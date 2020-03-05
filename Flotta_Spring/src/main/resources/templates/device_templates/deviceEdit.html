@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title>BoxInBox - Devices</title>
+</head>
+<body>
+  <div layout:fragment="loginContent">
+
+    <h2>Device edit</h2>
+
+    <hr />
+    
+    <div th:replace="fragments/device :: dateSliceSelector"></div>
+
+    <form th:object="${device}" method="post" id="form">
+      <input type="hidden" id="order" name="order" />
+      <div class="container">
+        <div class="row my-2">
+          <div class="col-2">
+            <label>Serial number</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="serialNumber" name="serialNumber"
+              th:value="*{serialNumber}" readonly="readonly"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label>Type name</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="typeName" name="typeName"
+              th:value="*{typeName}" readonly="readonly"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label>User</label>
+          </div>
+          <div class="col-4">
+            <select th:field="*{userId}" id="userId" class="col" onchange="userUpdate(this)">
+              <option value="0" title="Nobody"></option>
+              <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}"
+                th:title="${user.email}"
+              ></option>
+            </select>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label>Date</label>
+          </div>
+          <div class="col-4">
+            <input type="date" id="date" name="date" th:value="*{date}" required="required" />
+          </div>
+        </div>
+<!--         <div class="row btn-group"> -->
+          <button type="submit" class="btn btn-primary" th:formaction="'/device/' + ${device.id}" formmethod="post">Save</button>
+          <a href="/device/all" class="btn btn-primary">Back</a>
+<!--         </div> -->
+      </div>
+    </form>
+
+
+
+
+
+
+    <script th:inline="javascript">
+					//<![CDATA[
+					window.onload = function() {
+					};
+
+					function changeDate(d) {
+						document.getElementById('order').value = 'dateSliceCh ' + d.value;
+						document.getElementById('form').submit();
+					}
+
+					function userUpdate(u) {
+						document.getElementById('order').value = 'userCh ' + u.value;
+						document.getElementById('form').submit();
+					}
+
+					//]]>
+				</script>
+
+  </div>
+</body>
+</html>

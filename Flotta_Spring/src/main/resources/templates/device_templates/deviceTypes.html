@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title>BoxInBox - Device Types</title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <h2>Device Types</h2>
+    <table class="table">
+      <tr>
+        <td>Show invisible <input type="checkbox" id="visible" onclick="change_visible()" />
+        </td>
+        <td><button type="submit" class="btn btn-primary" data-target="#edit"
+            data-backdrop="static" data-toggle="modal" onclick="reset_modal()">New</button>
+            </td>
+      </tr>
+    </table>
+
+
+    <table class="table" id="table">
+      <tr>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Name</th>
+        <th>SIM number</th>
+        <th>Has MicroSD slot</th>
+        <th style="display: none;">Visible</th>
+        <th></th>
+      </tr>
+      <tr th:each="deviceType, i : ${deviceTypes}">
+        <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
+        <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
+        <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
+        <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
+        <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
+        <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+        <td th:id="visible + ${i.count}"  th:text="${deviceType.visible}"></td>
+        <td><button type="button" class="btn btn-primary"
+            th:onclick="|set_modal('${i.count}')|" data-target="#edit" data-backdrop="static"
+            data-toggle="modal">Edit</button></td>
+      </tr>
+    </table>
+
+
+    <!-- Modal -->
+    <div class="modal " id="edit" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <form id="modalForm" action="/deviceTypes" th:object="${deviceType}" method="post">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">x</span>
+            </button>
+            <h4 class="modal-title" id="exampleModalLabel">Title</h4>
+          </div>
+          <div class="modal-body">
+            
+              <input type="hidden" id="id" name="id" />
+              <div class="form-group">
+                <label class="form-control-label">Name:</label> <input type="checkbox"
+                  id="autoNameGenerate" checked="checked" onclick="autoNameGenerateChange()" /> <input
+                  type="text" class="form-control" id="name" name="name" readonly="readonly" required="required" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-control-label">Brand</label> <input list="brands" id="brand"
+                  name="brand" class="form-control" oninput="nameAutoComplete()" required="required" />
+                <datalist id="brands">
+                  <option th:each="b : ${brandList}" th:value="${b}"></option>
+                </datalist>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">Model</label> <input type="text" id="model"
+                  name="model" class="form-control" oninput="nameAutoComplete()" required="required" placeholder="Model" />
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">SIM number</label> <select id="simNumber"
+                  name="simNumber" class="form-control" oninput="nameAutoComplete()">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">Has MicroSD slot</label> <input type="checkbox"
+                  id="microsd" name="microsd" />
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">Visible</label> <input type="checkbox"
+                  id="see" name="see" />
+              </div>
+            
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+    <script th:inline="javascript">
+		//<![CDATA[
+			window.onload = function() {
+				change_visible();
+			};
+			
+		function change_visible() {
+			var table = document.getElementById('table');
+			var row;
+			if(document.getElementById('visible').checked) {
+				for (row of table.rows) {
+					row.style.display = '';
+				}
+			} else {
+				for (row of table.rows) {
+					if(row.cells[5].innerHTML == 'false') {
+						row.style.display = 'none';
+					}
+				}
+			}
+		}
+		
+		function reset_modal() {
+			document.getElementById('id').value = '';
+			document.getElementById('brand').value = '';
+			document.getElementById('model').value = '';
+			document.getElementById('name').value = '';
+			document.getElementById('simNumber').value = '1';
+			document.getElementById('microsd').checked = true;
+			document.getElementById('see').checked = true;
+		}
+		
+		function set_modal(i) {
+			document.getElementById('id').value = document.getElementById('id' + i).innerHTML;
+			document.getElementById('brand').value = document.getElementById('brand' + i).innerHTML;
+			document.getElementById('model').value = document.getElementById('model' + i).innerHTML;
+			document.getElementById('name').value = document.getElementById('name' + i).innerHTML;
+			document.getElementById('simNumber').value = document.getElementById('simNumber' + i).innerHTML;
+			document.getElementById('microsd').checked = document.getElementById('microsd' + i).innerHTML;
+			document.getElementById('visible').checked = document.getElementById('visible' + i).innerHTML;
+		}
+		
+		function nameAutoComplete() {
+			var sim = document.getElementById('simNumber').value;
+			if(document.getElementById('autoNameGenerate').checked) {
+				document.getElementById('name').value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
+			}
+		}
+		
+		function autoNameGenerateChange() {
+			var name = document.getElementById('name');
+			if(document.getElementById('autoNameGenerate').checked) {
+				name.readOnly = true;
+				name.value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
+			} else {
+				name.readOnly = false;
+			}
+		}
+		
+		//]]>
+		</script>
+
+  </div>
+</body>
+</html>

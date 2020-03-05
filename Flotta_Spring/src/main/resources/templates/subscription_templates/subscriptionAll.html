@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title>BoxInBox - Subscriptions</title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <h2 th:text="#{main.subscriptions}">Subscriptions</h2>
+
+    <a th:if="canCreateNew" href="/subscription/new" class="btn btn-primary my-2"
+      th:text="#{button.new}"
+    >New</a>
+
+    <table class="table">
+      <tr>
+        <th th:text="#{subscription.phoneNumber}">Number</th>
+        <th th:text="#{subscription.imei}">IMEI</th>
+        <th th:text="#{subscription.user}">User</th>
+        <th th:text="#{subscription.device}">Device</th>
+        <th></th>
+      </tr>
+      <tr th:each="subscription : ${subscriptions}">
+        <td th:text="${subscription.number}"></td>
+        <td th:text="${subscription.imei}"></td>
+        <td th:text="${subscription.userName}"></td>
+        <td th:text="${subscription.deviceName}"></td>
+        <td><a th:href="'/subscription/' + ${subscription.id}" class="btn btn-primary"
+          th:text="#{button.edit}"
+        >Edit</a></td>
+      </tr>
+    </table>
+
+  </div>
+
+</body>
+</html>

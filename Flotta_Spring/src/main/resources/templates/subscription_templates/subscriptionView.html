@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title>BoxInBox - Subscription</title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <h2>View subscription</h2>
+
+    <div class="container">
+      <select th:if="${dates} != null" onchange="changeDate(this)" class="my-3">
+        <option th:each="date : ${dates}" th:value="${date}" th:text="${date}"
+          th:selected="${date} == ${subscription.date}"
+        ></option>
+      </select>
+    </div>
+
+    <form th:object="${subscription}" method="post" id="form">
+      <input type="hidden" id="order" name="order" />
+      <div class="container">
+        <div class="row my-2">
+          <div class="col-2">
+            <label>Number</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="number" name="number" th:value="*{number}"
+              readonly="readonly"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label>IMEI</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="imei" name="imei" th:value="*{imei}"
+              readonly="readonly"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label>User</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="userName" name="userName"
+              th:value="*{userName}" readonly="readonly"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label>Date</label>
+          </div>
+          <div class="col-4">
+            <input type="date" id="date" name="date" th:value="*{date}" readonly="readonly" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4"></div>
+          <div class="col-2">
+            <button type="submit" class="btn" th:formaction="'/subscription/' + ${subscription.id}"
+              formmethod="post"
+            >Save</button>
+            <a href="/subscription/all" class="btn btn-primary">Back</a>
+          </div>
+        </div>
+      </div>
+    </form>
+
+
+
+    <script th:inline="javascript">
+					//<![CDATA[		
+					function changeDate(d) {
+						document.getElementById('order').value = 'dateSliceCh ' + d.value;
+						document.getElementById('form').submit();
+					}
+					//]]>
+				</script>
+
+  </div>
+
+
+
+</body>
+</html>

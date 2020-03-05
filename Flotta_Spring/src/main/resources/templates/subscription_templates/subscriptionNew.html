@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title>BoxInBox - Subscription</title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <h2>New subscription</h2>
+
+    <form th:object="${subscription}" method="post" id="form">
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+      <input type="hidden" id="order" name="order" />
+      <div class="container">
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{subscription.phoneNumber}">Number</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="number" name="number" th:value="*{number}"
+              required="required"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{subscription.imei}">IMEI</label>
+          </div>
+          <div class="col-2">
+            <input type="text" class="form-control bg-danger" id="imei" name="imei" th:value="*{imei}"
+              readonly="readonly" 
+            />
+          </div>
+          <div class="col-2">
+            <button type="button" class="form-control" data-toggle="modal"
+              data-target="#exampleModal"
+            >Choose sim</button>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{subscription.user}">User</label>
+          </div>
+          <div class="col-4">
+            <select th:field="*{userId}" id="userId" onchange="userUpdate(this)">
+              <option value="0" title="Nobody"></option>
+              <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}"
+                th:title="${user.email}"
+              ></option>
+            </select>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{subscription.device}">Device</label>
+          </div>
+          <div class="col-4">
+            <select th:field="*{deviceId}" id="deviceId" onchange="">
+              <option value="0" title="Nothing"></option>
+              <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName}"
+                th:title="${device.serialNumber}"
+              ></option>
+            </select>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{subscription.date}">Date</label>
+          </div>
+          <div class="col-4">
+            <input type="date" id="date" name="date" th:value="*{date}" required="required" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4"></div>
+          <div class="col-2">
+            <button type="submit" id="button" class="btn btn-primary"
+              formaction="/subscription/new" formmethod="post"
+              th:text="#{button.save}" disabled="disabled"
+            >Save</button>
+            <a href="/subscription/all" class="btn btn-primary" th:text="#{button.back}">Back</a>
+          </div>
+        </div>
+      </div>
+    </form>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal " id="exampleModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="exampleModalLabel">Select sim</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">x</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>IMEI</th>
+                  <th><lable id="t" th:text="T"></lable></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="sim : ${sims}">
+                  <td th:text="${sim.imei}"></td>
+                  <td><button type="button" class="btn btn-primary"
+                      th:onclick="|selectSim('${sim.imei}')|" data-dismiss="modal"
+                    >Choose</button></td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:inline="javascript">
+					//<![CDATA[
+					window.onload = function() {
+						if(document.getElementById('imei').value != '') {
+							document.getElementById('button').disabled = false;
+							document.getElementById('imei').classList.remove('bg-danger');
+// 							document.getElementById('imei').className += ' bg-success text-white';
+						}
+					};	
+					
+					function selectSim(imei) {
+						document.getElementById('imei').value = imei;
+						document.getElementById('button').disabled = false;
+						document.getElementById('imei').classList.remove('bg-danger');
+// 						document.getElementById('imei').className += ' bg-success text-white';
+					}
+
+					function userUpdate(u) {
+						document.getElementById('order').value = 'userCh ' + u.value;
+						document.getElementById('form').submit();
+					}
+					//]]>
+				</script>
+
+  </div>
+
+
+
+</body>
+</html>
