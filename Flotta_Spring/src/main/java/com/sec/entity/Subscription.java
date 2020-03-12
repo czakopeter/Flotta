@@ -112,7 +112,12 @@ public class Subscription {
     stv.setUserId(us.getUser() != null ? us.getUser().getId() : 0);
     stv.setUserName(us.getUser() != null ? us.getUser().getFullName() : "");
 
-    SubDev sd = subDev.get(getLastDeviceModificationDate());
+    LocalDate last = getLastDeviceModificationDate();
+    System.out.println(last);
+    SubDev sd = subDev.get(last);
+    System.out.println(sd);
+    
+//    SubDev sd = subDev.get(getLastDeviceModificationDate());
     stv.setDeviceId(sd.getDev() != null ? sd.getDev().getId() : 0);
     stv.setDeviceName(sd.getDev() != null ? sd.getDev().getDeviceType().getName() : "");
 
@@ -197,7 +202,7 @@ public class Subscription {
   }
 
   public void userModification(User user, LocalDate date) {
-    if (subUsers == null) {
+    if (subUsers == null || subUsers.isEmpty()) {
       subUsers = new HashMap<>();
       subUsers.put(date, new UserSub(user, this, date));
     } else {
@@ -221,9 +226,12 @@ public class Subscription {
   }
 
   public void deviceModification(Device dev, LocalDate date) {
-    if (subDev == null) {
+    if (subDev == null || subDev.isEmpty()) {
+      System.out.println("empty subdev");
       subDev = new HashMap<>();
+      System.out.println(subDev);
       subDev.put(date, new SubDev(this, dev, date));
+      System.out.println(subDev);
     } else {
       SubDev sd = subDev.get(date);
       if (sd == null) {
@@ -252,23 +260,31 @@ public class Subscription {
   }
 
   private LocalDate getLastUserModificationDate() {
-    return getUserModficationDateListDest().get(0);
+    try {
+      return getUserModficationDateListDest().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      return null;
+    }
   }
 
   private List<LocalDate> getUserModficationDateListDest() {
-    List<LocalDate> dList = new LinkedList<>(subUsers.keySet());
-    Collections.sort(dList, Collections.reverseOrder());
-    return dList;
+    List<LocalDate> dates = new LinkedList<>(subUsers.keySet());
+    Collections.sort(dates, Collections.reverseOrder());
+    return dates;
   }
 
   private LocalDate getLastDeviceModificationDate() {
-    return getDeviceModficationDateListDest().get(0);
+    try {
+      return getDeviceModficationDateListDest().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      return null;
+    }
   }
 
   private List<LocalDate> getDeviceModficationDateListDest() {
-    List<LocalDate> dList = new LinkedList<>(subDev.keySet());
-    Collections.sort(dList, Collections.reverseOrder());
-    return dList;
+    List<LocalDate> dates = new LinkedList<>(subDev.keySet());
+    Collections.sort(dates, Collections.reverseOrder());
+    return dates;
   }
 
   public List<LocalDate> getAllModificationDateDesc() {

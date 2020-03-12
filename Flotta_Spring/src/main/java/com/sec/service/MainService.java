@@ -11,6 +11,7 @@ import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;
 import com.sec.entity.Subscription;
 import com.sec.entity.User;
+import com.sec.entity.switchTable.Service.SubSimService;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
 
@@ -26,6 +27,8 @@ public class MainService {
 	private DeviceTypeService deviceTypeService;
 	
 	private DeviceService deviceService;
+	
+	private SubSimService subSimService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -36,9 +39,16 @@ public class MainService {
 		this.deviceService = deviceService;
 	}
 	
+	@Autowired
+	public void setSubSimService(SubSimService subSimService) {
+    this.subSimService = subSimService;
+  }
+	
+	
 	//------- SUBSCRIPTION SERVICE --------
 	
-	public List<SubscriptionToView> findAllSubscription() {
+
+  public List<SubscriptionToView> findAllSubscription() {
 		List<SubscriptionToView> list = new LinkedList<>();
 		for(Subscription s : subscriptionService.findAll()) {
 			list.add(s.toView());
@@ -61,12 +71,16 @@ public class MainService {
 	public boolean saveSubscription(SubscriptionToView subscription) {
 	  Sim sim = simService.findByImei(subscription.getImei());
 	  User user = userService.findById(subscription.getUserId());
-	  return subscriptionService.save(subscription, sim, user, subscription.getDate());
+	  subscriptionService.save(subscription, user, subscription.getDate());
+	  Subscription s = subscriptionService.findByNumber(subscription.getNumber());
+	  subSimService.save(s, sim, subscription.getDate());
+	  return true;
   }
 	
 	public void updateSubscription(long id, SubscriptionToView stv) {
-    Sim sim = simService.findByImei(stv.getImei());
+	  Sim sim = simService.findByImei(stv.getImei());
     User user = userService.findById(stv.getUserId());
+    subSimService.update(stv.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
     subscriptionService.update(id, user, sim, stv.getImeiChangeReason(), stv.getDate());
   }
 	
@@ -123,7 +137,7 @@ public class MainService {
     return r;
   }
   
-  public Object findAllSim() {
+  public List<Sim> findAllSim() {
     return simService.findAll();
   }
   

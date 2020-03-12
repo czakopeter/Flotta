@@ -74,4 +74,15 @@ public class SubscriptionService {
     return subscriptionRepository.findOne(id);
   }
 
+  public void save(SubscriptionToView subscription, User user, LocalDate date) {
+    Subscription check = subscriptionRepository.findByNumber(subscription.getNumber());
+    if(check == null) {
+      Subscription s = new Subscription(subscription.getNumber());
+      s.userModification(user, date);
+      s.deviceModification(null, date);
+      subscriptionRepository.save(s);
+    }
+    
+  }
+
 }

@@ -79,7 +79,8 @@ public class HomeController {
   @RequestMapping("/sims")
   public String simsList(Model model) {
     model.addAttribute("title", "Sims");
-    model.addAttribute("sims", service.findAllFreeSim());
+//    model.addAttribute("sims", service.findAllFreeSim());
+    model.addAttribute("sims", service.findAllSim());
     model.addAttribute("sim", new Sim());
     return "sim_templates/sims";
   }

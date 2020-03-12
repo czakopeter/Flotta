@@ -9,13 +9,17 @@ import org.springframework.stereotype.Repository;
 import com.sec.entity.Subscription;
 import com.sec.entity.switchTable.SubSim;
 
-@Repository
 public interface SubSimRepository extends CrudRepository<SubSim, Long> {
 
   List<SubSim> findAllBySub(Subscription s);
 
   SubSim findBySubAndConnect(Subscription s, LocalDate date);
 
-  void deleteBySubAndDate(Subscription s, LocalDate date);
+  void deleteBySubAndConnect(Subscription s, LocalDate date);
 
+  SubSim findBySubAndConnect(long subId, LocalDate date);
+
+  List<SubSim> findAllBySub(long subId);
+
+  SubSim findFirstBySubOrderByConnectDesc(Subscription sub);
 }

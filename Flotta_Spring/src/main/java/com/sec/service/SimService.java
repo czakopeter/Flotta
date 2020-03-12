@@ -9,19 +9,26 @@ import org.springframework.stereotype.Service;
 import com.sec.entity.Sim;
 import com.sec.enums.SimStatusEnum;
 import com.sec.repo.SimRepository;
-import com.sec.status.SimStatus;
+import com.sec.status.service.SimStatusService;
 
 @Service
 public class SimService {
 	
 	private SimRepository simRepository;
 	
+	private SimStatusService simStatusService;
+	
 	@Autowired
 	public void setSimRepository(SimRepository simRepository) {
     this.simRepository = simRepository;
   }
 	
-	public List<Sim> findAll() {
+	@Autowired
+  public void setSimStatusService(SimStatusService simStatusService) {
+    this.simStatusService = simStatusService;
+  }
+
+  public List<Sim> findAll() {
     return simRepository.findAll(); 
   }
 	
@@ -48,6 +55,20 @@ public class SimService {
     if(check == null) {
       sim.addStatus(SimStatusEnum.FREE, date);
       simRepository.save(sim);
+    }
+  }
+
+  public void removeLastStatusModification(long id) {
+    Sim sim = simRepository.findOne(id);
+    if(sim != null) {
+     simStatusService.deleteLastStatus(sim);
+    }
+  }
+
+  public void modifySimLastStatus(long simId, String imeiChangeReason) {
+    Sim sim = simRepository.findOne(simId);
+    if(sim != null && !sim.isFree()) {
+      simStatusService.modifyLastStatus(sim, imeiChangeReason);
     }
   }
 }

@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BoxInBox</title>
 
-<link rel="stylesheet" href="../static/css/blog.css" th:href="@{/css/blog.css}" />
+<!-- <link rel="stylesheet" href="../static/css/blog.css" th:href="@{/css/blog.css}" /> -->
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" /> -->
 <link rel="stylesheet"
   href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -25,7 +25,9 @@
 <body>
 
 
-  <div class="navbar navbar-expand bg-light">
+  <div class="shadow navbar navbar-expand bg-light mx-3"
+    style="border-width: 1px; border-style: none; border-color: #cccccc; border-radius: 5px"
+  >
     <div sec:authorize="isAuthenticated()" class="navbar-nav">
       <ul class="nav nav-pills">
         <li class="nav-item"><a class="nav-link"
@@ -65,10 +67,7 @@
       </div>
     </div>
     <div class="navbar-nav mr-3">
-      <ul class="navbar-nav">
-        <li class="nav-item mr-1"><a href="?lang=hu">HU</a></li>
-        <li class="nav-item"><a href="?lang=en">EN</a></li>
-      </ul>
+      <span><a href="?lang=hu" class="mr-1">HU</a><a href="?lang=en">EN</a> </span>
     </div>
   </div>
 
