@@ -12,6 +12,7 @@ import com.sec.entity.Sim;
 import com.sec.entity.Subscription;
 import com.sec.entity.User;
 import com.sec.entity.switchTable.Service.SubSimService;
+import com.sec.entity.switchTable.Service.UserSubService;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
 
@@ -29,6 +30,8 @@ public class MainService {
 	private DeviceService deviceService;
 	
 	private SubSimService subSimService;
+	
+	private UserSubService userSubService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -44,10 +47,13 @@ public class MainService {
     this.subSimService = subSimService;
   }
 	
+	@Autowired
+	public void setUserSubService(UserSubService userSubService) {
+    this.userSubService = userSubService;
+  }
 	
 	//------- SUBSCRIPTION SERVICE --------
 	
-
   public List<SubscriptionToView> findAllSubscription() {
 		List<SubscriptionToView> list = new LinkedList<>();
 		for(Subscription s : subscriptionService.findAll()) {

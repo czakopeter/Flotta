@@ -36,9 +36,6 @@ public class SubSim {
   
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate connect;
-  
-//  @DateTimeFormat(pattern = "yyyy-MM-dd")
-//  private LocalDate disconnect;
 
   public SubSim() {
   }
