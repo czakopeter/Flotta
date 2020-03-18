@@ -59,9 +59,7 @@ public class SubscriptionService {
       System.out.println(s);
       return true;
     }
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    msg.put(
-        auth.getName(), "Number (" + subscription.getNumber() + ") already exists ");
+    addError("Number already exists");
     return false;
   }
   
@@ -74,15 +72,18 @@ public class SubscriptionService {
     return subscriptionRepository.findOne(id);
   }
 
-  public void save(SubscriptionToView subscription, User user, LocalDate date) {
+  public void save(SubscriptionToView subscription, LocalDate date) {
     Subscription check = subscriptionRepository.findByNumber(subscription.getNumber());
     if(check == null) {
       Subscription s = new Subscription(subscription.getNumber());
-      s.userModification(user, date);
       s.deviceModification(null, date);
       subscriptionRepository.save(s);
     }
-    
+  }
+  
+  private void addError(String err) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    msg.put(auth.getName(), err);
   }
 
 }

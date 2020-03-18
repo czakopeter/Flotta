@@ -75,19 +75,23 @@ public class MainService {
 	}
 	
 	public boolean saveSubscription(SubscriptionToView subscription) {
+	  subscriptionService.save(subscription, subscription.getDate());
 	  Sim sim = simService.findByImei(subscription.getImei());
 	  User user = userService.findById(subscription.getUserId());
-	  subscriptionService.save(subscription, user, subscription.getDate());
-	  Subscription s = subscriptionService.findByNumber(subscription.getNumber());
-	  subSimService.save(s, sim, subscription.getDate());
+	  Subscription sub = subscriptionService.findByNumber(subscription.getNumber());
+	  subSimService.save(sub, sim, subscription.getDate());
+	  userSubService.save(sub, user, subscription.getDate());
 	  return true;
   }
 	
-	public void updateSubscription(long id, SubscriptionToView stv) {
+	public boolean updateSubscription(long id, SubscriptionToView stv) {
+	  Subscription sub = subscriptionService.findById(id);
 	  Sim sim = simService.findByImei(stv.getImei());
     User user = userService.findById(stv.getUserId());
-    subSimService.update(stv.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
+    subSimService.update(sub.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
+    userSubService.update(sub, user, stv.getDate());
     subscriptionService.update(id, user, sim, stv.getImeiChangeReason(), stv.getDate());
+    return true;
   }
 	
 	public String getSubscriptionServiceError() {

@@ -70,6 +70,6 @@ public class UserService implements UserDetailsService {
     }
 
 	public User findById(long userId) {
-		return userRepository.findOne(userId);
+	  return userId == 0 ? null : userRepository.findOne(userId);
 	}
 }
