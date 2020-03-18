@@ -16,4 +16,16 @@ public class UserSubService {
     userSubRepository.save(entity);
   }
 
+  public void update(Subscription sub, User user, LocalDate date) {
+    UserSub last = userSubRepository.findFirstBySubOrderByConnectDesc(sub);
+    
+    if(date.isAfter(last.getConnect())) {
+      //new row
+    } else if(date.isEqual(last.getConnect())) {
+      //modifying
+    } else {
+      //error
+    }
+  }
+
 }
