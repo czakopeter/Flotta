@@ -13,4 +13,10 @@ public interface UserSubRepository extends CrudRepository<UserSub, Long> {
 
   UserSub findFirstBySubOrderByConnectDesc(Subscription sub);
 
+  UserSub findFirstBySubAndConnectLessThanOrderByConnectDesc(Subscription sub, LocalDate date);
+
+  UserSub findFirstBySubAndConnectBeforeOrderByConnectDesc(Subscription sub, LocalDate date);
+
+  void deleteAllBySub(Subscription sub);
+
 }
