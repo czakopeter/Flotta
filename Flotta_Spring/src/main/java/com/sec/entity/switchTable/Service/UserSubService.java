@@ -46,15 +46,4 @@ public class UserSubService {
     }
   }
   
-  public void delete(Subscription sub, LocalDate date) {
-    UserSub last = userSubRepository.findFirstBySubOrderByConnectDesc(sub);
-    if(date.isEqual(last.getConnect())) {
-      userSubRepository.delete(last.getId());
-    }
-  }
-  
-  public void deleteAll(Subscription sub) {
-    userSubRepository.deleteAllBySub(sub);
-  }
-
 }
