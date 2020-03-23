@@ -29,16 +29,22 @@ public class UserDevService {
     UserDev last = userDevRepository.findFirstByDevOrderByConnectDesc(dev);
     
     if(date.isAfter(last.getConnect())) {
-      if(last.getUser().getId() != user.getId()) {
+      if((last.getUser() != null && user != null && last.getUser().getId() != user.getId()) || 
+          (last.getUser() == null && user != null) ||
+          (last.getUser() != null && user == null)) {
         userDevRepository.save(new UserDev(user, dev, date));
       }
     } else if(date.isEqual(last.getConnect())) {
       //modifying
-      if(user.getId() != userDevRepository.findFirstByDevAndConnectBeforeOrderByConnectDesc(dev, date).getId()) {
+      UserDev lastBefore = userDevRepository.findFirstByDevAndConnectBeforeOrderByConnectDesc(dev, date);
+      if(lastBefore != null && (
+          (user == null && lastBefore.getUser() == null) ||
+          (user != null && lastBefore.getUser() != null && user.getId() == lastBefore.getUser().getId())
+          )) {
+        userDevRepository.delete(last.getId());
+      } else {
         last.setUser(user);
         userDevRepository.save(last);
-      } else {
-        userDevRepository.delete(last.getId());
       }
     } else {
       //error

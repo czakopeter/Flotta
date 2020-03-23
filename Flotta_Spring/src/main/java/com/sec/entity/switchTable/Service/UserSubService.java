@@ -30,16 +30,23 @@ public class UserSubService {
     UserSub last = userSubRepository.findFirstBySubOrderByConnectDesc(sub);
     
     if(date.isAfter(last.getConnect())) {
-      if(last.getUser().getId() != user.getId()) {
+      //add new user
+      if((last.getUser() != null && user != null && last.getUser().getId() != user.getId()) ||
+          (last.getUser() == null && user != null) ||
+          (last.getUser() != null && user == null)) {
         userSubRepository.save(new UserSub(user, sub, date));
       }
     } else if(date.isEqual(last.getConnect())) {
-      //modifying
-      if(user.getId() != userSubRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date).getId()) {
+      //modify last user
+      UserSub lastBefore = userSubRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date);
+      if(lastBefore != null && (
+          (user == null && lastBefore.getUser() == null) ||
+          (user != null && lastBefore.getUser() != null && user.getId() == lastBefore.getUser().getId())
+          )) {
+        userSubRepository.delete(last.getId());
+      } else {
         last.setUser(user);
         userSubRepository.save(last);
-      } else {
-        userSubRepository.delete(last.getId());
       }
     } else {
       //error

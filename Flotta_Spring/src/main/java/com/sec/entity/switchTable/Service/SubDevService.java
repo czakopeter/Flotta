@@ -32,16 +32,22 @@ public class SubDevService {
     SubDev last = subDevRepository.findFirstBySubOrderByConnectDesc(sub);
     
     if(date.isAfter(last.getConnect())) {
-      if(last.getDev().getId() != dev.getId()) {
+      if((last.getDev() != null && dev != null && last.getDev().getId() != dev.getId()) ||
+          (last.getDev() == null && dev != null) ||
+          (last.getDev() != null && dev == null)) {
         subDevRepository.save(new SubDev(sub, dev, date));
       }
     } else if(date.isEqual(last.getConnect())) {
       //modifying
-      if(dev.getId() != subDevRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date).getId()) {
+      SubDev lastBefore = subDevRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date);
+      if(lastBefore != null && (
+          (dev == null && lastBefore.getDev() == null) ||
+          (dev != null && lastBefore != null && dev.getId() == lastBefore.getDev().getId())
+          )) {
+        subDevRepository.delete(last.getId());
+      } else {
         last.setDev(dev);
         subDevRepository.save(last);
-      } else {
-        subDevRepository.delete(last.getId());
       }
     } else {
       //error

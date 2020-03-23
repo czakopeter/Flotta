@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;
 import com.sec.entity.Subscription;
@@ -68,9 +69,14 @@ public class MainService {
     this.userDevService = userDevService;
   }
 	
+	@Autowired
+	public void setSubDevService(SubDevService subDevService) {
+    this.subDevService = subDevService;
+  }
+	
 	
 	//------- SUBSCRIPTION SERVICE --------
-  
+
 
   public List<SubscriptionToView> findAllSubscription() {
 		List<SubscriptionToView> list = new LinkedList<>();
@@ -96,11 +102,11 @@ public class MainService {
 	  subscriptionService.save(subscription, subscription.getDate());
 	  Sim sim = simService.findByImei(subscription.getImei());
 	  User user = userService.findById(subscription.getUserId());
+	  Device dev = deviceService.findById(subscription.getDeviceId());
 	  Subscription sub = subscriptionService.findByNumber(subscription.getNumber());
 	  subSimService.save(sub, sim, subscription.getDate());
 	  userSubService.save(sub, user, subscription.getDate());
-	  
-	  
+	  subDevService.save(sub, dev, subscription.getDate());
 	  return true;
   }
 	
@@ -108,9 +114,12 @@ public class MainService {
 	  Subscription sub = subscriptionService.findById(id);
 	  Sim sim = simService.findByImei(stv.getImei());
     User user = userService.findById(stv.getUserId());
+    Device dev = deviceService.findById(stv.getDeviceId());
+    System.out.println(dev);
+    System.out.println(userDevService);
     subSimService.update(sub.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
     userSubService.update(sub, user, stv.getDate());
-    subscriptionService.update(id, user, sim, stv.getImeiChangeReason(), stv.getDate());
+    subDevService.update(sub, dev, stv.getDate());
     return true;
   }
 	
