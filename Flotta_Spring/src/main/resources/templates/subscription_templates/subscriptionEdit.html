@@ -25,7 +25,7 @@
       <div class="container">
         <div class="row my-2">
           <div class="col-2">
-            <label>Number</label>
+            <label th:text="#{subscription.phoneNumber}">Number</label>
           </div>
           <div class="col-4">
             <input type="text" class="form-control" id="number" name="number" th:value="*{number}" />
@@ -33,7 +33,7 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
-            <label>IMEI</label>
+            <label th:text="#{subscription.imei}">IMEI</label>
           </div>
           <div class="col-2">
             <input type="hidden" id="imeiChangeReason" name="imeiChangeReason" th:value="*{imeiChangeReason}"/>
@@ -47,7 +47,7 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
-            <label>User</label>
+            <label th:text="#{subscription.user}">User</label>
           </div>
           <div class="col-4">
             <select th:field="*{userId}" id="userId" onchange="userUpdate(this)">
@@ -60,7 +60,20 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
-            <label>Date</label>
+            <label th:text="#{subscription.device}">Device</label>
+          </div>
+          <div class="col-4">
+            <select th:field="*{deviceId}" id="deviceId" onchange="">
+              <option value="0" title="Nothing"></option>
+              <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName}"
+                th:title="${device.serialNumber}"
+              ></option>
+            </select>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{subscription.date}">Date</label>
           </div>
           <div class="col-4">
             <input type="date" id="date" name="date" th:value="*{date}" required="required"
