@@ -40,34 +40,6 @@ public class SubscriptionService {
 		return subscriptionRepository.findAll();
 	}
 
-	public void update(long id, User user, Sim sim, String imeiChangeReason, LocalDate date) {
-    Subscription s = subscriptionRepository.findOne(id);
-    if(s != null) {
-      s.userModification(user, date);
-      s.simModification(sim, imeiChangeReason, date);
-      subscriptionRepository.save(s);
-    }
-  }
-
-  public boolean save(SubscriptionToView subscription, Sim sim, User user, LocalDate date) {
-    Subscription check = subscriptionRepository.findByNumber(subscription.getNumber());
-    if(check == null) {
-      Subscription s = new Subscription(subscription.getNumber());
-      s.userModification(user, date);
-      s.simModification(sim, SimStatusEnum.ACTIVE.toString(), date);
-      subscriptionRepository.save(s);
-      System.out.println(s);
-      return true;
-    }
-    addError("Number already exists");
-    return false;
-  }
-  
-  public String getError() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    return msg.remove(auth.getName());
-  }
-
   public Subscription findById(long id) {
     return subscriptionRepository.findOne(id);
   }
@@ -76,9 +48,15 @@ public class SubscriptionService {
     Subscription check = subscriptionRepository.findByNumber(subscription.getNumber());
     if(check == null) {
       Subscription s = new Subscription(subscription.getNumber());
-      s.deviceModification(null, date);
       subscriptionRepository.save(s);
+    } else {
+      addError("Number already exists");
     }
+  }
+  
+  public String getError() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    return msg.remove(auth.getName());
   }
   
   private void addError(String err) {

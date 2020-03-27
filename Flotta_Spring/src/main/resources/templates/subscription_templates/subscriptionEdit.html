@@ -73,6 +73,14 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
+            <label th:text="#{subscription.note}">Note</label>
+          </div>
+          <div class="col-4">
+            <input type="text" id="note" name="note" th:value="*{note}"/>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
             <label th:text="#{subscription.date}">Date</label>
           </div>
           <div class="col-4">

@@ -16,7 +16,7 @@ INSERT INTO Sims (imei, service_provider) VALUES ('imei3', 'Telekom')
 INSERT INTO Sims (imei, service_provider) VALUES ('f1', 'FREE')
 INSERT INTO Sims (imei, service_provider) VALUES ('f2', 'FREE')
 
-
+INSERT INTO Sub_note (note, sub_id, date) VALUES ('First', 1, to_date('20-01-01', 'RR-MM-DD'))
 
 INSERT INTO Sim_status (sim_id, connect, status) VALUES (1, to_date('20-01-01', 'RR-MM-DD'), 1)
 INSERT INTO Sim_status (sim_id, connect, status) VALUES (2, to_date('20-01-02', 'RR-MM-DD'), 1)

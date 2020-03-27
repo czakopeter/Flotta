@@ -21,7 +21,9 @@ public class SubscriptionToView {
 	
 	private String deviceName;
 	
-	@DateTimeFormat (pattern="yyyy-MM-dd")
+	private String note;
+	
+  @DateTimeFormat (pattern="yyyy-MM-dd")
 	private LocalDate date;
 	
 	private String min;
@@ -95,6 +97,14 @@ public class SubscriptionToView {
     this.deviceName = deviceName;
   }
 
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
+  }
+  
   public LocalDate getDate() {
 		return date;
 	}

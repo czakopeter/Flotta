@@ -18,6 +18,8 @@ import com.sec.entity.switchTable.Service.UserDevService;
 import com.sec.entity.switchTable.Service.UserSubService;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
+import com.sec.entity.note.service.SubNoteService;
+
 
 @Service
 public class MainService {
@@ -39,6 +41,8 @@ public class MainService {
 	private UserDevService userDevService;
 	
 	private SubDevService subDevService;
+	
+	private SubNoteService subNoteService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -74,6 +78,11 @@ public class MainService {
     this.subDevService = subDevService;
   }
 	
+	@Autowired
+	public void setSubNoteService(SubNoteService subNoteService) {
+    this.subNoteService = subNoteService;
+  }
+	
 	
 	//------- SUBSCRIPTION SERVICE --------
 
@@ -107,6 +116,7 @@ public class MainService {
 	  subSimService.save(sub, sim, subscription.getDate());
 	  userSubService.save(sub, user, subscription.getDate());
 	  subDevService.save(sub, dev, subscription.getDate());
+	  subNoteService.save(sub, subscription.getNote(), subscription.getDate());
 	  return true;
   }
 	
@@ -120,6 +130,7 @@ public class MainService {
     subSimService.update(sub.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
     userSubService.update(sub, user, stv.getDate());
     subDevService.update(sub, dev, stv.getDate());
+    subNoteService.update(sub, stv.getNote(), stv.getDate());
     return true;
   }
 	
