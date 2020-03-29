@@ -30,7 +30,7 @@
           <label th:text="#{device.typeName}">Type name</label>
         </div>
         <div class="col-4">
-          <select th:field="*{typeName}" id="deviceType" name="deviceType" class="col">
+          <select th:field="*{typeName}" class="form-control" id="deviceType" name="deviceType" class="col">
             <option th:each="type : ${deviceTypes}" th:value="${type.name}" th:text="${type.name}"></option>
           </select>
         </div>
@@ -40,7 +40,7 @@
           <label th:text="#{device.user}">User</label>
         </div>
         <div class="col-4">
-          <select th:field="*{userId}" id="userId" class="col">
+          <select th:field="*{userId}" class="form-control" id="userId" class="col">
             <option value="0" title="Nobody"></option>
             <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}"
               th:title="${user.email}"
@@ -61,7 +61,7 @@
           <label th:text="#{device.date}">Date</label>
         </div>
         <div class="col-4">
-          <input type="date" id="date" name="date" required="required" />
+          <input type="date" class="form-control" id="date" name="date" required="required" />
         </div>
       </div>
       <div class="row">
