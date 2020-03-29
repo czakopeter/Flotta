@@ -19,6 +19,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.sec.entity.note.DevNote;
 import com.sec.entity.switchTable.SubDev;
 import com.sec.entity.switchTable.UserDev;
 import com.sec.entity.viewEntity.DeviceToView;
@@ -44,6 +45,10 @@ public class Device {
   @OneToMany(mappedBy = "sub", cascade = CascadeType.ALL)
   @MapKey( name = "connect")
   private Map<LocalDate, SubDev> devSubs;
+  
+  @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
+  @MapKey( name = "date")
+  private Map<LocalDate, DevNote> notes;
 
   public Device() {
   }
@@ -111,13 +116,37 @@ public class Device {
     d.setUserName(ud.getUser() != null ? ud.getUser().getFullName() : "");
     
     SubDev sd = devSubs.get(getLastDeviceModificationDate());
-    d.setNumber(sd.getSub() != null ? sd.getSub().getNumber() : "" );
+    d.setNumber(sd != null ? sd.getSub() != null ? sd.getSub().getNumber() : "" : "" );
 
     LocalDate last = lastUserMod;
 
     d.setDate(last);
     d.setMin(last.toString());
+    
+    LocalDate dn = getLastNoteModificationDate();
+    d.setNote(dn == null ? "" : notes.get(dn).getNote());
     return d;
+  }
+  
+  public DeviceToView toView(LocalDate date) {
+    DeviceToView dtv = new DeviceToView();
+    dtv.setId(id);
+    dtv.setSerialNumber(serialNumber);
+    dtv.setTypeName(deviceType.getName());
+    dtv.setDate(date);
+    dtv.setEditable(!date.isBefore(getAllModificationDateDesc().get(0)));
+    dtv.setMin(date.toString());
+    
+    LocalDate userModDate = floorDate(new LinkedList<>(devUsers.keySet()), date);
+    UserDev ud = devUsers.get(userModDate);
+    dtv.setUserId(ud.getUser() != null ? ud.getUser().getId() : 0);
+    dtv.setUserName(ud.getUser() != null ? ud.getUser().getFullName() : "");
+    
+    LocalDate noteModDate = floorDate(new LinkedList<>(notes.keySet()), date);
+    DevNote dn = notes.get(noteModDate);
+    dtv.setNote(dn != null ? dn.getNote() : "");
+    
+    return dtv;
   }
 
   public void userModification(User user, LocalDate date) {
@@ -159,7 +188,12 @@ public class Device {
   }
   
   private LocalDate getLastDeviceModificationDate() {
-    return getDeviceModficationDateListDest().get(0);
+    try {
+      return getDeviceModficationDateListDest().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      return null;
+    }
+    
   }
   
   private List<LocalDate> getDeviceModficationDateListDest() {
@@ -172,32 +206,25 @@ public class Device {
   public String toString() {
     return "Device [id=" + id + ", serialNumber=" + serialNumber + ", deviceType=" + deviceType + "]";
   }
-
+  
+  private LocalDate getLastNoteModificationDate() {
+    if(notes.isEmpty()) {
+      return null;
+    } else {
+      List<LocalDate> dates = new LinkedList<>(notes.keySet());
+      Collections.sort(dates, Collections.reverseOrder());
+      return dates.get(0);
+    }
+  }
+  
   public List<LocalDate> getAllModificationDateDesc() {
     Set<LocalDate> dates = new HashSet<>();
     dates.addAll(devUsers.keySet());
+    dates.addAll(notes.keySet());
     
     List<LocalDate> result = new LinkedList<>(dates);
     Collections.sort(result, Collections.reverseOrder());
     return result;
-  }
-
-  public DeviceToView toView(LocalDate date) {
-    DeviceToView dtv = new DeviceToView();
-    dtv.setId(id);
-    dtv.setSerialNumber(serialNumber);
-    dtv.setTypeName(deviceType.getName());
-    dtv.setDate(date);
-    dtv.setEditable(!date.isBefore(getAllModificationDateDesc().get(0)));
-    dtv.setMin(date.toString());
-    
-    LocalDate userModDate = floorDate(new LinkedList<>(devUsers.keySet()), date);
-    UserDev ud = devUsers.get(userModDate);
-    
-    dtv.setUserId(ud.getUser() != null ? ud.getUser().getId() : 0);
-    dtv.setUserName(ud.getUser() != null ? ud.getUser().getFullName() : "");
-    
-    return dtv;
   }
   
   private LocalDate floorDate(List<LocalDate> dates, LocalDate date) {
@@ -223,7 +250,8 @@ public class Device {
     devSubs.put(date, new SubDev(sub, this, date));
   }
   
-  public UserDev getLastUserDev() {
-    return devUsers.get(getLastUserModificationDate());
-  }
+//  public UserDev getLastUserDev() {
+//    return devUsers.get(getLastUserModificationDate());
+//  }
+
 }

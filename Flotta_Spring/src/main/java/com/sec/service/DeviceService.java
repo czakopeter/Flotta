@@ -66,8 +66,25 @@ public class DeviceService {
     }
   }
 
+  public Device save(String serialNumber, DeviceType deviceType, LocalDate date) {
+    Device check = deviceRepository.findBySerialNumber(serialNumber);
+    if(check == null) {
+      Device d = new Device(serialNumber);
+      d.setDeviceType(deviceType);
+      return deviceRepository.save(d);
+    } else {
+      addError("Serial number already exists");
+      return null;
+    }
+  }
+  
   public String getError() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     return msg.remove(auth.getName());
+  }
+  
+  private void addError(String err) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    msg.put(auth.getName(), err);
   }
 }

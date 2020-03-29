@@ -17,6 +17,8 @@ public class DeviceToView {
 	
 	private String number;
 	
+	private String note;
+	
 	@DateTimeFormat (pattern="yyyy-MM-dd")
 	private LocalDate date;
 	
@@ -41,6 +43,14 @@ public class DeviceToView {
 
   public void setSerialNumber(String serialNumber) {
     this.serialNumber = serialNumber;
+  }
+  
+  public String getNote() {
+    return note;
+  }
+  
+  public void setNote(String note) {
+    this.note = note;
   }
 
   public String getTypeName() {
@@ -103,6 +113,5 @@ public class DeviceToView {
   public String toString() {
     return "DeviceToView [serialNumber=" + serialNumber + ", typeName=" + typeName + ", date=" + date + ", min=" + min + ", editable=" + editable + "]";
   }
-  
-  
+
 }

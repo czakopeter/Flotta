@@ -62,15 +62,23 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
+            <label th:text="#{subscription.note}">Note</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="note" name="note" th:value="*{note}" readonly="readonly"/>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
             <label th:text="#{subscription.date}">Date</label>
           </div>
           <div class="col-4">
-            <input type="date" id="date" name="date" th:value="*{date}" readonly="readonly" />
+            <input type="date" class="form-control" id="date" name="date" th:value="*{date}" readonly="readonly" />
           </div>
         </div>
         <div class="row">
-          <div class="col-4"></div>
-          <div class="col-2">
+          <div class="col-2"></div>
+          <div class="col-4">
             <a href="/subscription/all" class="btn btn-primary" th:text="#{button.back}">Back</a>
           </div>
         </div>

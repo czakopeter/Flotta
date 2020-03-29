@@ -17,7 +17,7 @@
       <div class="container">
         <div class="row my-2">
           <div class="col-2">
-            <label>Serial number</label>
+            <label th:text="#{device.serialNumber}">Serial number</label>
           </div>
           <div class="col-4">
             <input type="text" class="form-control" id="serialNumber" name="serialNumber"
@@ -27,7 +27,7 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
-            <label>Type name</label>
+            <label th:text="#{device.typeName}">Type name</label>
           </div>
           <div class="col-4">
             <input type="text" class="form-control" id="typeName" name="typeName"
@@ -37,7 +37,7 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
-            <label>User</label>
+            <label th:text="#{device.user}">User</label>
           </div>
           <div class="col-4">
             <input type="text" class="form-control" id="userName" name="userName" th:value="*{userName}"
@@ -47,10 +47,18 @@
         </div>
         <div class="row my-2">
           <div class="col-2">
-            <label>Date</label>
+            <label th:text="#{device.note}">Note</label>
           </div>
           <div class="col-4">
-            <input type="date" id="date" name="date" th:value="*{date}" readonly="readonly" />
+            <input type="text" class="form-control" id="note" name="note" th:value="*{note}" readonly="readonly"/>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{device.date}">Date</label>
+          </div>
+          <div class="col-4">
+            <input type="date" class="form-control" id="date" name="date" th:value="*{date}" readonly="readonly" />
           </div>
         </div>
         <div class="row">
@@ -58,7 +66,7 @@
           <div class="col-1">
           </div>
           <div class="col-1" >
-            <a href="/device/all" class="btn btn-primary">Back</a>
+            <a href="/device/all" class="btn btn-primary" th:text="#{button.back}">Back</a>
           </div>
         </div>
       </div>

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.sec.entity.Subscription;
 import com.sec.entity.note.SubNote;
 import com.sec.entity.note.repository.SubNoteRepository;
-import com.sec.entity.switchTable.SubDev;
 
 @Service
 public class SubNoteService {

@@ -11,7 +11,7 @@ public interface DeviceRepository extends CrudRepository<Device, Long> {
 
   List<Device> findAll();
   
-  Device findBySerialNumber(String selialNumber);
+  Device findBySerialNumber(String serialNumber);
 
   List<Device> findAllByDeviceType(DeviceType deviceType);
 

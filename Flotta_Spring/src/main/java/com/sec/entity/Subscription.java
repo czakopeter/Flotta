@@ -122,20 +122,10 @@ public class Subscription {
     stv.setDeviceId(sd.getDev() != null ? sd.getDev().getId() : 0);
     stv.setDeviceName(sd.getDev() != null ? sd.getDev().getDeviceType().getName() : "");
     
-    
-    stv.setNote(getLastNote());
+    LocalDate sn = getLastNoteModificationDate();
+    stv.setNote(sn == null ? "" : notes.get(sn).getNote());
 
     return stv;
-  }
-
-  private String getLastNote() {
-    if(notes.isEmpty()) {
-      return "";
-    }
-    
-    List<LocalDate> dates = new LinkedList<LocalDate>(notes.keySet());
-    Collections.sort(dates, Collections.reverseOrder());
-    return notes.get(dates.get(0)).getNote();
   }
 
   public SubscriptionToView toView(LocalDate date) {
@@ -161,7 +151,9 @@ public class Subscription {
     stv.setDeviceId(sd == null || sd.getDev() == null ? 0 : sd.getDev().getId());
     stv.setDeviceName(sd == null || sd.getDev() == null ? "" : sd.getDev().getDeviceType().getName());
     
-    stv.setNote(getLastNote());
+    LocalDate noteModDate = floorDate(new LinkedList<>(notes.keySet()), date);
+    SubNote sn = notes.get(noteModDate);
+    stv.setNote(sn.getNote() != null ? sn.getNote() : "");
     return stv;
   }
 
@@ -206,12 +198,24 @@ public class Subscription {
     Collections.sort(dates, Collections.reverseOrder());
     return dates;
   }
+  
+  private LocalDate getLastNoteModificationDate() {
+    if(notes.isEmpty()) {
+      return null;
+    } else {
+      List<LocalDate> dates = new LinkedList<>(notes.keySet());
+      Collections.sort(dates, Collections.reverseOrder());
+      return dates.get(0);
+    }
+    
+  }
 
   public List<LocalDate> getAllModificationDateDesc() {
     Set<LocalDate> dates = new HashSet<>();
-    dates.addAll(getUserModficationDateListDest());
-    dates.addAll(getSimModficationDateListDest());
-    dates.addAll(getDeviceModficationDateListDest());
+    dates.addAll(subUsers.keySet());
+    dates.addAll(subSim.keySet());
+    dates.addAll(subDev.keySet());
+    dates.addAll(notes.keySet());
 
     List<LocalDate> result = new LinkedList<>(dates);
     Collections.sort(result, Collections.reverseOrder());

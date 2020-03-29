@@ -18,6 +18,7 @@ import com.sec.entity.switchTable.Service.UserDevService;
 import com.sec.entity.switchTable.Service.UserSubService;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
+import com.sec.entity.note.service.DevNoteService;
 import com.sec.entity.note.service.SubNoteService;
 
 
@@ -43,6 +44,8 @@ public class MainService {
 	private SubDevService subDevService;
 	
 	private SubNoteService subNoteService;
+	
+	private DevNoteService devNoteService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -83,6 +86,11 @@ public class MainService {
     this.subNoteService = subNoteService;
   }
 	
+	@Autowired
+  public void setDevNoteService(DevNoteService devNoteService) {
+    this.devNoteService = devNoteService;
+  }
+	
 	
 	//------- SUBSCRIPTION SERVICE --------
 
@@ -113,6 +121,7 @@ public class MainService {
 	  User user = userService.findById(subscription.getUserId());
 	  Device dev = deviceService.findById(subscription.getDeviceId());
 	  Subscription sub = subscriptionService.findByNumber(subscription.getNumber());
+	  
 	  subSimService.save(sub, sim, subscription.getDate());
 	  userSubService.save(sub, user, subscription.getDate());
 	  subDevService.save(sub, dev, subscription.getDate());
@@ -125,8 +134,7 @@ public class MainService {
 	  Sim sim = simService.findByImei(stv.getImei());
     User user = userService.findById(stv.getUserId());
     Device dev = deviceService.findById(stv.getDeviceId());
-    System.out.println(dev);
-    System.out.println(userDevService);
+    
     subSimService.update(sub.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
     userSubService.update(sub, user, stv.getDate());
     subDevService.update(sub, dev, stv.getDate());
@@ -209,7 +217,8 @@ public class MainService {
   
   public List<DeviceToView> findAllDevices() {
     List<DeviceToView> list = new LinkedList<>();
-    deviceService.findAll().forEach(d -> list.add(d.toView()));
+    deviceService.findAll().forEach(
+        d -> list.add(d.toView()));
     return list;
   }
   
@@ -223,8 +232,24 @@ public class MainService {
 
   public boolean saveDevice(DeviceToView device) {
     DeviceType deviceType = deviceTypeService.findByName(device.getTypeName());
-    User user = userService.findById(device.getUserId());
-    return deviceService.save(device, deviceType, user, device.getDate());
+    Device saved = deviceService.save(device.getSerialNumber(), deviceType, device.getDate());
+    if(saved != null) {
+      User user = userService.findById(device.getUserId());
+      
+      userDevService.save(saved, user, device.getDate());
+      devNoteService.save(saved, device.getNote(), device.getDate());
+      
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  public void updateDevice(long id, DeviceToView dtv) {
+    Device device = deviceService.findById(id);
+    User user = userService.findById(dtv.getUserId());
+    userDevService.update(device, user, dtv.getDate());
+    devNoteService.update(device, dtv.getNote(), dtv.getDate());
   }
 
   public DeviceToView findDeviceById(long id) {
@@ -237,11 +262,6 @@ public class MainService {
   
   public List<LocalDate> findDeviceDatesById(long id) {
     return deviceService.findById(id).getAllModificationDateDesc();
-  }
-
-  public void updateDevice(long id, DeviceToView dtv) {
-    User user = userService.findById(dtv.getUserId());
-    deviceService.update(id, user, dtv.getDate());
   }
 
   public String getDeviceServiceError() {
