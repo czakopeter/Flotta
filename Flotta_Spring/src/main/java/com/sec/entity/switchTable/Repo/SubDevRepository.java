@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.sec.entity.Device;
 import com.sec.entity.Subscription;
 import com.sec.entity.switchTable.SubDev;
 

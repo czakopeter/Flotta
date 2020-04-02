@@ -11,11 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.sec.repo.SubscriptionRepository;
-import com.sec.entity.Sim;
+import com.sec.status.service.SubscriptionStatusService;
 import com.sec.entity.Subscription;
-import com.sec.entity.User;
 import com.sec.entity.viewEntity.SubscriptionToView;
-import com.sec.enums.SimStatusEnum;
+import com.sec.enums.SubscriptionStatusEnum;
 
 @Service
 public class SubscriptionService {
@@ -23,13 +22,22 @@ public class SubscriptionService {
   private Map<String, String> msg = new HashMap<String, String>();
   
 	private SubscriptionRepository subscriptionRepository;
+	
+	private SubscriptionStatusService subscriptionStatusService;
 
 	@Autowired
 	public void setSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
 		this.subscriptionRepository = subscriptionRepository;
 	}
 	
-	public Subscription findByNumber(String number) {
+	@Autowired
+	public void setSubscriptionStatusService(SubscriptionStatusService subscriptionStatusService) {
+    this.subscriptionStatusService = subscriptionStatusService;
+  }
+
+
+
+  public Subscription findByNumber(String number) {
 		if(number != null) {
 			return subscriptionRepository.findByNumber(number);
 		}
@@ -62,6 +70,18 @@ public class SubscriptionService {
   private void addError(String err) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     msg.put(auth.getName(), err);
+  }
+
+  public void userHasConnected(Subscription sub, LocalDate date) {
+    subscriptionStatusService.setStatus(sub, SubscriptionStatusEnum.ACTIVE, date);
+  }
+
+  public void userHasntConnected(Subscription sub, LocalDate date) {
+    subscriptionStatusService.setStatus(sub, SubscriptionStatusEnum.FREE, date);
+  }
+
+  public void deleteLastSatus(Subscription sub) {
+    subscriptionStatusService.deleteLastStatus(sub);
   }
 
 }

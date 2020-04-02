@@ -1,8 +1,6 @@
 package com.sec.entity.switchTable;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,12 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.internal.CriteriaImpl.Subcriteria;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.sec.entity.Device;
 import com.sec.entity.Subscription;
-import com.sec.entity.User;
 
 @Entity
 @Table( name="sub_dev_st")

@@ -7,11 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.sec.entity.Device;
 import com.sec.entity.Subscription;
-import com.sec.entity.User;
 import com.sec.entity.switchTable.SubDev;
-import com.sec.entity.switchTable.UserSub;
 import com.sec.entity.switchTable.Repo.SubDevRepository;
-import com.sec.repo.UserRepository;
 
 @Service
 public class SubDevService {

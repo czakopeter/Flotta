@@ -40,7 +40,7 @@
             <label th:text="#{device.user}">User</label>
           </div>
           <div class="col-4">
-            <select class="form-control" id="userId" th:field="*{userId}"
+            <select class="form-control" id="userId" name="userId" th:field="*{userId}"
               onchange="userUpdate(this)"
             >
               <option value="0" title="Nobody"></option>

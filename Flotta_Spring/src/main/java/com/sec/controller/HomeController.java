@@ -90,7 +90,7 @@ public class HomeController {
     System.out.println(date);
     switch (command) {
     case "add":
-      service.addSim(sim, LocalDate.parse(date));
+      service.saveSim(sim, LocalDate.parse(date));
       break;
     default: 
       break;

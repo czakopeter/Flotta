@@ -7,11 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sec.entity.Device;
-import com.sec.entity.Subscription;
 import com.sec.entity.note.DevNote;
-import com.sec.entity.note.SubNote;
 import com.sec.entity.note.repository.DevNoteRepository;
-import com.sec.entity.note.repository.SubNoteRepository;
 
 @Service
 public class DevNoteService {

@@ -23,6 +23,7 @@ import com.sec.entity.note.DevNote;
 import com.sec.entity.switchTable.SubDev;
 import com.sec.entity.switchTable.UserDev;
 import com.sec.entity.viewEntity.DeviceToView;
+import com.sec.status.DeviceStatus;
 
 @Entity
 @Table(name = "devices")
@@ -49,6 +50,10 @@ public class Device {
   @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
   @MapKey( name = "date")
   private Map<LocalDate, DevNote> notes;
+  
+  @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
+  @MapKey(name = "date")
+  private Map<LocalDate, DeviceStatus> statuses = new HashMap<LocalDate, DeviceStatus>();
 
   public Device() {
   }
@@ -102,6 +107,22 @@ public class Device {
     this.devSubs = devSubs;
   }
 
+  public Map<LocalDate, DevNote> getNotes() {
+    return notes;
+  }
+
+  public void setNotes(Map<LocalDate, DevNote> notes) {
+    this.notes = notes;
+  }
+
+  public Map<LocalDate, DeviceStatus> getStatuses() {
+    return statuses;
+  }
+
+  public void setStatuses(Map<LocalDate, DeviceStatus> statuses) {
+    this.statuses = statuses;
+  }
+
   public DeviceToView toView() {
     DeviceToView d = new DeviceToView();
     d.setId(id);
@@ -149,33 +170,33 @@ public class Device {
     return dtv;
   }
 
-  public void userModification(User user, LocalDate date) {
-    if (devUsers == null) {
-      devUsers = new HashMap<>();
-      devUsers.put(date, new UserDev(user, this, date));
-    } else {
-      UserDev us = devUsers.get(date);
-      if (us == null) {
-        LocalDate last = getLastUserModificationDate();
-        if (!usersEquals(devUsers.get(last).getUser(), user)) {
-          us = devUsers.get(last);
-          us.setDisconnect(date);
-          devUsers.put(last, us);
-          devUsers.put(date, new UserDev(user, this, date));
-        }
+//  public void userModification(User user, LocalDate date) {
+//    if (devUsers == null) {
+//      devUsers = new HashMap<>();
+//      devUsers.put(date, new UserDev(user, this, date));
+//    } else {
+//      UserDev us = devUsers.get(date);
+//      if (us == null) {
+//        LocalDate last = getLastUserModificationDate();
+//        if (!usersEquals(devUsers.get(last).getUser(), user)) {
+//          us = devUsers.get(last);
+//          us.setDisconnect(date);
+//          devUsers.put(last, us);
+//          devUsers.put(date, new UserDev(user, this, date));
+//        }
+//
+//      } else {
+//        if (devUsers.size() == 1 || !usersEquals(devUsers.get(getUserModficationDateListDest().get(1)).getUser(), user)) {
+//          us.setUser(user);
+//          devUsers.put(date, us);
+//        }
+//      }
+//    }
+//  }
 
-      } else {
-        if (devUsers.size() == 1 || !usersEquals(devUsers.get(getUserModficationDateListDest().get(1)).getUser(), user)) {
-          us.setUser(user);
-          devUsers.put(date, us);
-        }
-      }
-    }
-  }
-
-  private boolean usersEquals(User u1, User u2) {
-    return u1 != null ? u1.equals(u2) : (u2 == null ? true : false);
-  }
+//  private boolean usersEquals(User u1, User u2) {
+//    return u1 != null ? u1.equals(u2) : (u2 == null ? true : false);
+//  }
 
   private LocalDate getLastUserModificationDate() {
     return getUserModficationDateListDest().get(0);

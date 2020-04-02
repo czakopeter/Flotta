@@ -22,8 +22,7 @@ import com.sec.entity.switchTable.SubDev;
 import com.sec.entity.switchTable.SubSim;
 import com.sec.entity.switchTable.UserSub;
 import com.sec.entity.viewEntity.SubscriptionToView;
-import com.sec.enums.SimStatusEnum;
-import com.sec.status.SimStatus;
+import com.sec.status.SubscriptionStatus;
 
 @Entity
 @Table(name = "subscriptions")
@@ -50,6 +49,10 @@ public class Subscription {
   @OneToMany(mappedBy = "sub")
   @MapKey(name = "date")
   private Map<LocalDate, SubNote> notes = new HashMap<>();
+  
+  @OneToMany(mappedBy = "sub")
+  @MapKey(name = "date")
+  private Map<LocalDate, SubscriptionStatus> statuses = new HashMap<>();
   
   public Subscription() {
   }
@@ -96,6 +99,22 @@ public class Subscription {
 
   public void setSubDev(Map<LocalDate, SubDev> subDev) {
     this.subDev = subDev;
+  }
+  
+  public Map<LocalDate, SubNote> getNotes() {
+    return notes;
+  }
+
+  public void setNotes(Map<LocalDate, SubNote> notes) {
+    this.notes = notes;
+  }
+
+  public Map<LocalDate, SubscriptionStatus> getStatuses() {
+    return statuses;
+  }
+
+  public void setStatuses(Map<LocalDate, SubscriptionStatus> statuses) {
+    this.statuses = statuses;
   }
 
   @Override
@@ -153,7 +172,7 @@ public class Subscription {
     
     LocalDate noteModDate = floorDate(new LinkedList<>(notes.keySet()), date);
     SubNote sn = notes.get(noteModDate);
-    stv.setNote(sn.getNote() != null ? sn.getNote() : "");
+    stv.setNote(sn != null ? sn.getNote() : "");
     return stv;
   }
 

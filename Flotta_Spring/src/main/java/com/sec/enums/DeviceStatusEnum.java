@@ -21,4 +21,11 @@ public enum DeviceStatusEnum {
   public boolean isFree() {
     return 0 == this.code;
   }
+  
+  public boolean equals(DeviceStatusEnum status) {
+    if(this.compareTo(status) == 0) {
+      return true;
+    }
+    return false;
+  }
 }

@@ -50,7 +50,7 @@ public class SimService {
     return simRepository.findByImei(imei);
 	}
 
-  public void addSim(Sim sim, LocalDate date) {
+  public void save(Sim sim, LocalDate date) {
     Sim check = simRepository.findByImei(sim.getImei());
     if(check == null) {
       sim.addStatus(SimStatusEnum.FREE, date);

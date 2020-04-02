@@ -10,8 +10,6 @@ import com.sec.entity.note.SubNote;
 
 public interface SubNoteRepository extends CrudRepository<SubNote, Long>{
 
-  SubNote save(SubNote subNote);
-
   List<SubNote> findAllBySub(Subscription sub);
 
   SubNote findFirstBySubOrderByDateDesc(Subscription sub);

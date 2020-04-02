@@ -179,8 +179,8 @@ public class MainService {
     return simService.findAllFree();
   }
 
-  public void addSim(Sim sim, LocalDate date) {
-    simService.addSim(sim, date);
+  public void saveSim(Sim sim, LocalDate date) {
+    simService.save(sim, date);
   }
 
   public Sim findSimById(int i) {

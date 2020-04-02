@@ -9,21 +9,29 @@ import com.sec.entity.Subscription;
 import com.sec.entity.User;
 import com.sec.entity.switchTable.UserSub;
 import com.sec.entity.switchTable.Repo.UserSubRepository;
-import com.sec.repo.UserRepository;
+import com.sec.service.SubscriptionService;
 
 @Service
 public class UserSubService {
 
   private UserSubRepository userSubRepository;
   
+  private SubscriptionService subscriptionService;
+  
   @Autowired
   public void setUserSubRepository(UserSubRepository userSubRepository) {
     this.userSubRepository = userSubRepository;
   }
 
+  @Autowired
+  public void setSubscriptionService(SubscriptionService subscriptionService) {
+    this.subscriptionService = subscriptionService;
+  }
+
   public void save(Subscription sub, User user, LocalDate date) {
     UserSub entity = new UserSub(user, sub, date);
     userSubRepository.save(entity);
+    updateSubscriptionStatus(sub, user, date);
   }
 
   public void update(Subscription sub, User user, LocalDate date) {
@@ -35,6 +43,7 @@ public class UserSubService {
           (last.getUser() == null && user != null) ||
           (last.getUser() != null && user == null)) {
         userSubRepository.save(new UserSub(user, sub, date));
+        updateSubscriptionStatus(sub, user, date);
       }
     } else if(date.isEqual(last.getConnect())) {
       //modify last user
@@ -44,12 +53,22 @@ public class UserSubService {
           (user != null && lastBefore.getUser() != null && user.getId() == lastBefore.getUser().getId())
           )) {
         userSubRepository.delete(last.getId());
+        subscriptionService.deleteLastSatus(sub);
       } else {
         last.setUser(user);
         userSubRepository.save(last);
+        updateSubscriptionStatus(sub, user, date);
       }
     } else {
       //error
+    }
+  }
+  
+  private void updateSubscriptionStatus(Subscription sub, User user, LocalDate date) {
+    if(user != null) {
+      subscriptionService.userHasConnected(sub, date);
+    } else {
+      subscriptionService.userHasntConnected(sub, date);
     }
   }
   

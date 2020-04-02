@@ -1,7 +1,6 @@
 package com.sec.entity.switchTable;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -14,7 +13,6 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.sec.entity.Device;
-import com.sec.entity.Subscription;
 import com.sec.entity.User;
 
 @Entity

@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.sec.entity.Device;
-import com.sec.entity.Subscription;
 
 @Entity
 @Table( name = "dev_note" )

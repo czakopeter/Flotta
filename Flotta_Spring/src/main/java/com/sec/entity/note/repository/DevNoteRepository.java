@@ -6,13 +6,9 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 import com.sec.entity.Device;
-import com.sec.entity.Subscription;
 import com.sec.entity.note.DevNote;
-import com.sec.entity.note.SubNote;
 
 public interface DevNoteRepository extends CrudRepository<DevNote, Long>{
-
-  DevNote save(DevNote devNote);
 
   List<DevNote> findAllByDev(Device dev);
 

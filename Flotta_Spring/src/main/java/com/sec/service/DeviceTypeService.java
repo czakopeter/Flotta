@@ -2,10 +2,8 @@ package com.sec.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mobile.DeviceResolverAutoConfiguration;
 import org.springframework.stereotype.Service;
 
-import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.repo.DeviceTypeRepository;
 
@@ -36,7 +34,6 @@ public class DeviceTypeService {
         deviceTypeRepository.save(deviceType);
     }
   }
-  
   
   private boolean deviceIsSaveable(DeviceType deviceType) {
     DeviceType name = deviceTypeRepository.findByName(deviceType.getName());

@@ -32,7 +32,7 @@ public class SimStatusService {
   public boolean save(Sim sim, String status, LocalDate date) {
     try {
       simStatusRepository.save(new SimStatus(SimStatusEnum.valueOf(status), sim, date));
-    } catch (Exception e) {
+    } catch (IllegalArgumentException e) {
       return false;
     }
     return true;
@@ -45,9 +45,9 @@ public class SimStatusService {
     }
   }
   
-  public void deleteAllStatus(Sim sim) {
-    simStatusRepository.deleteAllBySim(sim);
-  }
+//  public void deleteAllStatus(Sim sim) {
+//    simStatusRepository.deleteAllBySim(sim);
+//  }
 
   public void modifyLastStatus(Sim sim, String imeiChangeReason) {
     SimStatus ss = simStatusRepository.findFirstBySimOrderByConnectDesc(sim);

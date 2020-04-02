@@ -13,5 +13,4 @@ public interface SimStatusRepository extends CrudRepository<SimStatus, Long> {
 
   SimStatus findFirstBySimOrderByConnectDesc(Sim sim);
 
-  void deleteAllBySim(Sim sim);
 }
