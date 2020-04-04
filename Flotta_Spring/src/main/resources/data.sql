@@ -43,9 +43,9 @@ INSERT INTO Sub_sim_st (sub_id, sim_id, connect) VALUES (1, 1, to_date('20-01-01
 INSERT INTO Sub_sim_st (sub_id, sim_id, connect) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))
 INSERT INTO Sub_sim_st (sub_id, sim_id, connect) VALUES (3, 3, to_date('20-01-03', 'RR-MM-DD'))
 
-INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (1, 1, to_date('20-01-10', 'RR-MM-DD'))
-INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (2, 2, to_date('20-01-10', 'RR-MM-DD'))
-INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (3, 3, to_date('20-01-10', 'RR-MM-DD'))
+INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (1, 1, to_date('20-01-01', 'RR-MM-DD'))
+INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))
+INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (3, 3, to_date('20-01-03', 'RR-MM-DD'))
 
 INSERT INTO Sub_dev_st (sub_id, dev_id, connect) VALUES (1, 1, to_date('20-01-11', 'RR-MM-DD'))
 INSERT INTO Sub_dev_st (sub_id, dev_id, connect) VALUES (2, 2, to_date('20-01-12', 'RR-MM-DD'))

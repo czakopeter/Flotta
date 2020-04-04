@@ -131,7 +131,7 @@ public class SubscriptionToView {
 
   @Override
   public String toString() {
-    return "SubscriptionToView [number=" + number + ", imei=" + imei + ", imeiChangeReason=" + imeiChangeReason + ", userId=" + userId + ", userName=" + userName + ", deviceId=" + deviceId + ", deviceName=" + deviceName + ", date=" + date + "]";
+    return "SubscriptionToView [number=" + number + ", imei=" + imei + ", imeiChangeReason=" + imeiChangeReason + ", userId=" + userId + ", userName=" + userName + ", deviceId=" + deviceId + ", deviceName=" + deviceName + ", date=" + date + ", min=" + min + "]";
   }
 
 	

@@ -63,7 +63,7 @@
             <label th:text="#{subscription.device}">Device</label>
           </div>
           <div class="col-4">
-            <select th:field="*{deviceId}" class="form-control" id="deviceId" onchange="">
+            <select th:field="*{deviceId}" class="form-control" id="deviceId" onchange="deviceUpdate(this)">
               <option value="0" title="Nothing"></option>
               <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName}"
                 th:title="${device.serialNumber}"
@@ -87,6 +87,7 @@
             <input type="date" class="form-control" id="date" name="date" th:value="*{date}" required="required"
               th:min="${subscription.min}"
             />
+            <input type="hidden" id="min" name="min" th:value="*{min}" />
           </div>
         </div>
         <div class="row">
@@ -153,10 +154,16 @@
 						$('#simStatusModal').modal()
 					}
 
-					function userUpdate(u) {
-						document.getElementById('order').value = 'userCh ' + u.value;
+					function userUpdate(user) {
+						document.getElementById('order').value = 'userCh ' + user.value;
 						document.getElementById('form').submit();
 					}
+					
+					function deviceUpdate(device) {
+						document.getElementById('order').value = 'deviceCh';
+						document.getElementById('form').submit();
+					}
+					
 					//]]>
 				</script>
 

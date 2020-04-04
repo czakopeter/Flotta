@@ -1,7 +1,7 @@
 package com.sec.service;
 
 import java.util.List;
-import java.util.Random;
+//import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -57,17 +57,17 @@ public class UserService implements UserDetailsService {
 		return true;
 	}
 
-	public String generateKey()
-    {
-		String key = "";
-		Random random = new Random();
-		char[] word = new char[16]; 
-		for (int j = 0; j < word.length; j++) {
-			word[j] = (char) ('a' + random.nextInt(26));
-		}
-		String toReturn = new String(word);
-		return new String(word);
-    }
+//	public String generateKey()
+//    {
+//		String key = "";
+//		Random random = new Random();
+//		char[] word = new char[16]; 
+//		for (int j = 0; j < word.length; j++) {
+//			word[j] = (char) ('a' + random.nextInt(26));
+//		}
+//		String toReturn = new String(word);
+//		return new String(word);
+//    }
 
 	public User findById(long userId) {
 	  return userId == 0 ? null : userRepository.findOne(userId);

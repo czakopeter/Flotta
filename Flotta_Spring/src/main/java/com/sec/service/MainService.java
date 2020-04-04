@@ -18,6 +18,7 @@ import com.sec.entity.switchTable.Service.UserDevService;
 import com.sec.entity.switchTable.Service.UserSubService;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
+import com.sec.entity.note.DevNote;
 import com.sec.entity.note.service.DevNoteService;
 import com.sec.entity.note.service.SubNoteService;
 
@@ -215,19 +216,54 @@ public class MainService {
 
 //-------- DEVICE SERVICE --------
   
+  private DeviceToView toView(Device device) {
+    DeviceToView dtv = new DeviceToView();
+    dtv.setId(device.getId());
+    dtv.setSerialNumber(device.getSerialNumber());
+    dtv.setTypeName(device.getDeviceType().getName());
+    dtv.setEditable(true);
+    
+    User user = userDevService.findLastUser(device);
+    if(user != null) {
+      dtv.setUserId(user.getId());
+      dtv.setUserName(user.getFullName());
+    } else {
+      dtv.setUserId(0);
+      dtv.setUserName("");
+    }
+    
+    Subscription sub = subDevService.findLastSub(device);
+    if(sub != null) {
+      dtv.setNumber(sub.getNumber());
+    } else {
+      dtv.setNumber("");
+    }
+    
+    DevNote note = devNoteService.findLastNote(device);
+    
+    if(note != null) {
+      dtv.setNote(note.getNote());
+    } else {
+      dtv.setNote("");
+    }
+    
+    return dtv;
+  }
+  
   public List<DeviceToView> findAllDevices() {
     List<DeviceToView> list = new LinkedList<>();
     deviceService.findAll().forEach(
-        d -> list.add(d.toView()));
+        d -> list.add(toView(d)));
     return list;
   }
   
-  public List<User> findAllDevicesByUser(long userId) {
-    List<User> list = new LinkedList<>();
-    if(userId != 0) {
-//      User u = userService.findById(userId);
-    }
-    return list;
+  public List<DeviceToView> findAllDevicesByUser(long userId) {
+    User user = userService.findById(userId);
+    List<DeviceToView> result = new LinkedList<>();
+    userDevService.findAllFreeDeviceByUser(user).forEach(d -> {
+      result.add(d.toView());
+    });
+    return result ;
   }
 
   public boolean saveDevice(DeviceToView device) {
@@ -237,6 +273,7 @@ public class MainService {
       User user = userService.findById(device.getUserId());
       
       userDevService.save(saved, user, device.getDate());
+      subDevService.save(null, saved, device.getDate());
       devNoteService.save(saved, device.getNote(), device.getDate());
       
       return true;

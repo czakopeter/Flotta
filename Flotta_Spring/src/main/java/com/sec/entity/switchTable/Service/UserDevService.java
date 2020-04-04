@@ -1,6 +1,8 @@
 package com.sec.entity.switchTable.Service;
 
 import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,6 +71,21 @@ public class UserDevService {
     } else {
       deviceService.userHasntConnected(dev, date);
     }
+  }
+
+  public List<Device> findAllFreeDeviceByUser(User user) {
+    List<UserDev> udList = userDevRepository.findAllByUser(user);
+    List<Device> result = new LinkedList<Device>();
+    udList.forEach(ud -> {
+      if(user.equals(userDevRepository.findFirstByDevOrderByConnectDesc(ud.getDev()).getUser())) {
+        result.add(ud.getDev());
+      }
+    });
+    return result;
+  }
+
+  public User findLastUser(Device device) {
+    return userDevRepository.findFirstByDevOrderByConnectDesc(device).getUser();
   }
   
 }

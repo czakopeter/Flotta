@@ -40,17 +40,17 @@ public class Device {
   private DeviceType deviceType;
 
   @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
-  @MapKey( name = "connect")
+  @MapKey(name = "connect")
   private Map<LocalDate, UserDev> devUsers;
 
   @OneToMany(mappedBy = "sub", cascade = CascadeType.ALL)
-  @MapKey( name = "connect")
+  @MapKey(name = "connect")
   private Map<LocalDate, SubDev> devSubs;
-  
+
   @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
-  @MapKey( name = "date")
+  @MapKey(name = "date")
   private Map<LocalDate, DevNote> notes;
-  
+
   @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
   @MapKey(name = "date")
   private Map<LocalDate, DeviceStatus> statuses = new HashMap<LocalDate, DeviceStatus>();
@@ -133,22 +133,25 @@ public class Device {
     LocalDate lastUserMod = getLastUserModificationDate();
 
     UserDev ud = devUsers.get(lastUserMod);
-    d.setUserId(ud.getUser() != null ? ud.getUser().getId() : 0);
-    d.setUserName(ud.getUser() != null ? ud.getUser().getFullName() : "");
-    
-    SubDev sd = devSubs.get(getLastDeviceModificationDate());
-    d.setNumber(sd != null ? sd.getSub() != null ? sd.getSub().getNumber() : "" : "" );
+    d.setUserId(ud != null ? ud.getUser() != null ? ud.getUser().getId() : 0 : 0);
+    d.setUserName(ud != null ? ud.getUser() != null ? ud.getUser().getFullName() : "" : "");
+
+    LocalDate lastDevMod = getLastDeviceModificationDate();
+    System.out.println(lastDevMod);
+    SubDev sd = devSubs.get(lastDevMod);
+    System.out.println(sd);
+    d.setNumber(sd != null ? sd.getSub() != null ? sd.getSub().getNumber() : "" : "");
 
     LocalDate last = lastUserMod;
 
     d.setDate(last);
     d.setMin(last.toString());
-    
+
     LocalDate dn = getLastNoteModificationDate();
     d.setNote(dn == null ? "" : notes.get(dn).getNote());
     return d;
   }
-  
+
   public DeviceToView toView(LocalDate date) {
     DeviceToView dtv = new DeviceToView();
     dtv.setId(id);
@@ -157,16 +160,16 @@ public class Device {
     dtv.setDate(date);
     dtv.setEditable(!date.isBefore(getAllModificationDateDesc().get(0)));
     dtv.setMin(date.toString());
-    
+
     LocalDate userModDate = floorDate(new LinkedList<>(devUsers.keySet()), date);
     UserDev ud = devUsers.get(userModDate);
     dtv.setUserId(ud.getUser() != null ? ud.getUser().getId() : 0);
     dtv.setUserName(ud.getUser() != null ? ud.getUser().getFullName() : "");
-    
+
     LocalDate noteModDate = floorDate(new LinkedList<>(notes.keySet()), date);
     DevNote dn = notes.get(noteModDate);
     dtv.setNote(dn != null ? dn.getNote() : "");
-    
+
     return dtv;
   }
 
@@ -199,27 +202,32 @@ public class Device {
 //  }
 
   private LocalDate getLastUserModificationDate() {
-    return getUserModficationDateListDest().get(0);
+    try {
+      return getUserModficationDateListDest().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      return null;
+    }
   }
-  
+
   private List<LocalDate> getUserModficationDateListDest() {
     List<LocalDate> dList = new LinkedList<>(devUsers.keySet());
     Collections.sort(dList, Collections.reverseOrder());
     return dList;
   }
-  
+
   private LocalDate getLastDeviceModificationDate() {
     try {
       return getDeviceModficationDateListDest().get(0);
     } catch (IndexOutOfBoundsException e) {
       return null;
     }
-    
+
   }
-  
+
   private List<LocalDate> getDeviceModficationDateListDest() {
     List<LocalDate> dList = new LinkedList<>(devSubs.keySet());
     Collections.sort(dList, Collections.reverseOrder());
+    System.out.println("Device id: " + id + ", deviceModDateList: " + dList);
     return dList;
   }
 
@@ -227,9 +235,9 @@ public class Device {
   public String toString() {
     return "Device [id=" + id + ", serialNumber=" + serialNumber + ", deviceType=" + deviceType + "]";
   }
-  
+
   private LocalDate getLastNoteModificationDate() {
-    if(notes.isEmpty()) {
+    if (notes.isEmpty()) {
       return null;
     } else {
       List<LocalDate> dates = new LinkedList<>(notes.keySet());
@@ -237,28 +245,28 @@ public class Device {
       return dates.get(0);
     }
   }
-  
+
   public List<LocalDate> getAllModificationDateDesc() {
     Set<LocalDate> dates = new HashSet<>();
     dates.addAll(devUsers.keySet());
     dates.addAll(notes.keySet());
-    
+
     List<LocalDate> result = new LinkedList<>(dates);
     Collections.sort(result, Collections.reverseOrder());
     return result;
   }
-  
+
   private LocalDate floorDate(List<LocalDate> dates, LocalDate date) {
-    if(dates == null || dates.isEmpty()) {
+    if (dates == null || dates.isEmpty()) {
       return null;
     }
-    if(dates.contains(date)) {
+    if (dates.contains(date)) {
       return date;
     }
     Collections.sort(dates);
     LocalDate r = null;
-    for(LocalDate a : dates) {
-      if(date.isBefore(a)) {
+    for (LocalDate a : dates) {
+      if (date.isBefore(a)) {
         break;
       }
       r = a;
@@ -270,7 +278,7 @@ public class Device {
     devSubs = new HashMap<>();
     devSubs.put(date, new SubDev(sub, this, date));
   }
-  
+
 //  public UserDev getLastUserDev() {
 //    return devUsers.get(getLastUserModificationDate());
 //  }

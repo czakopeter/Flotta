@@ -55,4 +55,8 @@ public class DevNoteService {
     }
   }
 
+  public DevNote findLastNote(Device device) {
+    return devNoteRepository.findFirstByDevOrderByDateDesc(device);
+  }
+
 }

@@ -1,5 +1,7 @@
 package com.sec.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.service.MainService;
 
@@ -75,9 +78,11 @@ public class SubscriptionController {
   @RequestMapping("/subscription/{id}")
   public String subscription(Model model, @PathVariable("id") long id) {
     model.addAttribute("title", "Subscriptions");
-    model.addAttribute("subscription", service.findSubscriptionById(id));
+    SubscriptionToView stv = service.findSubscriptionById(id);
+    model.addAttribute("subscription", stv);
     model.addAttribute("sims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
+    model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
     model.addAttribute("dates", service.findSubscriptionDatesById(id));
     model.addAttribute("simChangeReasons", service.getSimChangeReasons());
     return "subscription_templates/subscriptionEdit";
@@ -96,6 +101,15 @@ public class SubscriptionController {
     case "userCh":
       stv.setEditable(true);
       break;
+    case "deviceCh":
+      stv.setEditable(true);
+      if(stv.getDeviceId() != 0) {
+        DeviceToView selectedDevice = service.findDeviceById(stv.getDeviceId());
+        if(selectedDevice.getDate().isAfter(LocalDate.parse(stv.getMin()))) {
+          stv.setMin(selectedDevice.getDate().toString());
+        }
+      }
+      break;
     case "dateSliceCh":
       stv = service.findSubscriptionByIdAndDate(id, orderPart[1]);
       break;
@@ -104,6 +118,7 @@ public class SubscriptionController {
     }
     model.addAttribute("sims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
+    model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
     model.addAttribute("dates", service.findSubscriptionDatesById(id));
     model.addAttribute("subscription", stv);
     model.addAttribute("simChangeReasons", service.getSimChangeReasons());

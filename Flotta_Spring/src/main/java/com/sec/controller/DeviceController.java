@@ -82,7 +82,8 @@ public class DeviceController {
   @RequestMapping("device/{id}")
   public String setForEdit(Model model, @PathVariable("id") long id) {
     System.out.println("\nGET edit");
-    model.addAttribute("device", service.findDeviceById(id));
+    DeviceToView dtv = service.findDeviceById(id);
+    model.addAttribute("device", dtv);
     model.addAttribute("dates", service.findDeviceDatesById(id));
     model.addAttribute("users", service.findAllUser());
     return "device_templates/deviceEdit";

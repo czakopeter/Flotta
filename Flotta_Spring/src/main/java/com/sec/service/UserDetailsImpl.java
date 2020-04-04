@@ -13,7 +13,7 @@ import com.sec.entity.User;
 
 public class UserDetailsImpl implements UserDetails {
 
-//	private static final long serialVersionUID = 3185970362329652822L;
+	private static final long serialVersionUID = 3185970362329652822L;
 
 	private User user;
 

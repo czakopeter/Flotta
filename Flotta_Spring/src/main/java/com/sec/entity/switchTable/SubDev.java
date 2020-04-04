@@ -2,6 +2,7 @@ package com.sec.entity.switchTable;
 
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -22,11 +23,11 @@ public class SubDev {
 	@GeneratedValue
 	Long id;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn( name = "sub_id")
 	private Subscription sub;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn( name = "dev_id")
 	private Device dev;
 	
@@ -44,8 +45,6 @@ public class SubDev {
     this.dev = dev;
     this.connect = connect;
   }
-
-
 
   public Long getId() {
     return id;
@@ -85,6 +84,11 @@ public class SubDev {
 
   public void setDisconnect(LocalDate disconnect) {
     this.disconnect = disconnect;
+  }
+
+  @Override
+  public String toString() {
+    return "SubDev [id=" + id + ", sub=" + (sub == null ? "0" : sub.getId()) + ", dev=" + (dev == null ? "0" : dev.getId()) + ", connect=" + connect + "]";
   }
 
 }

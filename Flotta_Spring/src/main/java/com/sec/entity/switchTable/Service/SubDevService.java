@@ -29,13 +29,17 @@ public class SubDevService {
     SubDev last = subDevRepository.findFirstBySubOrderByConnectDesc(sub);
     
     if(date.isAfter(last.getConnect())) {
+      System.out.println("SubDevService: new mod date is after last mod date");
       if((last.getDev() != null && dev != null && last.getDev().getId() != dev.getId()) ||
           (last.getDev() == null && dev != null) ||
           (last.getDev() != null && dev == null)) {
+        System.out.println("SubDevService: add new row");
+        subDevRepository.save(new SubDev(null, last.getDev(),date));
         subDevRepository.save(new SubDev(sub, dev, date));
       }
     } else if(date.isEqual(last.getConnect())) {
       //modifying
+      System.out.println("SubDevService: modifying");
       SubDev lastBefore = subDevRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date);
       if(lastBefore != null && (
           (dev == null && lastBefore.getDev() == null) ||
@@ -49,6 +53,10 @@ public class SubDevService {
     } else {
       //error
     }
+  }
+
+  public Subscription findLastSub(Device device) {
+    return subDevRepository.findFirstByDevOrderByConnectDesc(device).getSub();
   }
   
 }
