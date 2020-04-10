@@ -138,7 +138,7 @@ public class MainService {
     
     subSimService.update(sub.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
     userSubService.update(sub, user, stv.getDate());
-    subDevService.update(sub, dev, stv.getDate());
+    subDevService.updateFromSubscription(sub, dev, stv.getDate());
     subNoteService.update(sub, stv.getNote(), stv.getDate());
     return true;
   }
@@ -222,6 +222,41 @@ public class MainService {
     dtv.setSerialNumber(device.getSerialNumber());
     dtv.setTypeName(device.getDeviceType().getName());
     dtv.setEditable(true);
+    
+    User user = userDevService.findLastUser(device);
+    if(user != null) {
+      dtv.setUserId(user.getId());
+      dtv.setUserName(user.getFullName());
+    } else {
+      dtv.setUserId(0);
+      dtv.setUserName("");
+    }
+    
+    Subscription sub = subDevService.findLastSub(device);
+    if(sub != null) {
+      dtv.setNumber(sub.getNumber());
+    } else {
+      dtv.setNumber("");
+    }
+    
+    DevNote note = devNoteService.findLastNote(device);
+    
+    if(note != null) {
+      dtv.setNote(note.getNote());
+    } else {
+      dtv.setNote("");
+    }
+    
+    return dtv;
+  }
+  
+  private DeviceToView toView(Device device, LocalDate date) {
+    DeviceToView dtv = new DeviceToView();
+    dtv.setId(device.getId());
+    dtv.setSerialNumber(device.getSerialNumber());
+    dtv.setTypeName(device.getDeviceType().getName());
+    
+//    dtv.setEditable(true);
     
     User user = userDevService.findLastUser(device);
     if(user != null) {

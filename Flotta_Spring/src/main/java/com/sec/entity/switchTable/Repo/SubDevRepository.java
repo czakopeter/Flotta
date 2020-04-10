@@ -15,6 +15,7 @@ public interface SubDevRepository extends CrudRepository<SubDev, Long> {
   SubDev findFirstBySubAndConnectBeforeOrderByConnectDesc(Subscription sub, LocalDate date);
 
   SubDev findFirstByDevOrderByConnectDesc(Device device);
-  
 
+  SubDev findFirstByDevAndConnectBeforeOrderByConnectDesc(Device dev, LocalDate date);
+  
 }

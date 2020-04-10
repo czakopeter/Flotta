@@ -1,8 +1,10 @@
 package com.sec.entity.switchTable.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,13 +77,13 @@ public class UserDevService {
 
   public List<Device> findAllFreeDeviceByUser(User user) {
     List<UserDev> udList = userDevRepository.findAllByUser(user);
-    List<Device> result = new LinkedList<Device>();
+    Set<Device> dSet = new HashSet<Device>();
     udList.forEach(ud -> {
       if(user.equals(userDevRepository.findFirstByDevOrderByConnectDesc(ud.getDev()).getUser())) {
-        result.add(ud.getDev());
+        dSet.add(ud.getDev());
       }
     });
-    return result;
+    return new LinkedList<>(dSet);
   }
 
   public User findLastUser(Device device) {
