@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.sec.billing.service.BillingService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;
@@ -47,6 +49,8 @@ public class MainService {
 	private SubNoteService subNoteService;
 	
 	private DevNoteService devNoteService;
+	
+	private BillingService billingService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -90,6 +94,11 @@ public class MainService {
 	@Autowired
   public void setDevNoteService(DevNoteService devNoteService) {
     this.devNoteService = devNoteService;
+  }
+	
+	@Autowired
+  public void setBillingService(BillingService billingService) {
+    this.billingService = billingService;
   }
 	
 	
@@ -339,5 +348,11 @@ public class MainService {
   public String getDeviceServiceError() {
     return deviceService.getError();
   }
-
+  
+  //-------- BILLING SERVICE --------
+  
+  public void fileUpload(MultipartFile file) {
+    billingService.uploadBill(file);
+  }
+  
 }

@@ -2,7 +2,6 @@ package com.sec.entity.switchTable;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -23,11 +22,11 @@ public class SubDev {
 	@GeneratedValue
 	Long id;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne()
 	@JoinColumn( name = "sub_id")
 	private Subscription sub;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne()
 	@JoinColumn( name = "dev_id")
 	private Device dev;
 	

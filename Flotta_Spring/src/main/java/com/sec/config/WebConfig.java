@@ -51,4 +51,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);		
 	}
 	
+	//beállítás nélkül elvileg korlátlan a feltölthető fájl mérete
+//	@Bean(name = "multipartResolver")
+//	public CommonsMultipartResolver multipartResolver() {
+//	    CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+//	    multipartResolver.setMaxUploadSize(100000);
+//	    return multipartResolver;
+//	}
 }

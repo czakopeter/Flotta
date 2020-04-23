@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title></title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <div class="shadow p-5 mb-5 bg-white rounded">
+
+      <h2>Category</h2>
+
+      <div class="container">
+        <div class="row my-1" th:each="c : ${categories}">
+          <div class="col-4">
+            <label th:text="${c}"></label>
+          </div>
+        </div>
+        <div class="row my-1">
+          <div class="col-4">
+            <form action="/billing/category" th:object="${add}" method="post">
+              <input type="text" id="add" name="add" />
+              <button type="submit">Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+
+</body>
+</html>
