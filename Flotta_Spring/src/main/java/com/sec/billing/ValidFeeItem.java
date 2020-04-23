@@ -1,4 +1,4 @@
-package com.sec.billing.service;
+package com.sec.billing;
 
 import java.time.LocalDate;
 

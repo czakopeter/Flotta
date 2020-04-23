@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sec.billing.service.BillingService;
+import com.sec.billing.BillingService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.sec.billing.service.Node;
+import com.sec.billing.Node;
 
 public interface NodeRepository extends CrudRepository<Node, Long> {
 

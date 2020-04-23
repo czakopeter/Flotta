@@ -1,7 +1,6 @@
-package com.sec.billing.service;
+package com.sec.billing;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,11 +13,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -115,7 +112,7 @@ public class BillingService {
   }
 
   private boolean validXMLStructure(Node root) {
-    for (com.sec.billing.service.Node template : nodeService.findAllRoot()) {
+    for (com.sec.billing.Node template : nodeService.findAllRoot()) {
       if (root.getNodeName().equalsIgnoreCase(template.getName())) {
         if (equals(root.getChildNodes(), template.getChild())) {
           return true;
@@ -125,7 +122,7 @@ public class BillingService {
     return false;
   }
 
-  private boolean equals(NodeList nodes, List<com.sec.billing.service.Node> template) {
+  private boolean equals(NodeList nodes, List<com.sec.billing.Node> template) {
     for (int i = 0; i < nodes.getLength(); i++) {
       Node node = nodes.item(i);
       System.out.println("--------------------");
@@ -142,7 +139,7 @@ public class BillingService {
       }
       if (node.getNodeType() == Node.ELEMENT_NODE) {
         boolean valid = false;
-        for (com.sec.billing.service.Node t : template) {
+        for (com.sec.billing.Node t : template) {
           if (node.getNodeName().equalsIgnoreCase(t.getName())) {
             System.out.println(node.getNodeName());
             if (equals(node.getChildNodes(), t.getChild())) {
