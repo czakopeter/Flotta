@@ -60,4 +60,10 @@ public class BillingController {
     service.fileUpload(file);
     return "billing_templates/index";
   }
+  
+  @RequestMapping("billing/all")
+  public String bills(Model model) {
+    model.addAttribute("bills", service.findAllBill());
+    return "billing_templates/billAll";
+  }
 }

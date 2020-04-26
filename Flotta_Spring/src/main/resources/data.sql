@@ -50,7 +50,3 @@ INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (3, 3, to_date('20-01-
 INSERT INTO Sub_dev_st (sub_id, dev_id, connect) VALUES (1, 1, to_date('20-01-11', 'RR-MM-DD'))
 INSERT INTO Sub_dev_st (sub_id, dev_id, connect) VALUES (2, 2, to_date('20-01-12', 'RR-MM-DD'))
 INSERT INTO Sub_dev_st (sub_id, dev_id, connect) VALUES (3, 3, to_date('20-01-13', 'RR-MM-DD'))
-
-
-INSERT INTO Nodes (id, template_id, name, parent_id) VALUES (1, 1, 'Account', null)
-INSERT INTO Nodes (id, template_id, name, parent_id) VALUES (2, 1, 'AccountHeader', 1)

@@ -31,7 +31,7 @@ public class SubscriptionController {
   }
 
   @RequestMapping("/subscription/all")
-  public String addSubscription(Model model) {
+  public String subscriptions(Model model) {
     model.addAttribute("title", "Subscriptions");
     model.addAttribute("canCreateNew", "Subscriptions");
     model.addAttribute("subscriptions", service.findAllSubscription());
@@ -39,7 +39,7 @@ public class SubscriptionController {
   }
 
   @RequestMapping("/subscription/new")
-  public String subscriptions(Model model) {
+  public String addSubscription(Model model) {
     model.addAttribute("title", "Subscriptions");
     model.addAttribute("subscription", new SubscriptionToView());
     model.addAttribute("users", service.findAllUser());
@@ -48,7 +48,7 @@ public class SubscriptionController {
   }
 
   @PostMapping("/subscription/new")
-  public String subscriptions(Model model, @ModelAttribute("subscription") SubscriptionToView stv, @RequestParam(name = "order", defaultValue = "save") String order) {
+  public String addSubscription(Model model, @ModelAttribute("subscription") SubscriptionToView stv, @RequestParam(name = "order", defaultValue = "save") String order) {
     String[] orderPart = order.split(" ");
     switch (orderPart[0]) {
     case "save":

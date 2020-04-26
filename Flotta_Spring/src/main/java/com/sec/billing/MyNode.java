@@ -15,7 +15,7 @@ import groovy.transform.ToString;
 
 @Entity
 @Table(name = "nodes")
-public class Node {
+public class MyNode {
 
   @Id
   @GeneratedValue
@@ -26,10 +26,20 @@ public class Node {
   private String name;
   
   @ManyToOne
-  private Node parent;
+  private MyNode parent;
   
   @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-  private List<Node> child = new LinkedList<Node>();
+  private List<MyNode> child = new LinkedList<MyNode>();
+
+  public MyNode(MyNode parent, String name) {
+    this.templateId = parent.getTemplateId();
+    this.parent = parent;
+    this.name = name;
+  }
+
+  public MyNode() {
+    // TODO Auto-generated constructor stub
+  }
 
   public long getId() {
     return id;
@@ -55,27 +65,45 @@ public class Node {
     this.name = name;
   }
   
-  public Node getParent() {
+  public MyNode getParent() {
     return parent;
   }
 
-  public void setParent(Node parent) {
+  public void setParent(MyNode parent) {
     this.parent = parent;
   }
 
-  public List<Node> getChild() {
+  public List<MyNode> getChild() {
     return child;
   }
 
-  public void setChild(List<Node> child) {
+  public void setChild(List<MyNode> child) {
     this.child = child;
   }
   
   public void show() {
-    System.out.println("name = " + name + "(OPEN)");
-    for(Node n : child) {
-      n.show();
+    if(child.isEmpty()) {
+      System.out.println("name = " + name);
+    } else {
+      System.out.println("name = " + name + "(OPEN)");
+      for(MyNode n : child) {
+        n.show();
+      }
+      System.out.println("name = " + name + "(CLOSE)");
     }
-    System.out.println("name = " + name + "(CLOSE)");
+  }
+  
+  public MyNode appendChild(String name) {
+    MyNode n = new MyNode(this, name);
+    child.add(n);
+    return n;
+  }
+
+  public static MyNode createRoot(int templateId, String name) {
+    MyNode root = new MyNode();
+    root.setTemplateId(templateId);
+    root.setParent(null);
+    root.setName(name);
+    return root;
   }
 }

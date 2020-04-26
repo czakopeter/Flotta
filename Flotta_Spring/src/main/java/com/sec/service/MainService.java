@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sec.billing.Bill;
 import com.sec.billing.BillingService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
@@ -353,6 +354,10 @@ public class MainService {
   
   public void fileUpload(MultipartFile file) {
     billingService.uploadBill(file);
+  }
+
+  public List<Bill> findAllBill() {
+    return billingService.findAll();
   }
   
 }
