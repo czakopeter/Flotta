@@ -17,48 +17,40 @@ import com.sec.entity.Subscription;
 @Entity
 @Table(name = "fee_items")
 public class FeeItem {
-  
+
   @Id
   @GeneratedValue
   long id;
-  
+
   @ManyToOne
   private Bill bill;
-  
-//  private Subscription subscription;
-  
+
+  private String subscription;
+
   private String description;
-  
+
   private LocalDate begin;
-  
+
   private LocalDate end;
-  
+
   private double netAmount;
-  
+
   private double taxAmount;
-  
+
   private double taxPercentage;
 
-  public FeeItem(Element feeRoot) {
-    description = feeRoot.getElementsByTagName("Desc").item(0).getFirstChild().getNodeValue().trim();
-    begin = LocalDate.parse(feeRoot.getElementsByTagName("Begin").item(0).getFirstChild().getNodeValue(), DateTimeFormatter.ofPattern("uuuu.MM.dd."));
-    end = LocalDate.parse(feeRoot.getElementsByTagName("End").item(0).getFirstChild().getNodeValue(), DateTimeFormatter.ofPattern("uuuu.MM.dd."));
-    netAmount = Double.valueOf(feeRoot.getElementsByTagName("NetA").item(0).getFirstChild().getNodeValue().replace(",", "."));
-    taxAmount = Double.valueOf(feeRoot.getElementsByTagName("TaxA").item(0).getFirstChild().getNodeValue().replace(",", "."));
-    taxPercentage = Double.valueOf(feeRoot.getElementsByTagName("TaxP").item(0).getFirstChild().getNodeValue().replace(",", ".").replace("%", ""));
-    
-//    Node p = feeRoot.getFirstChild();
-//    description = p.getFirstChild().getNodeValue();
-//    p = p.getNextSibling();
-//    System.out.println(p.getNodeName());
-//    begin = LocalDate.parse(p.getChildNodes().item(0).getFirstChild().getNodeValue(), DateTimeFormatter.ofPattern("uuuu.MM.dd."));
-//    end = LocalDate.parse(p.getChildNodes().item(1).getFirstChild().getNodeValue(), DateTimeFormatter.ofPattern("uuuu.MM.dd."));
-//    p = p.getNextSibling();
-//    netAmount = Double.valueOf(p.getFirstChild().getNodeValue().replace(',', '.'));
-//    p = p.getNextSibling();
-//    taxPercentage = Double.valueOf(p.getFirstChild().getNodeValue().replace("%", "").replace(',', '.'));
-//    p = p.getNextSibling();
-//    taxAmount = Double.valueOf(p.getFirstChild().getNodeValue().replace(',', '.'));
+  public FeeItem() {
+  }
+
+  public FeeItem(Bill bill, String subscription, String description, LocalDate begin, LocalDate end, double netAmount, double taxAmount, double taxPercentage) {
+    this.bill = bill;
+    this.subscription = subscription;
+    this.description = description;
+    this.begin = begin;
+    this.end = end;
+    this.netAmount = netAmount;
+    this.taxAmount = taxAmount;
+    this.taxPercentage = taxPercentage;
   }
 
   public long getId() {
@@ -77,13 +69,13 @@ public class FeeItem {
     this.bill = bill;
   }
 
-//  public Subscription getSubscription() {
-//    return subscription;
-//  }
-//
-//  public void setSubscription(Subscription subscription) {
-//    this.subscription = subscription;
-//  }
+  public String getSubscription() {
+    return subscription;
+  }
+
+  public void setSubscription(String subscription) {
+    this.subscription = subscription;
+  }
 
   public String getDescription() {
     return description;
@@ -135,7 +127,7 @@ public class FeeItem {
 
   @Override
   public String toString() {
-    return "FeeItem [description=" + description + ", begin=" + begin + ", end=" + end + ", netAmount=" + netAmount + ", taxAmount=" + taxAmount + ", taxPercentage=" + taxPercentage + "]";
+    return "FeeItem [subscription=" + subscription + ", description=" + description + ", begin=" + begin + ", end=" + end + ", netAmount=" + netAmount + ", taxAmount=" + taxAmount + ", taxPercentage=" + taxPercentage + "]";
   }
-  
+
 }

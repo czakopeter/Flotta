@@ -9,16 +9,27 @@
 
     <div class="shadow p-5 mb-5 bg-white rounded">
 
-      <h2>Billing index</h2>
-      
+      <h2>Invoices</h2>
 
-      <div>
-        <form action="/billing" method="post" enctype="multipart/form-data">
-          <label for="myfile">Select a file:</label> 
-          <input type="file" id="file" name="file" />
-          <input type="submit" />
-        </form>
-      </div>
+      <table class="table">
+        <tr>
+          <th th:text="#{bill.invoiceNumber}">Invoice number</th>
+          <th th:text="#{bill.fromDate}">From</th>
+          <th th:text="#{bill.emdDate}">To</th>
+          <th th:text="#{bill.invoiceNetAmount}">Net amount</th>
+          <th th:text="#{bill.invoiceTaxAmount}">Tax amount</th>
+          <th></th>
+        </tr>
+        <tr th:each="bill : ${bills}">
+          <td th:text="${bill.invoiceNumber}"></td>
+          <td th:text="${bill.fromDate}"></td>
+          <td th:text="${bill.endDate}"></td>
+          <td th:text="${bill.invoiceNetAmount}"></td>
+          <td th:text="${bill.invoiceTaxAmount}"></td>
+          <td><a th:href="'/billing/' + ${bill.invoiceNumber}" class="btn btn-primary"
+          th:text="#{button.details}">Details</a></td>
+        </tr>
+      </table>
 
 
     </div>

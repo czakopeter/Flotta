@@ -9,8 +9,6 @@
 
     <h2>Edit subscription</h2>
 
-<!--     <hr /> -->
-
     <div class="container">
       <select th:if="${dates} != null" onchange="changeDate(this)" class="my-3">
         <option th:each="date : ${dates}" th:value="${date}" th:text="${date}"
@@ -65,7 +63,7 @@
           <div class="col-4">
             <select th:field="*{deviceId}" class="form-control" id="deviceId" onchange="deviceUpdate(this)">
               <option value="0" title="Nothing"></option>
-              <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName}"
+              <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName} + ' (' + ${device.serialNumber} + ')'"
                 th:title="${device.serialNumber}"
               ></option>
             </select>

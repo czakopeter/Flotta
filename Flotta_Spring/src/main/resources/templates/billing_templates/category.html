@@ -12,9 +12,9 @@
       <h2>Category</h2>
 
       <div class="container">
-        <div class="row my-1" th:each="c : ${categories}">
+        <div class="row my-1" th:each="category : ${categories}">
           <div class="col-4">
-            <label th:text="${c}"></label>
+            <label th:text="${category.name}"></label>
           </div>
         </div>
         <div class="row my-1">

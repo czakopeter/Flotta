@@ -4,11 +4,14 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.w3c.dom.Element;
 
@@ -16,14 +19,11 @@ import org.w3c.dom.Element;
 @Table(name = "bills")
 public class Bill {
 
-//  private Concerned costumerData;
-  
-//  private  Concerned companyData;
-  
   @Id
   @GeneratedValue
   private long id;
   
+  @Lob
   private String xmlString;
   
   private LocalDate fromDate;
@@ -36,20 +36,11 @@ public class Bill {
   
   private double invoiceTaxAmount;
   
-  @OneToMany(mappedBy = "bill")
+  @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
   List<FeeItem> feeItems = new LinkedList<FeeItem>();
   
   public Bill() {}
   
-  public Bill(LocalDate fromDate, LocalDate endDate, String invoiceNumber, double invoiceNetAmount, double invoiceTaxAmount, List<FeeItem> feeItems) {
-    this.fromDate = fromDate;
-    this.endDate = endDate;
-    this.invoiceNumber = invoiceNumber;
-    this.invoiceNetAmount = invoiceNetAmount;
-    this.invoiceTaxAmount = invoiceTaxAmount;
-    this.feeItems = feeItems;
-  }
-
   public Bill(String xmlString, LocalDate fromDate, LocalDate endDate, String invoiceNumber, Double invoiceNetAmount, Double invoiceTaxAmount) {
     this.xmlString = xmlString;
     this.fromDate = fromDate;
@@ -123,14 +114,8 @@ public class Bill {
     this.feeItems = feeItems;
   }
   
-  @Override
-  public String toString() {
-    return "Bill [fromDate=" + fromDate + ", endDate=" + endDate + ", invoiceNumber=" + invoiceNumber + ", invoiceNetAmount=" + invoiceNetAmount + ", invoiceTaxAmount=" + invoiceTaxAmount + "]";
-  }
-
   public void addFee(FeeItem feeItem) {
     this.feeItems.add(feeItem);
-    System.out.println(feeItem);
   }
   
 }

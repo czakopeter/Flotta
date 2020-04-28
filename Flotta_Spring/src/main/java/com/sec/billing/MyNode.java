@@ -11,8 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import groovy.transform.ToString;
-
 @Entity
 @Table(name = "nodes")
 public class MyNode {
@@ -94,6 +92,11 @@ public class MyNode {
   }
   
   public MyNode appendChild(String name) {
+    for(MyNode c : this.child) {
+      if(c.getName().equalsIgnoreCase(name)) {
+        return c;
+      }
+    }
     MyNode n = new MyNode(this, name);
     child.add(n);
     return n;

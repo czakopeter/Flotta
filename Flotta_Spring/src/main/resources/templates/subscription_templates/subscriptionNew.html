@@ -58,7 +58,7 @@
           <div class="col-4">
             <select th:field="*{deviceId}" class="form-control" id="deviceId" onchange="">
               <option value="0" title="Nothing"></option>
-              <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName}"
+              <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName} + ' (' + ${device.serialNumber} + ')'"
                 th:title="${device.serialNumber}"
               ></option>
             </select>

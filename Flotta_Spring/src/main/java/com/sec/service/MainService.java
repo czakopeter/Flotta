@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sec.billing.Bill;
-import com.sec.billing.BillingService;
+import com.sec.billing.BillPartitionTemplate;
+import com.sec.billing.Category;
+import com.sec.billing.service.BillingService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;
@@ -352,12 +354,31 @@ public class MainService {
   
   //-------- BILLING SERVICE --------
   
-  public void fileUpload(MultipartFile file) {
-    billingService.uploadBill(file);
+  public boolean fileUpload(MultipartFile file) {
+    return billingService.uploadBill(file);
   }
 
   public List<Bill> findAllBill() {
-    return billingService.findAll();
+    return billingService.findAllBill();
+  }
+
+  public Bill findBillByInvoiceNumber(String invoiceNumber) {
+    return billingService.findBilldByInvoiceNumber(invoiceNumber);
+  }
+
+  public List<BillPartitionTemplate> findAllBillPartitionTemplate() {
+    return billingService.findAllBillPartitionTemplate();
   }
   
+  public boolean billPartitionByTemplateId(long billId, long templateId) {
+    return billingService.billPartitionByTemplateId(billId, templateId);
+  }
+  
+  public List<Category> findAllCategory() {
+    return billingService.findAllCategory();
+  }
+
+  public void addCategory(String outCat) {
+    billingService.addCategory(outCat);
+  }
 }

@@ -9,14 +9,24 @@
 
     <div class="shadow p-5 mb-5 bg-white rounded">
 
-      <h2>Billing index</h2>
-      
+      <h2>Billing</h2>
 
       <div>
+        <a href="/billing/all" class="btn btn-primary">All bill</a>
+      </div>
+
+      <div th:if="${msg}" class="alert alert-danger" th:text="${msg}"></div>
+
+
+      <div class="container">
         <form action="/billing" method="post" enctype="multipart/form-data">
-          <label for="myfile">Select a file:</label> 
-          <input type="file" id="file" name="file" />
-          <input type="submit" />
+          <label for="myfile">Select a bill:</label> <input type="file" id="file" name="file" />
+          <select id="selected_template" name="selected_template">
+            <option th:each="template : ${templates}" th:text="${template.name}" th:value="${template.id}"></option>
+          </select> 
+          <input
+            type="submit"
+          />
         </form>
       </div>
 

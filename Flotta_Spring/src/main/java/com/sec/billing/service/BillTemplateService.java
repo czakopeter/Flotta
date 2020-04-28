@@ -1,4 +1,4 @@
-package com.sec.billing;
+package com.sec.billing.service;
 
 import java.util.List;
 
@@ -8,11 +8,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.sec.billing.MyNode;
 import com.sec.billing.repository.BillTemplateRepository;
 
 @Service
 public class BillTemplateService {
 
+  //TODO function to add new template or modify
+  
   private BillTemplateRepository billTemplateRepository;
 
   @Autowired
@@ -52,7 +55,7 @@ public class BillTemplateService {
 
     billTemplateRepository.save(root);
 
-    root.show();
+//    root.show();
   }
 
   public List<MyNode> findAllRoot() {
@@ -70,7 +73,6 @@ public class BillTemplateService {
     }
     
     for(MyNode template : templates) {
-      System.out.println(root.getNodeName() + "\t" + template.getName());
       if(equals(root.getChildNodes(), template.getChild())) {
         return true;
       }
@@ -86,7 +88,6 @@ public class BillTemplateService {
         boolean valid = false;
         for (MyNode subTemplate : subTemplates) {
           if (tempNode.getNodeName().equalsIgnoreCase(subTemplate.getName())) {
-            System.out.println(tempNode.getNodeName() + "\t" + subTemplate.getName());
             if (equals(tempNode.getChildNodes(), subTemplate.getChild())) {
               valid = true;
               break;

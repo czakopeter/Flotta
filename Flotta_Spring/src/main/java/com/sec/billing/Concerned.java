@@ -10,9 +10,4 @@ public class Concerned {
   
   private String city;
   
-  private String address;
-  
-  private String zip;
-  
-  
 }

@@ -1,4 +1,4 @@
-package com.sec.billing;
+package com.sec.billing.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,6 +19,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+
+import com.sec.billing.Bill;
+import com.sec.billing.FeeItem;
+import com.sec.billing.repository.BillRepository;
 
 @Service
 public class BillService {
@@ -37,7 +42,7 @@ public class BillService {
     billTemplateService.createBasicTemplate();
   }
 
-  public void uploadBill(MultipartFile file) throws Exception {
+  public Bill uploadBill(MultipartFile file) throws Exception {
     String xmlString = getXMLString(file);
     Element root = getTreeFromXMLString(xmlString);
     boolean valid = billTemplateService.validateBill(root);
@@ -55,13 +60,22 @@ public class BillService {
       NodeList nodes = root.getElementsByTagName("FeeItem");
       for(int i = 0; i < nodes.getLength(); i++) {
         Element feeItem =  (Element) nodes.item(i);
-        
-        System.out.println(getFirstTagValue(feeItem, "Desc"));
+        bill.addFee(new FeeItem(
+            bill,
+            getFirstTagValue(feeItem, "ItemNr"),
+            getFirstTagValue(feeItem, "Desc"),
+            LocalDate.parse(getFirstTagValue(feeItem, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
+            LocalDate.parse(getFirstTagValue(feeItem, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
+            Double.valueOf(getFirstTagValue(feeItem, "NetA").replace(',', '.')),
+            Double.valueOf(getFirstTagValue(feeItem, "TaxA").replace(',', '.')),
+            Double.valueOf(getFirstTagValue(feeItem, "TaxP").replace(',', '.').replace("%", ""))
+            ));
       }
       
-//      billRepository.save(bill);
+      billRepository.save(bill);
+      return bill;
     } else {
-      System.out.println("invalid bill");
+      throw new Exception("Invalid structure");
     }
   }
   
@@ -96,6 +110,18 @@ public class BillService {
 
       return sb.toString().replaceAll(">\\s+<", "><");
     }
+  }
+
+  public List<Bill> findAll() {
+    return billRepository.findAll();
+  }
+
+  public Bill findByInvoiceNumber(String invoiceNumber) {
+    return billRepository.findByInvoiceNumber(invoiceNumber);
+  }
+
+  public Bill findById(long id) {
+    return billRepository.findOne(id);
   }
 
 }

@@ -104,6 +104,7 @@ public class SubDevService {
             subDevRepository.save(lastFromSub);
           } else {
             if (equals(dev, lastBeforeFromSub.getDev())) {
+              System.out.println("IDE " + lastFromSub.getId());
               subDevRepository.delete(lastFromSub.getId());
             } else {
               lastFromSub.setDev(dev);
