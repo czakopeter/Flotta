@@ -48,9 +48,12 @@ public class BillPartitionTemplateService {
     return templateMissingFeeItemDescription.remove(templateId);
   }
 
-  public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Long> categories) {
-    // TODO Auto-generated method stub
-    
+  public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Category> categories) {
+    BillPartitionTemplate bpt = billPartitionTemplateRepository.findOne(templateId);
+    for(int i = 0; i < descriptions.size(); i++) {
+      bpt.addToConnection(descriptions.get(i), categories.get(i));
+    }
+    billPartitionTemplateRepository.save(bpt);
   }
   
 }

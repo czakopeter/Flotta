@@ -110,6 +110,14 @@ public class BillingService {
   }
 
   public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Long> categories) {
-    billPartitionTemplateService.upgradeBillPartitionTemplate(templateId, descriptions, categories);
+    billPartitionTemplateService.upgradeBillPartitionTemplate(templateId, descriptions, idToCategory(categories));
+  }
+  
+  private List<Category> idToCategory(List<Long> catIds) {
+    List<Category> result = new LinkedList<>();
+    for(long id : catIds) {
+      result.add(categoryService.findById(id));
+    }
+    return result;
   }
 }

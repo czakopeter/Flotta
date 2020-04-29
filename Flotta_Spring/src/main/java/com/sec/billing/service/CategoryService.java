@@ -34,4 +34,8 @@ public class CategoryService {
       categoryRepository.save(new Category(category));
     }
   }
+
+  public Category findById(long id) {
+    return categoryRepository.findOne(id);
+  }
 }
