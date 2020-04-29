@@ -387,7 +387,7 @@ public class MainService {
     return billingService.getUnknownFeeDescToTemplate(templateId);
   }
 
-  public void upgradeBillPartitionTemplate(List<String> descriptions, List<Long> categories) {
-    billingService.upgradeBillPartitionTemplate(descriptions, categories);
+  public void upgradeBillPartitionTemplate(long tempalteId, List<String> descriptions, List<Long> categories) {
+    billingService.upgradeBillPartitionTemplate(tempalteId, descriptions, categories);
   }
 }

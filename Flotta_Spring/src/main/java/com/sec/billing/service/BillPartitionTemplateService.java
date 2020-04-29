@@ -47,5 +47,10 @@ public class BillPartitionTemplateService {
   public List<String> getTemplateMissingFeeItemDescription(long templateId) {
     return templateMissingFeeItemDescription.remove(templateId);
   }
+
+  public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Long> categories) {
+    // TODO Auto-generated method stub
+    
+  }
   
 }

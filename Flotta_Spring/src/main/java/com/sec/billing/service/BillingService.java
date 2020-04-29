@@ -108,4 +108,8 @@ public class BillingService {
   public List<String> getUnknownFeeDescToTemplate(long templateId) {
     return billPartitionTemplateService.getTemplateMissingFeeItemDescription(templateId);
   }
+
+  public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Long> categories) {
+    billPartitionTemplateService.upgradeBillPartitionTemplate(templateId, descriptions, categories);
+  }
 }

@@ -87,7 +87,7 @@ public class BillingController {
   
   @PostMapping("billing/billPartitionUpdate")
   public String billPartitionTemplate(Model model, @RequestParam long templateId, @RequestParam(name = "description") List<String> descriptions, @RequestParam(name = "category") List<Long> categories) {
-    service.upgradeBillPartitionTemplate(descriptions, categories);
+    service.upgradeBillPartitionTemplate(templateId, descriptions, categories);
     return "redirect:/billing/all";
   }
   
