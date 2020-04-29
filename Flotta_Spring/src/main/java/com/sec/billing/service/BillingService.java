@@ -3,6 +3,7 @@ package com.sec.billing.service;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import com.sec.billing.Bill;
 import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
+import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.exception.UnknonwFeeItemDescriptionException;
 import com.sec.entity.User;
 
@@ -42,13 +44,8 @@ public class BillingService {
   // beolvassa a számlát
   // valid akkor konvertál validFeeItem-re
   // newm valid új template készítése
-  public boolean uploadBill(MultipartFile file) {
-    try {
-      billService.uploadBill(file);
-    } catch (Exception e) {
-      //TODO handle different exception
-      return false;
-    } 
+  public boolean uploadBill(MultipartFile file) throws FileUploadException {
+    billService.uploadBill(file);
     return true;
   }
 
@@ -99,11 +96,16 @@ public class BillingService {
   }
 
   public boolean billPartitionByTemplateId(long billId, long templateId) {
+    //TODO missing bill or template problem throw exception
     Bill bill = billService.findById(billId);
     if(bill != null) {
-      billPartitionTemplateService.partition(bill, templateId);
+      Map<Category, List<FeeItem> >  result =  billPartitionTemplateService.partition(bill, templateId);
+      return result == null ?  false : true;
     }
-    
     return false;
+  }
+
+  public List<String> getUnknownFeeDescToTemplate(long templateId) {
+    return billPartitionTemplateService.getTemplateMissingFeeItemDescription(templateId);
   }
 }

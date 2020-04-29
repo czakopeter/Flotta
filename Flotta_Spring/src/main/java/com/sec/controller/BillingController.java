@@ -1,8 +1,7 @@
 package com.sec.controller;
 
-import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sec.billing.BillPartitionTemplate;
+import com.sec.billing.Category;
+import com.sec.billing.exception.FileUploadException;
 import com.sec.service.MainService;
 
 @Controller
@@ -47,20 +47,6 @@ public class BillingController {
     return "billing_templates/category";
   }
   
-  @RequestMapping("/billing")
-  public String basecPage(Model model) {
-    model.addAttribute("templates", service.findAllBillPartitionTemplate());
-    return "billing_templates/index";
-  }
-  
-  @PostMapping("/billing")
-  public String uploadBill(Model model, @RequestParam("file") MultipartFile file) {
-    if(!service.fileUpload(file)) {
-      model.addAttribute("msg", "Error in upload");
-    }
-    return "billing_templates/index";
-  }
-  
   @RequestMapping("billing/all")
   public String bills(Model model) {
     model.addAttribute("bills", service.findAllBill());
@@ -68,14 +54,41 @@ public class BillingController {
     return "billing_templates/billAll";
   }
   
+  @PostMapping("/billing/all")
+  public String uploadBill(Model model, @RequestParam("file") MultipartFile file) {
+    try {
+      service.fileUpload(file);
+    } catch (FileUploadException e) {
+      model.addAttribute("error", e.getMessage());
+    }
+    model.addAttribute("bills", service.findAllBill());
+    model.addAttribute("templates", service.findAllBillPartitionTemplate());
+    return "billing_templates/billAll";
+  }
+  
   @RequestMapping("billing/billPartition")
-  public String billPartition(Model model) {
-    return "redirect:/billing_templates/billAll";
+  public String billPartitions(Model model) {
+    return "redirect:/billing/all";
   }
   
   @PostMapping("billing/billPartition")
-  public String billPartition(Model model, @RequestParam(name = "bill_id") long billId, @RequestParam(name = "template_id") long templateId) {
-    return "redirect:/billing_templates/billAll";
+  public String billPartitionTemplate(Model model, @RequestParam(name = "bill_id") long billId, @RequestParam(name = "template_id") long templateId) {
+    System.out.println("billId " + billId);
+    System.out.println("templateId " + templateId);
+    if(service.billPartitionByTemplateId(billId, templateId)) {
+      return "redirect:/billing/all";
+    } else {
+      model.addAttribute("tempalteId", templateId);
+      model.addAttribute("feeDescriptions", service.getUnknownFeeDescToTemplate(templateId));
+      model.addAttribute("categories", service.findAllCategory());
+      return "billing_templates/billPartitionTemplateUpgrade";
+    }
+  }
+  
+  @PostMapping("billing/billPartitionUpdate")
+  public String billPartitionTemplate(Model model, @RequestParam long templateId, @RequestParam(name = "description") List<String> descriptions, @RequestParam(name = "category") List<Long> categories) {
+    service.upgradeBillPartitionTemplate(descriptions, categories);
+    return "redirect:/billing/all";
   }
   
   @RequestMapping("billing/{invoiceNumber}")

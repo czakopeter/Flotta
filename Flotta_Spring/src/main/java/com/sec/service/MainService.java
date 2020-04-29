@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sec.billing.Bill;
 import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
+import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.service.BillingService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
@@ -354,7 +355,7 @@ public class MainService {
   
   //-------- BILLING SERVICE --------
   
-  public boolean fileUpload(MultipartFile file) {
+  public boolean fileUpload(MultipartFile file) throws FileUploadException {
     return billingService.uploadBill(file);
   }
 
@@ -380,5 +381,13 @@ public class MainService {
 
   public void addCategory(String outCat) {
     billingService.addCategory(outCat);
+  }
+
+  public List<String> getUnknownFeeDescToTemplate(long templateId) {
+    return billingService.getUnknownFeeDescToTemplate(templateId);
+  }
+
+  public void upgradeBillPartitionTemplate(List<String> descriptions, List<Long> categories) {
+    billingService.upgradeBillPartitionTemplate(descriptions, categories);
   }
 }

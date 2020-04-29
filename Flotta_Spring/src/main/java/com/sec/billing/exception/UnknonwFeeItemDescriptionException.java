@@ -1,5 +1,6 @@
 package com.sec.billing.exception;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -13,9 +14,7 @@ public class UnknonwFeeItemDescriptionException extends Exception {
   private List<String> unknownDescriptions;
   
   public UnknonwFeeItemDescriptionException(Set<String> unknownFreeItemDesc) {
-    for(String s : unknownFreeItemDesc) {
-      this.unknownDescriptions.add(s);
-    }
+    this.unknownDescriptions = new LinkedList<String>(unknownFreeItemDesc);
   }
 
   public List<String> getUnknownDescriptions() {

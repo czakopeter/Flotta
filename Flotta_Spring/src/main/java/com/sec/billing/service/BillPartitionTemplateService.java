@@ -34,10 +34,6 @@ public class BillPartitionTemplateService {
     return billPartitionTemplateRepository.findOne(templateId);
   }
 
-  public void prepareTemplateUpdate(long templateId, List<String> unknownDescriptions) {
-    
-  }
-
   public Map<Category, List<FeeItem> > partition(Bill bill, long templateId) {
     BillPartitionTemplate bpt = billPartitionTemplateRepository.findOne(templateId);
     try {
@@ -46,6 +42,10 @@ public class BillPartitionTemplateService {
       templateMissingFeeItemDescription.put(templateId, e.getUnknownDescriptions());
     }
     return null;
+  }
+  
+  public List<String> getTemplateMissingFeeItemDescription(long templateId) {
+    return templateMissingFeeItemDescription.remove(templateId);
   }
   
 }

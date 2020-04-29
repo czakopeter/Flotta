@@ -10,6 +10,16 @@
     <div class="shadow p-5 mb-5 bg-white rounded">
 
       <h2>Invoices</h2>
+      
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+
+      <div class="container">
+        <form action="/billing/all" method="post" enctype="multipart/form-data">
+          <label for="file">Select a bill: </label> <input type="file" id="file" name="file" accept=".xml"/>
+          <input type="submit" th:value="#{button.add}"/>
+        </form>
+      </div>
 
       <table class="table">
         <tr>
@@ -19,20 +29,46 @@
           <th th:text="#{bill.invoiceNetAmount}">Net amount</th>
           <th th:text="#{bill.invoiceTaxAmount}">Tax amount</th>
           <th></th>
+          <th>Template option</th>
+          <th></th>
         </tr>
         <tr th:each="bill : ${bills}">
+
           <td th:text="${bill.invoiceNumber}"></td>
           <td th:text="${bill.fromDate}"></td>
           <td th:text="${bill.endDate}"></td>
           <td th:text="${bill.invoiceNetAmount}"></td>
           <td th:text="${bill.invoiceTaxAmount}"></td>
           <td><a th:href="'/billing/' + ${bill.invoiceNumber}" class="btn btn-primary"
-          th:text="#{button.details}">Details</a></td>
+            th:text="#{button.details}"
+          >Details</a></td>
+          <form action="/billing/billPartition" method="post">
+            <td>
+              <select class="form-control" id="template_id" name="template_id">
+                <option th:each="template : ${templates}" th:value="${template.id}" th:text="${template.name}"></option>
+              </select>
+            </td>
+            <td>
+              <input type="submit" id="bill_id" name="bill_id" th:value="${bill.id}" text="Part" />
+            </td>
+          </form>
         </tr>
       </table>
 
+      <input type="hidden" id="template_id" name="template_id" />
+
 
     </div>
+
+    <script th:inline="javascript">
+					//<![CDATA[
+					function selectBill(id) {
+						var select = document.getElementById(id);
+						document.getElementById('template_id').value = select.options[select.selectedIndex].value;
+					}
+
+					//]]>
+				</script>
 
 
   </div>
