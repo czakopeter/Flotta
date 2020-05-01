@@ -1,6 +1,8 @@
 package com.sec.entity.switchTable.Service;
 
 import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,22 @@ public class UserSubService {
     } else {
       subscriptionService.userHasntConnected(sub, date);
     }
+  }
+
+  public List<LocalDate> findAllBeginDateBySubBetween(String number, LocalDate begin, LocalDate end) {
+    Subscription sub = subscriptionService.findByNumber(number);
+    List<UserSub> list = userSubRepository.findAllBySubAndConnectBetween(sub, begin, end);
+    List<LocalDate> dates = new LinkedList<>();
+    for(UserSub us : list) {
+      dates.add(us.getConnect());
+    }
+    return dates;
+  }
+
+  public User getUser(String number, LocalDate begin, LocalDate end) {
+    Subscription sub = subscriptionService.findByNumber(number);
+    UserSub us = userSubRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, end);
+    return us.getUser();
   }
   
 }

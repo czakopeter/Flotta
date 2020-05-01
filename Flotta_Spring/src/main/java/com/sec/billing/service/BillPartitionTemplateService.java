@@ -27,7 +27,10 @@ public class BillPartitionTemplateService {
   }
 
   public void save(BillPartitionTemplate bpt) {
-    billPartitionTemplateRepository.save(bpt);
+    BillPartitionTemplate saved = billPartitionTemplateRepository.findByName(bpt.getName());
+    if(saved == null) {
+      billPartitionTemplateRepository.save(bpt);
+    }
   }
 
   public BillPartitionTemplate findTemplate(long templateId) {
@@ -50,9 +53,11 @@ public class BillPartitionTemplateService {
 
   public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Category> categories) {
     BillPartitionTemplate bpt = billPartitionTemplateRepository.findOne(templateId);
+    
     for(int i = 0; i < descriptions.size(); i++) {
       bpt.addToConnection(descriptions.get(i), categories.get(i));
     }
+    
     billPartitionTemplateRepository.save(bpt);
   }
   

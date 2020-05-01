@@ -28,7 +28,7 @@ public class BillPartitionTemplate {
 
   @ManyToMany(cascade = CascadeType.ALL)
   private Map<String, Category> connection = new HashMap<String, Category>();
-
+  
   public BillPartitionTemplate() {
   }
 
@@ -55,6 +55,7 @@ public class BillPartitionTemplate {
   public void setAvailable(boolean available) {
     this.available = available;
   }
+
 
   public Map<String, Category> getConnection() {
     return connection;
@@ -94,5 +95,7 @@ public class BillPartitionTemplate {
     }
     return result;
   }
+  
+  
   
 }

@@ -6,7 +6,7 @@ INSERT INTO Users (email, password, full_name, enabled) VALUES ('admin', 'admin'
 INSERT INTO Users (email, password, full_name, enabled) VALUES ('user', 'user', 'User', true)
 INSERT INTO Users (email, password, full_name, enabled) VALUES ('f', 'f', 'False', false)
 
-INSERT INTO Subscriptions(number) VALUES ('number1')
+INSERT INTO Subscriptions(number) VALUES ('202563364')
 INSERT INTO Subscriptions(number) VALUES ('number2')
 INSERT INTO Subscriptions(number) VALUES ('number3')
 

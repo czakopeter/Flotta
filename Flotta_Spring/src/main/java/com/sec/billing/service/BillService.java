@@ -124,4 +124,12 @@ public class BillService {
     return billRepository.findOne(id);
   }
 
+  public List<FeeItem> findAllFeeItemByBillId(long id) {
+    Bill bill = billRepository.findOne(id);
+    if(bill != null) {
+      return bill.getFeeItems();
+    }
+    return null;
+  }
+
 }

@@ -76,9 +76,11 @@ public class BillingController {
     System.out.println("billId " + billId);
     System.out.println("templateId " + templateId);
     if(service.billPartitionByTemplateId(billId, templateId)) {
-      return "redirect:/billing/all";
+//      return "redirect:/billing/all";
+      model.addAttribute("userFeeMap", service.splitting);
+      return "billing_templates/splittedBill";
     } else {
-      model.addAttribute("tempalteId", templateId);
+      model.addAttribute("templateId", templateId);
       model.addAttribute("feeDescriptions", service.getUnknownFeeDescToTemplate(templateId));
       model.addAttribute("categories", service.findAllCategory());
       return "billing_templates/billPartitionTemplateUpgrade";
@@ -87,6 +89,7 @@ public class BillingController {
   
   @PostMapping("billing/billPartitionUpdate")
   public String billPartitionTemplate(Model model, @RequestParam long templateId, @RequestParam(name = "description") List<String> descriptions, @RequestParam(name = "category") List<Long> categories) {
+    System.out.println("billing/billPartitionUpdate");
     service.upgradeBillPartitionTemplate(templateId, descriptions, categories);
     return "redirect:/billing/all";
   }

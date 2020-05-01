@@ -13,6 +13,7 @@
 
       <div class="container">
         <form action="/billing/billPartitionUpdate" method="post">
+        <lable  id="templateId" name="templateId" th:text="${templateId}" ></lable>
         <input type="hidden" id="templateId" name="templateId" th:value="${templateId}" />
         <div class="row my-2" th:each="description, i : ${feeDescriptions}">
           <div class="col-4">

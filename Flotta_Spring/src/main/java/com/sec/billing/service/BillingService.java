@@ -92,7 +92,19 @@ public class BillingService {
     
     billPartitionTemplateService.save(bpt);
     
+    bpt.addToConnection("Internet", cList.get(2));
+    
+    billPartitionTemplateService.save(bpt);
+    
     return result;
+  }
+  
+  public List<FeeItem> findAllFeeItemByBillId(long id) {
+    return billService.findAllFeeItemByBillId(id);
+  }
+  
+  public Bill findBillById(long id) {
+    return billService.findById(id);
   }
 
   public boolean billPartitionByTemplateId(long billId, long templateId) {
@@ -110,10 +122,10 @@ public class BillingService {
   }
 
   public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Long> categories) {
-    billPartitionTemplateService.upgradeBillPartitionTemplate(templateId, descriptions, idToCategory(categories));
+    billPartitionTemplateService.upgradeBillPartitionTemplate(templateId, descriptions, idListToCategoryList(categories));
   }
   
-  private List<Category> idToCategory(List<Long> catIds) {
+  private List<Category> idListToCategoryList(List<Long> catIds) {
     List<Category> result = new LinkedList<>();
     for(long id : catIds) {
       result.add(categoryService.findById(id));

@@ -7,4 +7,6 @@ import com.sec.billing.Category;
 
 public interface BillPartitionTemplateRepository extends CrudRepository<BillPartitionTemplate, Long>{
 
+  BillPartitionTemplate findByName(String name);
+
 }

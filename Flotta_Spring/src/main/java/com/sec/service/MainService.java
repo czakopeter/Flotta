@@ -1,8 +1,11 @@
 package com.sec.service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sec.billing.Bill;
 import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
+import com.sec.billing.FeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.service.BillingService;
 import com.sec.entity.Device;
@@ -104,6 +108,8 @@ public class MainService {
   public void setBillingService(BillingService billingService) {
     this.billingService = billingService;
   }
+	
+	public Map<User, List<FeeItem>> splitting = new HashMap<>();
 	
 	
 	//------- SUBSCRIPTION SERVICE --------
@@ -372,6 +378,33 @@ public class MainService {
   }
   
   public boolean billPartitionByTemplateId(long billId, long templateId) {
+    List<FeeItem> splittedFees = new LinkedList<>();
+    List<FeeItem> fees = billingService.findAllFeeItemByBillId(billId);
+    System.out.println(LocalDate.now().until(LocalDate.now().plusDays(1), ChronoUnit.DAYS));
+    for(FeeItem fee : fees) {
+      String number = fee.getSubscription();
+      LocalDate begin = fee.getBegin();
+      LocalDate end = fee.getEnd();
+      List<LocalDate> allNewUserBegin = userSubService.findAllBeginDateBySubBetween(number, begin, end);
+      splittedFees.addAll(fee.splitBeforeDate(allNewUserBegin));
+    }
+    Map<User, List<FeeItem>> result = new HashMap<>();
+    for(FeeItem fee : splittedFees) {
+      User user = userSubService.getUser(fee.getSubscription(), fee.getBegin(), fee.getEnd());
+      List<FeeItem> rows = result.get(user);
+      if(rows == null) {
+        rows = new LinkedList<>();
+      }
+      rows.add(fee);
+      result.put(user, rows);
+    }
+    for(User key : result.keySet()) {
+      System.out.println(key.getFullName());
+      for(FeeItem fee : result.get(key)) {
+        System.out.println(fee);
+      }
+    }
+    splitting = result;
     return billingService.billPartitionByTemplateId(billId, templateId);
   }
   
