@@ -27,6 +27,7 @@ import com.sec.entity.switchTable.Service.SubSimService;
 import com.sec.entity.switchTable.Service.UserDevService;
 import com.sec.entity.switchTable.Service.UserSubService;
 import com.sec.entity.viewEntity.DeviceToView;
+import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
 import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.entity.note.DevNote;
 import com.sec.entity.note.service.DevNoteService;
@@ -380,7 +381,6 @@ public class MainService {
   public boolean billPartitionByTemplateId(long billId, long templateId) {
     List<FeeItem> splittedFees = new LinkedList<>();
     List<FeeItem> fees = billingService.findAllFeeItemByBillId(billId);
-    System.out.println(LocalDate.now().until(LocalDate.now().plusDays(1), ChronoUnit.DAYS));
     for(FeeItem fee : fees) {
       String number = fee.getSubscription();
       LocalDate begin = fee.getBegin();
@@ -422,5 +422,10 @@ public class MainService {
 
   public void upgradeBillPartitionTemplate(long tempalteId, List<String> descriptions, List<Long> categories) {
     billingService.upgradeBillPartitionTemplate(tempalteId, descriptions, categories);
+  }
+
+  public List<OneCategoryOfUserFinance> getUserFinance(String username) {
+    List<OneCategoryOfUserFinance> result = new LinkedList<>();
+    return result;
   }
 }

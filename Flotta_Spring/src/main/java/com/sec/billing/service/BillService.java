@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import com.sec.billing.Bill;
 import com.sec.billing.FeeItem;
+import com.sec.billing.SplittedFeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.repository.BillRepository;
 
@@ -62,7 +63,6 @@ public class BillService {
         Element feeItem = (Element) nodes.item(i);
         bill.addFee(new FeeItem(bill, getFirstTagValue(feeItem, "ItemNr"), getFirstTagValue(feeItem, "Desc"), LocalDate.parse(getFirstTagValue(feeItem, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")), LocalDate.parse(getFirstTagValue(feeItem, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")), Double.valueOf(getFirstTagValue(feeItem, "NetA").replace(',', '.')), Double.valueOf(getFirstTagValue(feeItem, "TaxA").replace(',', '.')), Double.valueOf(getFirstTagValue(feeItem, "TaxP").replace(',', '.').replace("%", ""))));
       }
-
       billRepository.save(bill);
       return bill;
     } else {

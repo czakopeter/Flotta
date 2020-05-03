@@ -28,8 +28,6 @@ public class HomeController {
 
   @RequestMapping("/")
   public String home(Model model, Authentication a) {
-    System.out.println("Principal\t" + ((UserDetailsImpl)a.getPrincipal()).getFullName());
-    System.out.println("Authorities\t" + a.getAuthorities());
     model.addAttribute("title", "Homepage");
     model.addAttribute("name", service.findUser(a.getName()).getFullName());
     LocalDate date = service.findSimById(1).getSimSub().getConnect();

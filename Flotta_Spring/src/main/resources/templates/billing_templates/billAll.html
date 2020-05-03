@@ -10,14 +10,15 @@
     <div class="shadow p-5 mb-5 bg-white rounded">
 
       <h2>Invoices</h2>
-      
+
       <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
 
       <div class="container">
         <form action="/billing/all" method="post" enctype="multipart/form-data">
-          <label for="file">Select a bill: </label> <input type="file" id="file" name="file" accept=".xml"/>
-          <input type="submit" th:value="#{button.add}"/>
+          <label for="file">Select a bill: </label> <input type="file" id="file" name="file"
+            accept=".xml"
+          /> <input type="submit" th:value="#{button.add}" />
         </form>
       </div>
 
@@ -43,14 +44,14 @@
             th:text="#{button.details}"
           >Details</a></td>
           <form action="/billing/billPartition" method="post">
-            <td>
-              <select class="form-control" id="template_id" name="template_id">
-                <option th:each="template : ${templates}" th:value="${template.id}" th:text="${template.name}"></option>
-              </select>
-            </td>
-            <td>
-              <input type="submit" id="bill_id" name="bill_id" th:value="${bill.id}" text="Part" />
-            </td>
+            <td><select class="form-control" id="template_id" name="template_id">
+                <option th:each="template : ${templates}" th:value="${template.id}"
+                  th:text="${template.name}"
+                ></option>
+            </select></td>
+            <td><input type="submit" id="bill_id" name="bill_id" th:value="${bill.id}"
+              text="Part"
+            /></td>
           </form>
         </tr>
       </table>

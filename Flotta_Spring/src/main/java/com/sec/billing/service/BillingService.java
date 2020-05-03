@@ -13,6 +13,7 @@ import com.sec.billing.Bill;
 import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
+import com.sec.billing.SplittedFeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.exception.UnknonwFeeItemDescriptionException;
 import com.sec.entity.User;
@@ -116,7 +117,7 @@ public class BillingService {
     }
     return false;
   }
-
+  
   public List<String> getUnknownFeeDescToTemplate(long templateId) {
     return billPartitionTemplateService.getTemplateMissingFeeItemDescription(templateId);
   }

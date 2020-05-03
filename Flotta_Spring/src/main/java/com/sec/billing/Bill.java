@@ -37,7 +37,7 @@ public class Bill {
   private double invoiceTaxAmount;
   
   @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
-  List<FeeItem> feeItems = new LinkedList<FeeItem>();
+  List<FeeItem> feeItems = new LinkedList<>();
   
   public Bill() {}
   
@@ -117,5 +117,6 @@ public class Bill {
   public void addFee(FeeItem feeItem) {
     this.feeItems.add(feeItem);
   }
+  
   
 }

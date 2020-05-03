@@ -37,6 +37,7 @@ public class BillTemplateService {
     feeItem.appendChild("NetA");
     feeItem.appendChild("TaxP");
     feeItem.appendChild("TaxA");
+    feeItem.appendChild("GrossA");
 
     MyNode customerData = root.appendChild("CustomerData");
     customerData.appendChild("Name");
@@ -52,6 +53,7 @@ public class BillTemplateService {
     invoiceData.appendChild("InvNb");
     invoiceData.appendChild("InvTotalNetA");
     invoiceData.appendChild("InvTotalTaxA");
+    invoiceData.appendChild("InvTotalGrossA");
 
     billTemplateRepository.save(root);
 

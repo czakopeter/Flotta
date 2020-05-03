@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title></title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <div class="shadow p-5 mb-5 bg-white rounded">
+
+      <h2 style="font-style: italic;">Finances</h2>
+      
+      <h3 th:text="${#authentication.getPrincipal().getFullName()}"></h3>
+      
+      <div class="row">
+        <div class="col-1"><label>From</label></div>
+        <div class="col-2"><input type="date" class="form-control" /></div>
+      </div>
+      <div class="row">
+        <div class="col-1"><label>To</label></div>
+        <div class="col-2"><input type="date" class="form-control" /></div>
+        <div class="col-1"><input type="button" class="btn btn-primary" value="search" /></div>
+      </div>
+      
+      <br />
+
+<!--       <div th:each="oneCategory, i : ${userFinance}"> -->
+<!--         <div class="row"> -->
+<!--           <div class="col-1"><input type="button" class="btn btn-light" value="+" onclick="details(this, 'table' + ${i})" /></div> -->
+<!--           <div class="col-2" >Category:</div> -->
+<!--           <div class="col-2" th:text="${oneCategory.category}">Category name</div> -->
+<!--           <div class="col-2">Gross amount: </div> -->
+<!--           <div class="col-2" th:text="${oneCategory.totalGross}">2000 Ft</div> -->
+<!--         </div> -->
+<!--         <table id="'table' + ${i}" class="table" style="display : none"> -->
+<!--           <tr> -->
+<!--             <th>Subscription</th> -->
+<!--             <th>Description</th> -->
+<!--             <th>Begin</th> -->
+<!--             <th>End</th> -->
+<!--             <th>Gross amount</th> -->
+<!--           </tr> -->
+<!--           <tr th:each="feeItem : ${oneCategory.feeItems}"> -->
+<!--             <td th:text="${feeItem.subscription}"></td> -->
+<!--             <td th:text="${feeItem.description}"></td> -->
+<!--             <td th:text="${feeItem.begin}"></td> -->
+<!--             <td th:text="${feeItem.end}"></td> -->
+<!--             <td th:text="${feeItem.grossAmount} + ' Ft'"></td> -->
+<!--           </tr> -->
+<!--         </table> -->
+<!--       </div> -->
+
+      
+<!--       <div> -->
+<!--         <div class="row"> -->
+<!--           <div class="col-1"><input type="button" class="btn btn-light" value="+" onclick="openTable(this, 'table1')" /></div> -->
+<!--           <div class="col-2">Category:</div> -->
+<!--           <div class="col-2">Call</div> -->
+<!--           <div class="col-2">Gross amount: </div> -->
+<!--           <div class="col-2">2000 Ft</div> -->
+<!--         </div> -->
+<!--         <table id="table1" class="table" style="display : none"> -->
+<!--           <tr> -->
+<!--             <th>Subscription</th> -->
+<!--             <th>Description</th> -->
+<!--             <th>Begin</th> -->
+<!--             <th>End</th> -->
+<!--             <th>Gross Amount</th> -->
+<!--           </tr> -->
+<!--           <tr th:each="feeItem : ${feeItems}"> -->
+<!--             <td th:text="${feeItem.subscription}"></td> -->
+<!--             <td th:text="${feeItem.description}"></td> -->
+<!--             <td th:text="${feeItem.begin}"></td> -->
+<!--             <td th:text="${feeItem.end}"></td> -->
+<!--             <td th:text="${feeItem.netAmount} + ' Ft'"></td> -->
+<!--           </tr> -->
+<!--         </table> -->
+<!--         <div class="row"> -->
+<!--           <div class="col-1"></div> -->
+<!--           <div class="col-2">Category</div> -->
+<!--           <div class="col-2">Net amount</div> -->
+<!--           <div class="col-2">Tax amount</div> -->
+<!--         </div> -->
+<!--         <div class="row"> -->
+<!--           <div class="col-1"><input type="button" class="btn btn-light" value="+" onclick="openTable(this, 'table2')" /></div> -->
+<!--           <div class="col-2">Call</div> -->
+<!--           <div class="col-2">2000 Ft</div> -->
+<!--           <div class="col-2">270 Ft</div> -->
+<!--         </div> -->
+<!--         <table id="table2" class="table" style="display : none"> -->
+<!--           <tr> -->
+<!--             <th>Subscription</th> -->
+<!--             <th>Description</th> -->
+<!--             <th>Begin</th> -->
+<!--             <th>End</th> -->
+<!--             <th>Net Amount</th> -->
+<!--             <th>Tax Amount</th> -->
+<!--             <th>Tax Percentage</th> -->
+<!--           </tr> -->
+<!--           <tr th:each="feeItem : ${feeItems}"> -->
+<!--             <td th:text="${feeItem.subscription}"></td> -->
+<!--             <td th:text="${feeItem.description}"></td> -->
+<!--             <td th:text="${feeItem.begin}"></td> -->
+<!--             <td th:text="${feeItem.end}"></td> -->
+<!--             <td th:text="${feeItem.netAmount}"></td> -->
+<!--             <td th:text="${feeItem.taxAmount}"></td> -->
+<!--             <td th:text="${feeItem.taxPercentage}"></td> -->
+<!--           </tr> -->
+<!--         </table> -->
+<!--       </div> -->
+
+        <script th:inline="javascript">
+          //<![CDATA[
+          function details(button, table) {
+        	if(button.value == '+') {
+        		button.value = '-';
+        		document.getElementById(table).style.display = 'table';
+        	}else if(button.value == '-') {
+        		button.value = '+';
+        		document.getElementById(table).style.display = 'none';
+        	}
+          }
+          
+          //]]>
+        </script>
+
+
+
+    </div>
+
+
+  </div>
+
+
+
+</body>
+</html>
