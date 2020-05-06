@@ -10,7 +10,7 @@
     <h2>Device Types</h2>
     <table class="table">
       <tr>
-        <td>Show invisible <input type="checkbox" id="visible" onclick="change_visible()" />
+        <td>Show invisible <input type="checkbox" id="show" onclick="change_visible()" />
         </td>
         <td><button type="submit" class="btn btn-primary" data-target="#edit"
             data-backdrop="static" data-toggle="modal" onclick="reset_modal()">New</button>
@@ -26,7 +26,8 @@
         <th>Name</th>
         <th>SIM number</th>
         <th>Has MicroSD slot</th>
-        <th style="display: none;">Visible</th>
+        <th>Visible</th>
+<!--         <th style="display: none;">Visible</th> -->
         <th></th>
       </tr>
       <tr th:each="deviceType, i : ${deviceTypes}">
@@ -38,7 +39,7 @@
         <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
         <td th:id="visible + ${i.count}"  th:text="${deviceType.visible}"></td>
         <td><button type="button" class="btn btn-primary"
-            th:onclick="|set_modal('${i.count}')|" data-target="#edit" data-backdrop="static"
+            th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
             data-toggle="modal">Edit</button></td>
       </tr>
     </table>
@@ -50,10 +51,10 @@
         <div class="modal-content">
         <form id="modalForm" action="/deviceTypes" th:object="${deviceType}" method="post">
           <div class="modal-header">
+            <h4 class="modal-title" id="exampleModalLabel">Create device type</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">x</span>
             </button>
-            <h4 class="modal-title" id="exampleModalLabel">Title</h4>
           </div>
           <div class="modal-body">
             
@@ -88,7 +89,7 @@
               </div>
               <div class="form-group">
                 <label class="form-control-label">Visible</label> <input type="checkbox"
-                  id="see" name="see" />
+                  id="visible" name="visible" />
               </div>
             
           </div>
@@ -115,12 +116,13 @@
 			var table = document.getElementById('table');
 			var row;
 			if(document.getElementById('visible').checked) {
+				alert(table);
 				for (row of table.rows) {
 					row.style.display = '';
 				}
 			} else {
 				for (row of table.rows) {
-					if(row.cells[5].innerHTML == 'false') {
+					if(row.cells[6].innerHTML == 'false') {
 						row.style.display = 'none';
 					}
 				}
@@ -134,10 +136,12 @@
 			document.getElementById('name').value = '';
 			document.getElementById('simNumber').value = '1';
 			document.getElementById('microsd').checked = true;
-			document.getElementById('see').checked = true;
+			document.getElementById('visible').checked = true;
 		}
 		
 		function set_modal(i) {
+			alert(document.getElementById('microsd').checked);
+			alert(document.getElementById('microsd' + i).innerHTML);
 			document.getElementById('id').value = document.getElementById('id' + i).innerHTML;
 			document.getElementById('brand').value = document.getElementById('brand' + i).innerHTML;
 			document.getElementById('model').value = document.getElementById('model' + i).innerHTML;

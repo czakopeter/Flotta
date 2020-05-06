@@ -17,6 +17,7 @@ import com.sec.billing.SplittedFeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.exception.UnknonwFeeItemDescriptionException;
 import com.sec.entity.User;
+import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
 
 @Service
 public class BillingService {
@@ -113,6 +114,7 @@ public class BillingService {
     Bill bill = billService.findById(billId);
     if(bill != null) {
       Map<Category, List<FeeItem> >  result =  billPartitionTemplateService.partition(bill, templateId);
+      billService.save(bill);
       return result == null ?  false : true;
     }
     return false;
@@ -132,5 +134,13 @@ public class BillingService {
       result.add(categoryService.findById(id));
     }
     return result;
+  }
+
+  public void save(Bill bill) {
+    billService.save(bill);
+  }
+
+  public List<OneCategoryOfUserFinance> getFinanceByUserId(long id) {
+    return billService.getFinanceByUserId(id);
   }
 }

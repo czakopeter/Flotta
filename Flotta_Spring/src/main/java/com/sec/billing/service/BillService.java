@@ -27,6 +27,8 @@ import com.sec.billing.FeeItem;
 import com.sec.billing.SplittedFeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.repository.BillRepository;
+import com.sec.entity.User;
+import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
 
 @Service
 public class BillService {
@@ -34,6 +36,8 @@ public class BillService {
   private BillRepository billRepository;
 
   private BillTemplateService billTemplateService;
+  
+  private FeeItemService feeItemService;
 
   @Autowired
   public void setBillRepository(BillRepository billRepository) {
@@ -44,6 +48,11 @@ public class BillService {
   public void setBillTemplateService(BillTemplateService billTemplateService) {
     this.billTemplateService = billTemplateService;
     billTemplateService.createBasicTemplate();
+  }
+  
+  @Autowired
+  public void setFeeItemService(FeeItemService feeItemService) {
+    this.feeItemService = feeItemService;
   }
 
   public Bill uploadBill(MultipartFile file) throws FileUploadException {
@@ -56,12 +65,27 @@ public class BillService {
         throw new FileUploadException("Already exists");
       }
       
-      Bill bill = new Bill(xmlString, LocalDate.parse(getFirstTagValue(root, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")), LocalDate.parse(getFirstTagValue(root, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")), getFirstTagValue(root, "InvNb"), Double.valueOf(getFirstTagValue(root, "InvTotalNetA").replace(',', '.')), Double.valueOf(getFirstTagValue(root, "InvTotalTaxA").replace(',', '.')));
+      Bill bill = new Bill(xmlString,
+          LocalDate.parse(getFirstTagValue(root, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
+          LocalDate.parse(getFirstTagValue(root, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
+          getFirstTagValue(root, "InvNb"), Double.valueOf(getFirstTagValue(root, "InvTotalNetA").replace(',', '.')),
+          Double.valueOf(getFirstTagValue(root, "InvTotalTaxA").replace(',', '.')),
+          Double.valueOf(getFirstTagValue(root, "InvTotalGrossA").replace(',', '.'))
+          );
 
       NodeList nodes = root.getElementsByTagName("FeeItem");
       for (int i = 0; i < nodes.getLength(); i++) {
         Element feeItem = (Element) nodes.item(i);
-        bill.addFee(new FeeItem(bill, getFirstTagValue(feeItem, "ItemNr"), getFirstTagValue(feeItem, "Desc"), LocalDate.parse(getFirstTagValue(feeItem, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")), LocalDate.parse(getFirstTagValue(feeItem, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")), Double.valueOf(getFirstTagValue(feeItem, "NetA").replace(',', '.')), Double.valueOf(getFirstTagValue(feeItem, "TaxA").replace(',', '.')), Double.valueOf(getFirstTagValue(feeItem, "TaxP").replace(',', '.').replace("%", ""))));
+        bill.addFee(new FeeItem(
+            bill, 
+            getFirstTagValue(feeItem, "ItemNr"),
+            getFirstTagValue(feeItem, "Desc"),
+            LocalDate.parse(getFirstTagValue(feeItem, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
+            LocalDate.parse(getFirstTagValue(feeItem, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
+            Double.valueOf(getFirstTagValue(feeItem, "NetA").replace(',', '.')), 
+            Double.valueOf(getFirstTagValue(feeItem, "TaxA").replace(',', '.')),
+            Double.valueOf(getFirstTagValue(feeItem, "TaxP").replace(',', '.').replace("%", "")),
+            Double.valueOf(getFirstTagValue(feeItem, "GrossA").replace(',', '.'))));
       }
       billRepository.save(bill);
       return bill;
@@ -125,11 +149,15 @@ public class BillService {
   }
 
   public List<FeeItem> findAllFeeItemByBillId(long id) {
-    Bill bill = billRepository.findOne(id);
-    if(bill != null) {
-      return bill.getFeeItems();
-    }
-    return null;
+    return feeItemService.findAllByBillId(id);
+  }
+
+  public void save(Bill bill) {
+    billRepository.save(bill);
+  }
+
+  public List<OneCategoryOfUserFinance> getFinanceByUserId(long id) {
+    return feeItemService.getFinanceByUserId(id);
   }
 
 }

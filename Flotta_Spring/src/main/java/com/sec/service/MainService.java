@@ -379,8 +379,11 @@ public class MainService {
   }
   
   public boolean billPartitionByTemplateId(long billId, long templateId) {
+    Bill bill = billingService.findBillById(billId);
+    List<FeeItem> fees = bill.getFeeItems();
     List<FeeItem> splittedFees = new LinkedList<>();
-    List<FeeItem> fees = billingService.findAllFeeItemByBillId(billId);
+    
+    //split a fees by user using
     for(FeeItem fee : fees) {
       String number = fee.getSubscription();
       LocalDate begin = fee.getBegin();
@@ -388,23 +391,17 @@ public class MainService {
       List<LocalDate> allNewUserBegin = userSubService.findAllBeginDateBySubBetween(number, begin, end);
       splittedFees.addAll(fee.splitBeforeDate(allNewUserBegin));
     }
-    Map<User, List<FeeItem>> result = new HashMap<>();
+    
+    //set userId of fee, if no user than 0
     for(FeeItem fee : splittedFees) {
       User user = userSubService.getUser(fee.getSubscription(), fee.getBegin(), fee.getEnd());
-      List<FeeItem> rows = result.get(user);
-      if(rows == null) {
-        rows = new LinkedList<>();
-      }
-      rows.add(fee);
-      result.put(user, rows);
-    }
-    for(User key : result.keySet()) {
-      System.out.println(key.getFullName());
-      for(FeeItem fee : result.get(key)) {
-        System.out.println(fee);
+      if(user != null) {
+        fee.setUserId(user.getId());
       }
     }
-    splitting = result;
+    
+    bill.setFeeItems(splittedFees);
+    
     return billingService.billPartitionByTemplateId(billId, templateId);
   }
   
@@ -424,8 +421,8 @@ public class MainService {
     billingService.upgradeBillPartitionTemplate(tempalteId, descriptions, categories);
   }
 
-  public List<OneCategoryOfUserFinance> getUserFinance(String username) {
-    List<OneCategoryOfUserFinance> result = new LinkedList<>();
-    return result;
+  public List<OneCategoryOfUserFinance> getUserFinance(String email) {
+    User user = userService.findByEmail(email);
+    return billingService.getFinanceByUserId(user.getId());
   }
 }

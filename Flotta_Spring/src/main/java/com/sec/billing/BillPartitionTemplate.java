@@ -79,6 +79,8 @@ public class BillPartitionTemplate {
       Category category = connection.get(fi.getDescription());
       if (category == null) {
         unknownFreeItemDesc.add(fi.getDescription());
+      } else {
+        fi.setCatergory(category.getName());
       }
       if (unknownFreeItemDesc.size() != 0) {
         List<FeeItem> value = result.get(category);

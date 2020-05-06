@@ -46,11 +46,21 @@ public class FeeItem {
   private double taxAmount;
 
   private double taxPercentage;
+  
+  private double gross;
+  
+  private String catergory;
+  
+  private long userId;
+  
+  private boolean validByUser;
+  
+  private boolean validByCompany;
 
   public FeeItem() {
   }
 
-  public FeeItem(Bill bill, String subscription, String description, LocalDate begin, LocalDate end, double netAmount, double taxAmount, double taxPercentage) {
+  public FeeItem(Bill bill, String subscription, String description, LocalDate begin, LocalDate end, double netAmount, double taxAmount, double taxPercentage, double gross) {
     this.bill = bill;
     this.subscription = subscription;
     this.description = description;
@@ -59,6 +69,7 @@ public class FeeItem {
     this.netAmount = netAmount;
     this.taxAmount = taxAmount;
     this.taxPercentage = taxPercentage;
+    this.gross = gross;
   }
 
   public FeeItem(FeeItem feeItem) {
@@ -70,6 +81,7 @@ public class FeeItem {
     this.netAmount = feeItem.netAmount;
     this.taxAmount = feeItem.taxAmount;
     this.taxPercentage = feeItem.taxPercentage;
+    this.gross = feeItem.gross;
   }
 
   public long getId() {
@@ -143,6 +155,46 @@ public class FeeItem {
   public void setTaxPercentage(double taxPercentage) {
     this.taxPercentage = taxPercentage;
   }
+  
+  public double getGross() {
+    return gross;
+  }
+
+  public void setGross(double gross) {
+    this.gross = gross;
+  }
+  
+  public String getCatergory() {
+    return catergory;
+  }
+
+  public void setCatergory(String catergory) {
+    this.catergory = catergory;
+  }
+
+  public long getUserId() {
+    return userId;
+  }
+
+  public void setUserId(long userId) {
+    this.userId = userId;
+  }
+
+  public boolean isValidByUser() {
+    return validByUser;
+  }
+
+  public void setValidByUser(boolean validByUser) {
+    this.validByUser = validByUser;
+  }
+
+  public boolean isValidByCompany() {
+    return validByCompany;
+  }
+
+  public void setValidByCompany(boolean validByCompany) {
+    this.validByCompany = validByCompany;
+  }
 
   @Override
   public String toString() {
@@ -157,15 +209,19 @@ public class FeeItem {
       if (date.isEqual(begin) || date.isBefore(begin) || date.isAfter(end)) {
         // nothing
       } else {
-        result.add(getPartOfFeeItem(b, date));
+        FeeItem fee = getPartOfFeeItem(b, date);
+        
+        result.add(fee);
         b = date;
       }
     }
-    result.add(getPartOfFeeItem(b, end.plusDays(1)));
+    FeeItem last = getPartOfFeeItem(b, end.plusDays(1));
+    last.setId(this.id);
+    result.add(last);
     return result;
   }
 
-  // LocalDate b is enclusive
+  // LocalDate b is inclusive
   // LocalDate e is exclusive
   private FeeItem getPartOfFeeItem(LocalDate b, LocalDate e) {
     long all = begin.until(end, ChronoUnit.DAYS) + 1;
@@ -176,6 +232,9 @@ public class FeeItem {
     result.setEnd(e.minusDays(1));
     result.setNetAmount(round(netAmount * part / all, 2));
     result.setTaxAmount(round(taxAmount * part / all, 2));
+    result.setGross(round(gross * part / all, 2));
+    result.setValidByUser(false);
+    result.setValidByCompany(false);
     return result;
   }
   

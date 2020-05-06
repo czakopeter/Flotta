@@ -74,8 +74,6 @@ public class BillingController {
   
   @PostMapping("billing/billPartition")
   public String billPartitionTemplate(Model model, @RequestParam(name = "bill_id") long billId, @RequestParam(name = "template_id") long templateId) {
-    System.out.println("billId " + billId);
-    System.out.println("templateId " + templateId);
     if(service.billPartitionByTemplateId(billId, templateId)) {
 //      return "redirect:/billing/all";
       model.addAttribute("userFeeMap", service.splitting);
@@ -105,7 +103,6 @@ public class BillingController {
   
   @RequestMapping("finance")
   public String finance(Model model, Authentication auth) {
-    
     model.addAttribute("userFinance", service.getUserFinance(auth.getName()));
     return "billing_templates/finance";
   }

@@ -10,120 +10,92 @@
     <div class="shadow p-5 mb-5 bg-white rounded">
 
       <h2 style="font-style: italic;">Finances</h2>
-      
+
       <h3 th:text="${#authentication.getPrincipal().getFullName()}"></h3>
-      
+
       <div class="row">
-        <div class="col-1"><label>From</label></div>
-        <div class="col-2"><input type="date" class="form-control" /></div>
+        <div class="col-1">
+          <label>From</label>
+        </div>
+        <div class="col-2">
+          <input type="date" class="form-control"  />
+        </div>
       </div>
       <div class="row">
-        <div class="col-1"><label>To</label></div>
-        <div class="col-2"><input type="date" class="form-control" /></div>
-        <div class="col-1"><input type="button" class="btn btn-primary" value="search" /></div>
+        <div class="col-1">
+          <label>To</label>
+        </div>
+        <div class="col-2">
+          <input type="date" class="form-control" />
+        </div>
+        <div class="col-1">
+          <input type="button" class="btn btn-primary" value="search" />
+        </div>
       </div>
-      
+
       <br />
 
-<!--       <div th:each="oneCategory, i : ${userFinance}"> -->
-<!--         <div class="row"> -->
-<!--           <div class="col-1"><input type="button" class="btn btn-light" value="+" onclick="details(this, 'table' + ${i})" /></div> -->
-<!--           <div class="col-2" >Category:</div> -->
-<!--           <div class="col-2" th:text="${oneCategory.category}">Category name</div> -->
-<!--           <div class="col-2">Gross amount: </div> -->
-<!--           <div class="col-2" th:text="${oneCategory.totalGross}">2000 Ft</div> -->
-<!--         </div> -->
-<!--         <table id="'table' + ${i}" class="table" style="display : none"> -->
-<!--           <tr> -->
-<!--             <th>Subscription</th> -->
-<!--             <th>Description</th> -->
-<!--             <th>Begin</th> -->
-<!--             <th>End</th> -->
-<!--             <th>Gross amount</th> -->
-<!--           </tr> -->
-<!--           <tr th:each="feeItem : ${oneCategory.feeItems}"> -->
-<!--             <td th:text="${feeItem.subscription}"></td> -->
-<!--             <td th:text="${feeItem.description}"></td> -->
-<!--             <td th:text="${feeItem.begin}"></td> -->
-<!--             <td th:text="${feeItem.end}"></td> -->
-<!--             <td th:text="${feeItem.grossAmount} + ' Ft'"></td> -->
-<!--           </tr> -->
-<!--         </table> -->
-<!--       </div> -->
+      <div class="container" style="border: 1px solid #cecece; border-radius: 5px"
+        th:each="oneCategory, i : ${userFinance}"
+      >
+        <div class="row align-items-center">
+          <div class="col-1">
+<!--             <input type="button" class="btn btn-light btn-sm" value="+" th:onclick="|details(this, 'table${i.index}')|"/> -->
+<!--             <input type="button" class="btn btn-dark btn-sm btn-block" value="+" th:onclick="|details(this, 'table${i.index}')|"/> -->
+            <input type="button" class="btn btn-sm" style="background-color: #c1c1c1; color: white; border: 1px solid #cecece " value="+" th:onclick="|details(this, 'table${i.index}')|"/>
+          </div>
+          <div class="col-1">Category:</div>
+          <div class="col-2" th:text="${oneCategory.categoryName}">Category name</div>
+          <div class="col-2 text-right">Gross amount:</div>
+          <div class="col-2" th:text="${oneCategory.totalGross} + ' Ft'">Total gross</div>
+        </div>
+        <table th:id="|table${i.index}|" class="table" style="display: none">
+          <tr>
+            <th>Subscription</th>
+            <th>Description</th>
+            <th>Begin</th>
+            <th>End</th>
+            <th>Gross amount</th>
+          </tr>
+          <tr th:each="feeItem : ${oneCategory.feeItems}">
+            <td th:text="${feeItem.subscription}"></td>
+            <td th:text="${feeItem.description}"></td>
+            <td th:text="${feeItem.begin}"></td>
+            <td th:text="${feeItem.end}"></td>
+            <td th:text="${feeItem.gross} + ' Ft'"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-2 offset-4 text-right">Total gross amount:</div>
+          <div class="col-2">Total gross</div>
+        </div>
+      </div>
 
-      
-<!--       <div> -->
-<!--         <div class="row"> -->
-<!--           <div class="col-1"><input type="button" class="btn btn-light" value="+" onclick="openTable(this, 'table1')" /></div> -->
-<!--           <div class="col-2">Category:</div> -->
-<!--           <div class="col-2">Call</div> -->
-<!--           <div class="col-2">Gross amount: </div> -->
-<!--           <div class="col-2">2000 Ft</div> -->
-<!--         </div> -->
-<!--         <table id="table1" class="table" style="display : none"> -->
-<!--           <tr> -->
-<!--             <th>Subscription</th> -->
-<!--             <th>Description</th> -->
-<!--             <th>Begin</th> -->
-<!--             <th>End</th> -->
-<!--             <th>Gross Amount</th> -->
-<!--           </tr> -->
-<!--           <tr th:each="feeItem : ${feeItems}"> -->
-<!--             <td th:text="${feeItem.subscription}"></td> -->
-<!--             <td th:text="${feeItem.description}"></td> -->
-<!--             <td th:text="${feeItem.begin}"></td> -->
-<!--             <td th:text="${feeItem.end}"></td> -->
-<!--             <td th:text="${feeItem.netAmount} + ' Ft'"></td> -->
-<!--           </tr> -->
-<!--         </table> -->
-<!--         <div class="row"> -->
-<!--           <div class="col-1"></div> -->
-<!--           <div class="col-2">Category</div> -->
-<!--           <div class="col-2">Net amount</div> -->
-<!--           <div class="col-2">Tax amount</div> -->
-<!--         </div> -->
-<!--         <div class="row"> -->
-<!--           <div class="col-1"><input type="button" class="btn btn-light" value="+" onclick="openTable(this, 'table2')" /></div> -->
-<!--           <div class="col-2">Call</div> -->
-<!--           <div class="col-2">2000 Ft</div> -->
-<!--           <div class="col-2">270 Ft</div> -->
-<!--         </div> -->
-<!--         <table id="table2" class="table" style="display : none"> -->
-<!--           <tr> -->
-<!--             <th>Subscription</th> -->
-<!--             <th>Description</th> -->
-<!--             <th>Begin</th> -->
-<!--             <th>End</th> -->
-<!--             <th>Net Amount</th> -->
-<!--             <th>Tax Amount</th> -->
-<!--             <th>Tax Percentage</th> -->
-<!--           </tr> -->
-<!--           <tr th:each="feeItem : ${feeItems}"> -->
-<!--             <td th:text="${feeItem.subscription}"></td> -->
-<!--             <td th:text="${feeItem.description}"></td> -->
-<!--             <td th:text="${feeItem.begin}"></td> -->
-<!--             <td th:text="${feeItem.end}"></td> -->
-<!--             <td th:text="${feeItem.netAmount}"></td> -->
-<!--             <td th:text="${feeItem.taxAmount}"></td> -->
-<!--             <td th:text="${feeItem.taxPercentage}"></td> -->
-<!--           </tr> -->
-<!--         </table> -->
-<!--       </div> -->
 
-        <script th:inline="javascript">
-          //<![CDATA[
-          function details(button, table) {
-        	if(button.value == '+') {
-        		button.value = '-';
-        		document.getElementById(table).style.display = 'table';
-        	}else if(button.value == '-') {
-        		button.value = '+';
-        		document.getElementById(table).style.display = 'none';
-        	}
-          }
-          
-          //]]>
-        </script>
+      <script th:inline="javascript">
+							//<![CDATA[
+							function details(button, table) {
+								if (button.value == '+') {
+									button.value = '-';
+// 									button.classList.remove("btn-dark")
+// 									button.classList.add("btn-outline-dark")
+									button.style.color = "black";
+									button.style.backgroundColor = "white";
+									document.getElementById(table).style.display = 'table';
+								} else if (button.value == '-') {
+									button.value = '+';
+									button.style.color = "white";
+									button.style.backgroundColor = "#c1c1c1";
+// 									button.classList.add("btn-dark")
+// 									button.classList.remove("btn-outline-dark")
+									document.getElementById(table).style.display = 'none';
+								}
+							}
+
+							//]]>
+						</script>
 
 
 

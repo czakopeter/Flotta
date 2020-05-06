@@ -36,18 +36,21 @@ public class Bill {
   
   private double invoiceTaxAmount;
   
+  private double invoiceGrossAmount;
+  
   @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
   List<FeeItem> feeItems = new LinkedList<>();
   
   public Bill() {}
   
-  public Bill(String xmlString, LocalDate fromDate, LocalDate endDate, String invoiceNumber, Double invoiceNetAmount, Double invoiceTaxAmount) {
+  public Bill(String xmlString, LocalDate fromDate, LocalDate endDate, String invoiceNumber, Double invoiceNetAmount, Double invoiceTaxAmount, double invoiceGrossAmount) {
     this.xmlString = xmlString;
     this.fromDate = fromDate;
     this.endDate = endDate;
     this.invoiceNumber = invoiceNumber;
     this.invoiceNetAmount = invoiceNetAmount;
     this.invoiceTaxAmount = invoiceTaxAmount;
+    this.invoiceGrossAmount = invoiceGrossAmount;
   }
 
   public long getId() {
