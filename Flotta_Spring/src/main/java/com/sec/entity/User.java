@@ -1,6 +1,8 @@
 package com.sec.entity;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.sec.billing.PayDevision;
 import com.sec.entity.switchTable.UserDev;
 import com.sec.entity.switchTable.UserSub;
 
@@ -50,8 +53,27 @@ public class User {
 		inverseJoinColumns = {@JoinColumn(name="role_id")}  
 	)
 	private Set<Role> roles = new HashSet<Role>();
+
 	
-	public User() {}
+	
+	@ManyToMany
+	private List<PayDevision> payDevs = new LinkedList<>();
+	
+	public List<PayDevision> getPayDevs() {
+    return payDevs;
+  }
+
+  public void setPayDevs(List<PayDevision> payDevs) {
+    this.payDevs = payDevs;
+  }
+  
+  public void addPayDevision(PayDevision payDevision) {
+    this.payDevs.add(payDevision);
+  }
+
+  
+  
+  public User() {}
 
 	public Long getId() {
 		return id;

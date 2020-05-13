@@ -1,6 +1,5 @@
 package com.sec.billing.service;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,17 +7,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.sec.billing.Bill;
-import com.sec.billing.BillPartitionTemplate;
-import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
-import com.sec.billing.SplittedFeeItem;
-import com.sec.billing.exception.FileUploadException;
-import com.sec.billing.exception.UnknonwFeeItemDescriptionException;
 import com.sec.billing.repository.FeeItemRepository;
-import com.sec.entity.User;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
 
 @Service
@@ -59,10 +50,15 @@ public class FeeItemService {
 //  }
 
   public List<FeeItem> findAllByBillId(long id) {
-    return feeItemRepository.findAllByBill(id);
+    return feeItemRepository.findAllByBillId(id);
   }
 
   public List<FeeItem> findAllByUserId(long userId) {
     return feeItemRepository.findAllByUserId(userId);
+  }
+
+  public void save(List<FeeItem> fees) {
+    feeItemRepository.save(fees);
+    
   }
 }

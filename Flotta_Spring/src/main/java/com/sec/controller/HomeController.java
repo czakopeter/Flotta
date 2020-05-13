@@ -32,6 +32,7 @@ public class HomeController {
     model.addAttribute("name", service.findUser(a.getName()).getFullName());
     LocalDate date = service.findSimById(1).getSimSub().getConnect();
     model.addAttribute("date", date);
+    service.test();
     return "index";
   }
 

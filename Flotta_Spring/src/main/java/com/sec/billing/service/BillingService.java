@@ -13,7 +13,6 @@ import com.sec.billing.Bill;
 import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
-import com.sec.billing.SplittedFeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.exception.UnknonwFeeItemDescriptionException;
 import com.sec.entity.User;
@@ -142,5 +141,9 @@ public class BillingService {
 
   public List<OneCategoryOfUserFinance> getFinanceByUserId(long id) {
     return billService.getFinanceByUserId(id);
+  }
+
+  public void save(List<FeeItem> fees) {
+    billService.save(fees);
   }
 }

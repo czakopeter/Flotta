@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
 
 import com.sec.billing.Bill;
 import com.sec.billing.FeeItem;
-import com.sec.billing.SplittedFeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.repository.BillRepository;
 import com.sec.entity.User;
@@ -158,6 +157,10 @@ public class BillService {
 
   public List<OneCategoryOfUserFinance> getFinanceByUserId(long id) {
     return feeItemService.getFinanceByUserId(id);
+  }
+
+  public void save(List<FeeItem> fees) {
+    feeItemService.save(fees);
   }
 
 }

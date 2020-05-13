@@ -72,4 +72,9 @@ public class UserService implements UserDetailsService {
 	public User findById(long userId) {
 	  return userId == 0 ? null : userRepository.findOne(userId);
 	}
+
+  public void modify(User user) {
+    userRepository.save(user);
+    
+  }
 }

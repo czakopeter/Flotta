@@ -12,4 +12,6 @@ public interface FeeItemRepository extends CrudRepository<FeeItem, Long> {
   List<FeeItem> findAllByBill(long id);
 
   List<FeeItem> findAllByUserId(long userId);
+
+  List<FeeItem> findAllByBillId(long id);
 }

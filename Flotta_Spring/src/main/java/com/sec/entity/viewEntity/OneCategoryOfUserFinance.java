@@ -1,5 +1,7 @@
 package com.sec.entity.viewEntity;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,8 +22,8 @@ public class OneCategoryOfUserFinance {
   public OneCategoryOfUserFinance(long userId, String categoryName) {
     this.userId = userId;
     this.categoryName = categoryName;
-    this.totalGross = totalGross;
-  }
+    this.totalGross = 0;
+    }
 
   public OneCategoryOfUserFinance(String categoryName, long totalGross, List<FeeItem> feeItems) {
     this.categoryName = categoryName;
@@ -63,6 +65,15 @@ public class OneCategoryOfUserFinance {
   
   public void addFeeItem(FeeItem fee) {
     feeItems.add(fee);
-    totalGross += fee.getGross();
+    totalGross = round(totalGross + fee.getUserGross(), 2);
+  }
+  
+//https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places
+  private static double round(double value, int places) {
+    if (places < 0) throw new IllegalArgumentException();
+
+    BigDecimal bd = BigDecimal.valueOf(value);
+    bd = bd.setScale(places, RoundingMode.HALF_UP);
+    return bd.doubleValue();
   }
 }

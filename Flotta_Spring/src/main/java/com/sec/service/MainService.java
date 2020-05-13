@@ -1,7 +1,6 @@
 package com.sec.service;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +16,7 @@ import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.service.BillingService;
+import com.sec.billing.service.PayDevisionService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;
@@ -60,6 +60,8 @@ public class MainService {
 	private DevNoteService devNoteService;
 	
 	private BillingService billingService;
+	
+	private PayDevisionService payDevisionService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -110,11 +112,18 @@ public class MainService {
     this.billingService = billingService;
   }
 	
+	@Autowired
+	public void setPayDevisionService(PayDevisionService payDevisionService) {
+    this.payDevisionService = payDevisionService;
+  }
+	
 	public Map<User, List<FeeItem>> splitting = new HashMap<>();
 	
 	
 	//------- SUBSCRIPTION SERVICE --------
 
+
+  
 
   public List<SubscriptionToView> findAllSubscription() {
 		List<SubscriptionToView> list = new LinkedList<>();
@@ -270,40 +279,40 @@ public class MainService {
     return dtv;
   }
   
-  private DeviceToView toView(Device device, LocalDate date) {
-    DeviceToView dtv = new DeviceToView();
-    dtv.setId(device.getId());
-    dtv.setSerialNumber(device.getSerialNumber());
-    dtv.setTypeName(device.getDeviceType().getName());
-    
-//    dtv.setEditable(true);
-    
-    User user = userDevService.findLastUser(device);
-    if(user != null) {
-      dtv.setUserId(user.getId());
-      dtv.setUserName(user.getFullName());
-    } else {
-      dtv.setUserId(0);
-      dtv.setUserName("");
-    }
-    
-    Subscription sub = subDevService.findLastSub(device);
-    if(sub != null) {
-      dtv.setNumber(sub.getNumber());
-    } else {
-      dtv.setNumber("");
-    }
-    
-    DevNote note = devNoteService.findLastNote(device);
-    
-    if(note != null) {
-      dtv.setNote(note.getNote());
-    } else {
-      dtv.setNote("");
-    }
-    
-    return dtv;
-  }
+//  private DeviceToView toView(Device device, LocalDate date) {
+//    DeviceToView dtv = new DeviceToView();
+//    dtv.setId(device.getId());
+//    dtv.setSerialNumber(device.getSerialNumber());
+//    dtv.setTypeName(device.getDeviceType().getName());
+//    
+////    dtv.setEditable(true);
+//    
+//    User user = userDevService.findLastUser(device);
+//    if(user != null) {
+//      dtv.setUserId(user.getId());
+//      dtv.setUserName(user.getFullName());
+//    } else {
+//      dtv.setUserId(0);
+//      dtv.setUserName("");
+//    }
+//    
+//    Subscription sub = subDevService.findLastSub(device);
+//    if(sub != null) {
+//      dtv.setNumber(sub.getNumber());
+//    } else {
+//      dtv.setNumber("");
+//    }
+//    
+//    DevNote note = devNoteService.findLastNote(device);
+//    
+//    if(note != null) {
+//      dtv.setNote(note.getNote());
+//    } else {
+//      dtv.setNote("");
+//    }
+//    
+//    return dtv;
+//  }
   
   public List<DeviceToView> findAllDevices() {
     List<DeviceToView> list = new LinkedList<>();
@@ -378,31 +387,36 @@ public class MainService {
     return billingService.findAllBillPartitionTemplate();
   }
   
-  public boolean billPartitionByTemplateId(long billId, long templateId) {
-    Bill bill = billingService.findBillById(billId);
-    List<FeeItem> fees = bill.getFeeItems();
-    List<FeeItem> splittedFees = new LinkedList<>();
+  public boolean billDivisionByTemplateId(long billId, long templateId) {
+    List<FeeItem> fees = billingService.findAllFeeItemByBillId(billId);
+
+    fees = divideFeeItemsByUserChanges(fees);
+    fees = setFeeItemsUser(fees);
+    billingService.save(fees);
     
-    //split a fees by user using
+    return billingService.billPartitionByTemplateId(billId, templateId);
+  }
+  
+  private List<FeeItem> divideFeeItemsByUserChanges(List<FeeItem> fees) {
+    List<FeeItem> result = new LinkedList<>();
     for(FeeItem fee : fees) {
       String number = fee.getSubscription();
       LocalDate begin = fee.getBegin();
       LocalDate end = fee.getEnd();
       List<LocalDate> allNewUserBegin = userSubService.findAllBeginDateBySubBetween(number, begin, end);
-      splittedFees.addAll(fee.splitBeforeDate(allNewUserBegin));
+      result.addAll(fee.splitBeforeDate(allNewUserBegin));
     }
-    
-    //set userId of fee, if no user than 0
-    for(FeeItem fee : splittedFees) {
+    return result;
+  }
+  
+  private List<FeeItem> setFeeItemsUser(List<FeeItem> fees) {
+    for(FeeItem fee : fees) {
       User user = userSubService.getUser(fee.getSubscription(), fee.getBegin(), fee.getEnd());
       if(user != null) {
         fee.setUserId(user.getId());
       }
     }
-    
-    bill.setFeeItems(splittedFees);
-    
-    return billingService.billPartitionByTemplateId(billId, templateId);
+    return fees;
   }
   
   public List<Category> findAllCategory() {
@@ -425,4 +439,16 @@ public class MainService {
     User user = userService.findByEmail(email);
     return billingService.getFinanceByUserId(user.getId());
   }
+  
+  public void test() {
+    User user1 = userService.findById(1);
+    user1.addPayDevision(payDevisionService.get(1));
+    userService.modify(user1);
+    User user2 = userService.findById(2);
+    user2.addPayDevision(payDevisionService.get(1));
+    userService.modify(user2);
+    user1.setPayDevs(new LinkedList<>());
+    userService.modify(user1);
+  }
+  
 }

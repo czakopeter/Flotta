@@ -3,10 +3,7 @@ package com.sec.billing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,11 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.sec.entity.Subscription;
 
 @Entity
 @Table(name = "fee_items")
@@ -47,7 +39,9 @@ public class FeeItem {
 
   private double taxPercentage;
   
-  private double gross;
+  private double userGross;
+  
+  private double compGross;
   
   private String catergory;
   
@@ -60,7 +54,7 @@ public class FeeItem {
   public FeeItem() {
   }
 
-  public FeeItem(Bill bill, String subscription, String description, LocalDate begin, LocalDate end, double netAmount, double taxAmount, double taxPercentage, double gross) {
+  public FeeItem(Bill bill, String subscription, String description, LocalDate begin, LocalDate end, double netAmount, double taxAmount, double taxPercentage, double userGross) {
     this.bill = bill;
     this.subscription = subscription;
     this.description = description;
@@ -69,7 +63,7 @@ public class FeeItem {
     this.netAmount = netAmount;
     this.taxAmount = taxAmount;
     this.taxPercentage = taxPercentage;
-    this.gross = gross;
+    this.userGross = userGross;
   }
 
   public FeeItem(FeeItem feeItem) {
@@ -81,7 +75,8 @@ public class FeeItem {
     this.netAmount = feeItem.netAmount;
     this.taxAmount = feeItem.taxAmount;
     this.taxPercentage = feeItem.taxPercentage;
-    this.gross = feeItem.gross;
+    this.userGross = feeItem.userGross;
+    this.compGross = feeItem.compGross;
   }
 
   public long getId() {
@@ -156,14 +151,22 @@ public class FeeItem {
     this.taxPercentage = taxPercentage;
   }
   
-  public double getGross() {
-    return gross;
+  public double getUserGross() {
+    return userGross;
   }
 
-  public void setGross(double gross) {
-    this.gross = gross;
+  public void setUserGross(double userGross) {
+    this.userGross = userGross;
   }
   
+  public double getCompGross() {
+    return compGross;
+  }
+
+  public void setCompGross(double compGross) {
+    this.compGross = compGross;
+  }
+
   public String getCatergory() {
     return catergory;
   }
@@ -232,7 +235,8 @@ public class FeeItem {
     result.setEnd(e.minusDays(1));
     result.setNetAmount(round(netAmount * part / all, 2));
     result.setTaxAmount(round(taxAmount * part / all, 2));
-    result.setGross(round(gross * part / all, 2));
+    result.setUserGross(round(userGross * part / all, 2));
+    result.setCompGross(round(compGross * part / all, 2));
     result.setValidByUser(false);
     result.setValidByCompany(false);
     return result;
@@ -240,12 +244,12 @@ public class FeeItem {
   
   
   //https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places
-  public static double round(double value, int places) {
+  private static double round(double value, int places) {
     if (places < 0) throw new IllegalArgumentException();
 
     BigDecimal bd = BigDecimal.valueOf(value);
     bd = bd.setScale(places, RoundingMode.HALF_UP);
     return bd.doubleValue();
-}
+  }
 
 }

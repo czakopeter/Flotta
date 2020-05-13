@@ -74,7 +74,7 @@ public class BillingController {
   
   @PostMapping("billing/billPartition")
   public String billPartitionTemplate(Model model, @RequestParam(name = "bill_id") long billId, @RequestParam(name = "template_id") long templateId) {
-    if(service.billPartitionByTemplateId(billId, templateId)) {
+    if(service.billDivisionByTemplateId(billId, templateId)) {
 //      return "redirect:/billing/all";
       model.addAttribute("userFeeMap", service.splitting);
       return "billing_templates/splittedBill";
