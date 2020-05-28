@@ -9,9 +9,9 @@ INSERT INTO Users (email, password, full_name, enabled) VALUES ('f', 'f', 'False
 INSERT INTO Subscriptions(number) VALUES ('201234567')
 INSERT INTO Subscriptions(number) VALUES ('207654321')
 
-INSERT INTO Sims (imei, service_provider) VALUES ('imei1', 'Telekom')
-INSERT INTO Sims (imei, service_provider) VALUES ('imei2', 'Telekom')
-INSERT INTO Sims (imei, service_provider) VALUES ('imei3', 'Telekom')
+INSERT INTO Sims (imei, pin, puk) VALUES ('imei1', '1111', '1111111111')
+INSERT INTO Sims (imei, pin, puk) VALUES ('imei2', '2222', '2222222222')
+INSERT INTO Sims (imei, pin, puk) VALUES ('imei3', '3333', '3333333333')
 
 INSERT INTO Sub_note (note, sub_id, date) VALUES ('', 1, to_date('20-01-01', 'RR-MM-DD'))
 INSERT INTO Sub_note (note, sub_id, date) VALUES ('', 2, to_date('20-01-02', 'RR-MM-DD'))

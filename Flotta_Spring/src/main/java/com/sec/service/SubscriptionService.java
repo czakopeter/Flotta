@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.sec.repo.SubscriptionRepository;
 import com.sec.status.service.SubscriptionStatusService;
 import com.sec.entity.Subscription;
+import com.sec.entity.User;
 import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.enums.SubscriptionStatusEnum;
 

@@ -12,7 +12,7 @@ import com.sec.repo.SimRepository;
 import com.sec.status.service.SimStatusService;
 
 @Service
-public class SimService {
+public class SimService extends ServiceWithMsg {
 	
 	private SimRepository simRepository;
 	
@@ -69,6 +69,17 @@ public class SimService {
     Sim sim = simRepository.findOne(simId);
     if(sim != null && !sim.isFree()) {
       simStatusService.modifyLastStatus(sim, imeiChangeReason);
+    }
+  }
+
+  public boolean add(Sim sim) {
+    Sim check = simRepository.findByImei(sim.getImei());
+    if(check == null) {
+      simRepository.save(sim);
+      return true;
+    } else {
+      appendMsg("Imei (" + sim.getImei() + ") already exists");
+      return false;
     }
   }
 }

@@ -30,6 +30,8 @@ public class SubscriptionToView {
 	
 	private boolean editable;
 	
+	
+	
 	public SubscriptionToView() {
 	}
 

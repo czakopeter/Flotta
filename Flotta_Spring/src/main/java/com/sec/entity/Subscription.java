@@ -54,6 +54,8 @@ public class Subscription {
   @MapKey(name = "date")
   private Map<LocalDate, SubscriptionStatus> statuses = new HashMap<>();
   
+  private LocalDate createDate;
+  
   public Subscription() {
   }
 
@@ -115,6 +117,14 @@ public class Subscription {
 
   public void setStatuses(Map<LocalDate, SubscriptionStatus> statuses) {
     this.statuses = statuses;
+  }
+  
+  public LocalDate getCreateDate() {
+    return createDate;
+  }
+
+  public void setCreateDate(LocalDate createDate) {
+    this.createDate = createDate;
   }
 
   @Override

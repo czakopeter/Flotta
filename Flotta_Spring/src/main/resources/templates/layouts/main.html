@@ -8,9 +8,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Flotta</title>
 
-<!-- <link rel="stylesheet" href="../static/css/blog.css" th:href="@{/css/blog.css}" /> -->
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" /> -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="/css/my.css" th:href="@{/css/my.css}" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
 
 <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
 <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />
@@ -22,31 +21,29 @@
 </head>
 <body>
 
-
-  <div class="navbar navbar-expand bg-light mx-1"
-    style="border-width: 1px; border-style: solid ; border-color: #cccccc;border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;"
-  >
+  
+  <div class="navbar navbar-expand mx-1 my-menu">
     <div sec:authorize="isAuthenticated()" class="navbar-nav">
       <ul class="nav nav-pills">
         <li class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'Homepage' ? 'active' :''" href="/" th:text="#{main.homepage}"
         >Homepage</a></li>
         <li class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Subscriptions' ? 'active' :''" href="/subscription/all"
+          th:classappend="${title} == 'Subscription' ? 'active' :''" href="/subscription/all"
           th:text="#{main.subscriptions}"
         >Subscription</a></li>
         <li class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Users' ? 'active' :''" href="/users" th:text="#{main.users}"
+          th:classappend="${title} == 'User' ? 'active' :''" href="/users" th:text="#{main.users}"
         >User</a></li>
         <li class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Sims' ? 'active' :''" href="/sims" th:text="#{main.sims}"
+          th:classappend="${title} == 'Sim' ? 'active' :''" href="/sim/all" th:text="#{main.sims}"
         >Sim</a></li>
         <li class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Devices' ? 'active' :''" href="/device/all"
+          th:classappend="${title} == 'Device' ? 'active' :''" href="/device/all"
           th:text="#{main.devices}"
         >Device</a></li>
         <li class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'DeviceTypes' ? 'active' :''" href="/deviceTypes"
+          th:classappend="${title} == 'DeviceType' ? 'active' :''" href="/deviceTypes"
           th:text="#{main.deviceTypes}"
         >Device type</a></li>
         <li class="nav-item"><a class="nav-link"
@@ -87,8 +84,9 @@
 
   </div>
 
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -32,8 +32,10 @@ public class Sim {
 
   @Column(unique = true)
   private String imei;
-
-  private String serviceProvider;
+  
+  private String pin;
+  
+  private String puk;
 
   @OneToOne(mappedBy = "sim")
   @JoinColumn(name = "sub_id")
@@ -61,13 +63,21 @@ public class Sim {
   public void setImei(String imei) {
     this.imei = imei;
   }
-
-  public String getServiceProvider() {
-    return serviceProvider;
+  
+  public String getPin() {
+    return pin;
   }
 
-  public void setServiceProvider(String serviceProvider) {
-    this.serviceProvider = serviceProvider;
+  public void setPin(String pin) {
+    this.pin = pin;
+  }
+
+  public String getPuk() {
+    return puk;
+  }
+
+  public void setPuk(String puk) {
+    this.puk = puk;
   }
 
   public SubSim getSimSub() {

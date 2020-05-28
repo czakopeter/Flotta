@@ -450,5 +450,25 @@ public class MainService {
     user1.setPayDevs(new LinkedList<>());
     userService.modify(user1);
   }
+
+  //TODO write get all actual user's subscription
+  public List<SubscriptionToView> findAllSubscriptionByUser(String email) {
+    User user = userService.findByEmail(email);
+    return new LinkedList<>();
+  }
+  
+  //TODO write get all actual user's device
+  public List<DeviceToView> findAllDeviceByUser(String email) {
+    User user = userService.findByEmail(email);
+    return new LinkedList<>();
+  }
+
+  public boolean addSim(Sim sim) {
+    return simService.add(sim);
+  }
+
+  public String getSimError() {
+    return simService.removeMsg();
+  }
   
 }

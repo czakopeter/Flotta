@@ -71,8 +71,6 @@ public class User {
     this.payDevs.add(payDevision);
   }
 
-  
-  
   public User() {}
 
 	public Long getId() {
