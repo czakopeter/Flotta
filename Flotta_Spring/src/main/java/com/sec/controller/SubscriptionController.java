@@ -1,6 +1,7 @@
 package com.sec.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.sec.entity.Sim;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.service.MainService;
@@ -26,25 +28,27 @@ public class SubscriptionController {
   }
 
   @ModelAttribute
-  public void test(Model model) {
-    System.out.println("\nSUBSCRIPTION");
+  public void title(Model model) {
+    model.addAttribute("title", "Subscription");
   }
 
   @RequestMapping("/subscription/all")
   public String subscriptions(Model model) {
-    model.addAttribute("title", "Subscriptions");
-    model.addAttribute("canCreateNew", "Subscriptions");
+    model.addAttribute("canCreateNew", service.canCreateSubscription());
     model.addAttribute("subscriptions", service.findAllSubscription());
     return "subscription_templates/subscriptionAll";
   }
 
   @RequestMapping("/subscription/new")
   public String addSubscription(Model model) {
-    model.addAttribute("title", "Subscriptions");
-    model.addAttribute("subscription", new SubscriptionToView());
-    model.addAttribute("users", service.findAllUser());
-    model.addAttribute("sims", service.findAllFreeSim());
-    return "subscription_templates/subscriptionNew";
+    
+    if(service.canCreateSubscription()) {
+      model.addAttribute("subscription", new SubscriptionToView());
+      model.addAttribute("freeSims", service.findAllFreeSim());
+      return "subscription_templates/subscriptionNew";
+    } else {
+      return "redirect:/subscription/all";
+    }
   }
 
   @PostMapping("/subscription/new")
@@ -52,13 +56,10 @@ public class SubscriptionController {
     String[] orderPart = order.split(" ");
     switch (orderPart[0]) {
     case "save":
-      if (service.saveSubscription(stv)) {
+      if (service.addSubscription(stv)) {
         return "redirect:/subscription/all";
       } else {
         model.addAttribute("subscription", stv);
-        model.addAttribute("users", service.findAllUser());
-        model.addAttribute("sims", service.findAllFreeSim());
-        model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
         model.addAttribute("error", service.getSubscriptionServiceError());
         return "subscription_templates/subscriptionNew";
       }
@@ -77,10 +78,9 @@ public class SubscriptionController {
 
   @RequestMapping("/subscription/{id}")
   public String subscription(Model model, @PathVariable("id") long id) {
-    model.addAttribute("title", "Subscriptions");
     SubscriptionToView stv = service.findSubscriptionById(id);
     model.addAttribute("subscription", stv);
-    model.addAttribute("sims", service.findAllFreeSim());
+    model.addAttribute("freeSims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
     model.addAttribute("dates", service.findSubscriptionDatesById(id));
@@ -116,7 +116,7 @@ public class SubscriptionController {
     default:
       break;
     }
-    model.addAttribute("sims", service.findAllFreeSim());
+    model.addAttribute("freeSims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
     model.addAttribute("dates", service.findSubscriptionDatesById(id));

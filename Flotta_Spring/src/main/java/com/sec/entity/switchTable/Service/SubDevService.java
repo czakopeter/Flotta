@@ -1,6 +1,7 @@
 package com.sec.entity.switchTable.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ public class SubDevService {
     this.subDevRepository = userSubRepository;
   }
 
-  public void save(Subscription sub, Device dev, LocalDate date) {
-    SubDev entity = new SubDev(sub, dev, date);
-    subDevRepository.save(entity);
-  }
+//  public void save(Subscription sub, Device dev, LocalDate date) {
+//    SubDev entity = new SubDev(sub, dev, date);
+//    subDevRepository.save(entity);
+//  }
+  
+  
 
   public void updateFromSubscription(Subscription sub, Device dev, LocalDate date) {
     if (sub == null) {
@@ -178,11 +181,50 @@ public class SubDevService {
     } else if (d1 == null || d2 == null) {
       return false;
     }
-    return d1.getId().equals(d2.getId());
+//    return d1.getId().equals(d2.getId());
+    return true;
   }
 
   public Subscription findLastSub(Device device) {
     return subDevRepository.findFirstByDevOrderByConnectDesc(device).getSub();
   }
 
+  public SubDev findBySubIdAndDate(long id, LocalDate date) {
+    return subDevRepository.findFirstBySubIdAndConnectBeforeOrderByConnectDesc(id, date);
+  }
+
+  public void save(Subscription subscription, Device device, LocalDate date) {
+    if((subscription == null && device == null) || date == null) {
+//      throw new IllegalArgumentException("");
+    }
+    
+    SubDev lastBySub = null;
+    if(subscription != null) {
+      lastBySub = subDevRepository.findFirstBySubOrderByConnectDesc(subscription);
+    }
+    SubDev lastByDev = null;
+    if(device != null) {
+      lastByDev = subDevRepository.findFirstByDevOrderByConnectDesc(device);
+    }
+    if(lastBySub == null) {
+      subDevRepository.save(new SubDev(subscription, device, date));
+    } else {
+      if(date.isEqual(lastBySub.getConnect())) {
+        lastBySub.setDev(device);
+        subDevRepository.save(lastBySub);
+      } else if(date.isAfter(lastBySub.getConnect())) {
+        if(!equals(device, lastBySub.getDev())) {
+          if(lastBySub.getDev() != null) {
+            subDevRepository.save(new SubDev(null, lastBySub.getDev(), date));
+          }
+          subDevRepository.save(new SubDev(subscription, device, date));
+        }
+      }
+    }
+  }
+
+  public List<LocalDate> findAllDatesBySubId(long id) {
+    return subDevRepository.findAllDatesBySubId(id);
+  }
+  
 }

@@ -24,8 +24,8 @@
         <th>Brand</th>
         <th>Model</th>
         <th>Name</th>
-        <th>SIM number</th>
-        <th>Has MicroSD slot</th>
+<!--         <th>SIM number</th> -->
+<!--         <th>Has MicroSD slot</th> -->
         <th>Visible</th>
 <!--         <th style="display: none;">Visible</th> -->
         <th></th>
@@ -35,8 +35,8 @@
         <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
         <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
         <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
-        <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
-        <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+<!--         <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td> -->
+<!--         <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td> -->
         <td th:id="visible + ${i.count}"  th:text="${deviceType.visible}"></td>
         <td><button type="button" class="btn btn-primary"
             th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
@@ -46,7 +46,7 @@
 
 
     <!-- Modal -->
-    <div class="modal " id="edit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal" id="edit" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
         <form id="modalForm" action="/deviceTypes" th:object="${deviceType}" method="post">
@@ -76,17 +76,17 @@
                 <label class="form-control-label">Model</label> <input type="text" id="model"
                   name="model" class="form-control" oninput="nameAutoComplete()" required="required" placeholder="Model" />
               </div>
-              <div class="form-group">
-                <label class="form-control-label">SIM number</label> <select id="simNumber"
-                  name="simNumber" class="form-control" oninput="nameAutoComplete()">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-control-label">Has MicroSD slot</label> <input type="checkbox"
-                  id="microsd" name="microsd" />
-              </div>
+<!--               <div class="form-group"> -->
+<!--                 <label class="form-control-label">SIM number</label> <select id="simNumber" -->
+<!--                   name="simNumber" class="form-control" oninput="nameAutoComplete()"> -->
+<!--                   <option value="1">1</option> -->
+<!--                   <option value="2">2</option> -->
+<!--                 </select> -->
+<!--               </div> -->
+<!--               <div class="form-group"> -->
+<!--                 <label class="form-control-label">Has MicroSD slot</label> <input type="checkbox" -->
+<!--                   id="microsd" name="microsd" /> -->
+<!--               </div> -->
               <div class="form-group">
                 <label class="form-control-label">Visible</label> <input type="checkbox"
                   id="visible" name="visible" />
@@ -108,53 +108,50 @@
 
     <script th:inline="javascript">
 		//<![CDATA[
-			window.onload = function() {
-				change_visible();
-			};
+// 			window.onload = function() {
+// 				change_visible();
+// 			};
 			
-		function change_visible() {
-			var table = document.getElementById('table');
-			var row;
-			if(document.getElementById('visible').checked) {
-				alert(table);
-				for (row of table.rows) {
-					row.style.display = '';
-				}
-			} else {
-				for (row of table.rows) {
-					if(row.cells[6].innerHTML == 'false') {
-						row.style.display = 'none';
-					}
-				}
-			}
-		}
+// 		function change_visible() {
+// 			var table = document.getElementById('table');
+// 			var row;
+// 			if(document.getElementById('visible').checked) {
+// 				alert(table);
+// 				for (row of table.rows) {
+// 					row.style.display = '';
+// 				}
+// 			} else {
+// 				for (row of table.rows) {
+// 					if(row.cells[6].innerHTML == 'false') {
+// 						row.style.display = 'none';
+// 					}
+// 				}
+// 			}
+// 		}
 		
 		function reset_modal() {
 			document.getElementById('id').value = '';
 			document.getElementById('brand').value = '';
 			document.getElementById('model').value = '';
 			document.getElementById('name').value = '';
-			document.getElementById('simNumber').value = '1';
-			document.getElementById('microsd').checked = true;
+// 			document.getElementById('simNumber').value = '1';
+// 			document.getElementById('microsd').checked = true;
 			document.getElementById('visible').checked = true;
 		}
 		
 		function set_modal(i) {
-			alert(document.getElementById('microsd').checked);
-			alert(document.getElementById('microsd' + i).innerHTML);
 			document.getElementById('id').value = document.getElementById('id' + i).innerHTML;
 			document.getElementById('brand').value = document.getElementById('brand' + i).innerHTML;
 			document.getElementById('model').value = document.getElementById('model' + i).innerHTML;
 			document.getElementById('name').value = document.getElementById('name' + i).innerHTML;
-			document.getElementById('simNumber').value = document.getElementById('simNumber' + i).innerHTML;
-			document.getElementById('microsd').checked = document.getElementById('microsd' + i).innerHTML;
-			document.getElementById('visible').checked = document.getElementById('visible' + i).innerHTML;
+// 			document.getElementById('simNumber').value = document.getElementById('simNumber' + i).innerHTML;
+// 			document.getElementById('microsd').checked = document.getElementById('microsd' + i).innerHTML;
+			document.getElementById('visible').checked = document.getElementById('visible' + i).innerHTML == 'true' ? true : false;
 		}
 		
 		function nameAutoComplete() {
-			var sim = document.getElementById('simNumber').value;
 			if(document.getElementById('autoNameGenerate').checked) {
-				document.getElementById('name').value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
+				document.getElementById('name').value = document.getElementById('brand').value + ' ' + document.getElementById('model').value;
 			}
 		}
 		
@@ -162,7 +159,7 @@
 			var name = document.getElementById('name');
 			if(document.getElementById('autoNameGenerate').checked) {
 				name.readOnly = true;
-				name.value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
+				name.value = document.getElementById('brand').value + ' ' + document.getElementById('model').value;
 			} else {
 				name.readOnly = false;
 			}

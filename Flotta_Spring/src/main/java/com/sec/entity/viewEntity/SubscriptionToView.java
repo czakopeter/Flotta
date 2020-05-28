@@ -9,6 +9,8 @@ public class SubscriptionToView {
   
 	private String number;
 	
+	private String oldImei;
+	
 	private String imei;
 	
 	private String imeiChangeReason;
@@ -26,6 +28,9 @@ public class SubscriptionToView {
   @DateTimeFormat (pattern="yyyy-MM-dd")
 	private LocalDate date;
 	
+  @DateTimeFormat (pattern="yyyy-MM-dd")
+  private LocalDate createDate;
+  
 	private String min;
 	
 	private boolean editable;
@@ -48,8 +53,16 @@ public class SubscriptionToView {
 	public void setNumber(String number) {
 		this.number = number;
 	}
+	
+	public String getOldImei() {
+    return oldImei;
+  }
 
-	public String getImei() {
+  public void setOldImei(String oldImei) {
+    this.oldImei = oldImei;
+  }
+
+  public String getImei() {
 		return imei;
 	}
 
@@ -113,7 +126,15 @@ public class SubscriptionToView {
 		this.date = date;
 	}
 
-	public String getMin() {
+	public LocalDate getCreateDate() {
+    return createDate;
+  }
+
+  public void setCreateDate(LocalDate createDate) {
+    this.createDate = createDate;
+  }
+
+  public String getMin() {
 		return min;
 	}
 
@@ -129,10 +150,4 @@ public class SubscriptionToView {
 		this.editable = editable;
 	}
 
-  @Override
-  public String toString() {
-    return "SubscriptionToView [number=" + number + ", imei=" + imei + ", imeiChangeReason=" + imeiChangeReason + ", userId=" + userId + ", userName=" + userName + ", deviceId=" + deviceId + ", deviceName=" + deviceName + ", date=" + date + ", min=" + min + "]";
-  }
-
-	
 }

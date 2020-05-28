@@ -22,7 +22,7 @@ public class SubscriptionStatus {
   private long id;
   
   @ManyToOne(fetch = FetchType.LAZY)
-  private Subscription sub;
+  private Subscription subscription;
   
   private SubscriptionStatusEnum status;
   
@@ -31,9 +31,9 @@ public class SubscriptionStatus {
   public SubscriptionStatus() {
   }
 
-  public SubscriptionStatus(SubscriptionStatusEnum status, Subscription sub, LocalDate date) {
+  public SubscriptionStatus(SubscriptionStatusEnum status, Subscription subscription, LocalDate date) {
     this.status = status;
-    this.sub = sub;
+    this.subscription = subscription;
     this.date = date;
   }
 
@@ -45,12 +45,12 @@ public class SubscriptionStatus {
     this.id = id;
   }
 
-  public Subscription getSub() {
-    return sub;
+  public Subscription getSubscription() {
+    return subscription;
   }
 
-  public void setSub(Subscription sub) {
-    this.sub = sub;
+  public void setSubscription(Subscription subscription) {
+    this.subscription = subscription;
   }
 
   public SubscriptionStatusEnum getStatus() {

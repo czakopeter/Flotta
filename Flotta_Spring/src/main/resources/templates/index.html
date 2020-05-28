@@ -9,17 +9,68 @@
 
     <div class="shadow p-5 mb-5 bg-white rounded">
 
-      <h2 th:text="#{main.greeting} + ' ' + ${name} + '!'"></h2>
-      
-      <br />
-      
+      <h2 th:text="#{main.greeting} + ' ' + ${user.fullName} + '!'"></h2>
 
+      <br />
+
+      <div class="container my-border">
+        <div th:if="${#lists.isEmpty(user.subscriptions)}">
+          <label th:text="#{homepage.dontHaveAnySubscriptions}"></label>
+        </div>
+        <div th:unless="${#lists.isEmpty(user.subscriptions)}">
+
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th th:text="#{subscription.phoneNumber}">Number</th>
+                <th th:text="#{subscription.imei}">IMEI</th>
+                <th th:text="#{subscription.user}">User</th>
+                <th th:text="#{subscription.device}">Device</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr th:each="subscription : ${user.subscriptions}">
+              <td th:text="${subscription.number}"></td>
+              <td th:text="${subscription.sim?.imei}"></td>
+              <td th:text="${subscription.user?.fullName}"></td>
+              <td th:text="${subscription.device?.deviceType?.name}"></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="container my-border">
+        <div th:if="${#lists.isEmpty(user.devices)}">
+          <label th:text="#{homepage.dontHaveAnyDevices}"></label>
+        </div>
+        <div th:unless="${#lists.isEmpty(user.devices)}">
+
+          <table class="table table-sm">
+            <thead>
+              <tr>
+              
+                <th th:text="#{device.serialNumber}">Serial number</th>
+                <th th:text="#{device.typeName}">Type name</th>
+                <th th:text="#{device.user}">User</th>
+                <th th:text="#{device.subscription}">Subscription</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr th:each="device : ${user.devices}">
+              <td th:text="${device.serialNumber}"></td>
+              <td th:text="${device.deviceType.name}"></td>
+              <td th:text="${device.user?.fullName}"></td>
+              <td th:text="${device.subscription?.number}"></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
     </div>
 
 
   </div>
-
-
-
 </body>
 </html>

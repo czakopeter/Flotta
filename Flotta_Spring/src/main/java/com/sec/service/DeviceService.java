@@ -43,6 +43,7 @@ public class DeviceService {
   }
   
   public Device findById(long id) {
+    if(0 == id) {return null;}
     return deviceRepository.findOne(id);
   }
 
@@ -106,5 +107,13 @@ public class DeviceService {
 
   public void deleteLastSatus(Device dev) {
     deviceStatusService.deleteLastStatus(dev);
+  }
+
+  public Device findByIdAndDate(long id, LocalDate date) {
+    return null;
+  }
+
+  public List<LocalDate> findDevicesDatesById(long id) {
+    return null;
   }
 }

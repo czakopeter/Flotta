@@ -1,7 +1,9 @@
 package com.sec.entity.switchTable.Repo;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.sec.entity.Device;
@@ -17,5 +19,12 @@ public interface SubDevRepository extends CrudRepository<SubDev, Long> {
   SubDev findFirstByDevOrderByConnectDesc(Device device);
 
   SubDev findFirstByDevAndConnectBeforeOrderByConnectDesc(Device dev, LocalDate date);
+
+  SubDev findFirstBySubIdAndConnectBeforeOrderByConnectDesc(long id, LocalDate date);
+
+  List<SubDev> findAllBySub(Subscription subscription);
+
+  @Query("select sd.connect from SubDev sd where sd.sub.id = ?1")
+  List<LocalDate> findAllDatesBySubId(long id);
   
 }

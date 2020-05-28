@@ -9,7 +9,7 @@
 
     <h2 th:text="#{main.subscriptions}">Subscriptions</h2>
 
-    <a th:if="canCreateNew" href="/subscription/new" class="btn btn-primary my-2"
+    <a th:if="${canCreateNew}" href="/subscription/new" class="btn btn-primary my-2"
       th:text="#{button.new}"
     >New</a>
 

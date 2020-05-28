@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.sec.entity.Device;
 import com.sec.entity.Sim;
+import com.sec.entity.Subscription;
 import com.sec.entity.User;
 import com.sec.service.MainService;
 import com.sec.service.UserDetailsImpl;
@@ -26,19 +28,21 @@ public class HomeController {
     this.service = service;
   }
 
+  @ModelAttribute
+  public void title(Model model) {
+    model.addAttribute("title", "Homepage");
+  }
+  
   @RequestMapping("/")
   public String home(Model model, Authentication a) {
-    model.addAttribute("title", "Homepage");
-    model.addAttribute("name", service.findUser(a.getName()).getFullName());
-    LocalDate date = service.findSimById(1).getSimSub().getConnect();
-    model.addAttribute("date", date);
-    service.test();
+    
+    model.addAttribute("user", service.findUser(a.getName()));
     return "index";
   }
-
+  
   @RequestMapping("/users")
   public String users(Model model, Authentication a) {
-    model.addAttribute("title", "Users");
+//    model.addAttribute("title", "Users");
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("user", new User());
     return "users";
@@ -75,31 +79,7 @@ public class HomeController {
     }
   }
 
-  @RequestMapping("/sims")
-  public String simsList(Model model) {
-    model.addAttribute("title", "Sims");
-//    model.addAttribute("sims", service.findAllFreeSim());
-    model.addAttribute("sims", service.findAllSim());
-    model.addAttribute("sim", new Sim());
-    return "sim_templates/sims";
-  }
   
-  @PostMapping("/sims")
-  public String sims(Model model, @ModelAttribute Sim sim, @RequestParam(name = "command") String command, @RequestParam(name = "date") String date) {
-    System.out.println(date);
-    switch (command) {
-    case "add":
-      service.saveSim(sim, LocalDate.parse(date));
-      break;
-    default: 
-      break;
-    }
-    model.addAttribute("title", "Sims");
-//    model.addAttribute("sims", service.findAllFreeSim());
-    model.addAttribute("sims", service.findAllSim());
-    model.addAttribute("sim", new Sim());
-    return "sim_templates/sims";
-  }
   
   
 }

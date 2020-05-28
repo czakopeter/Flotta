@@ -42,7 +42,7 @@ public class DeviceTypeService {
       return name == null || brandAndModel == null;
     } else {
       DeviceType id = deviceTypeRepository.findOne(deviceType.getId());
-      if(id.getDevices() != null && id.getDevices().size() > 0 && (id.getSimNumber() > deviceType.getSimNumber() || (id.isMicrosd() && !deviceType.isMicrosd()))) {
+      if(id.getDevices() != null && id.getDevices().size() > 0 ) {
         return false;
       } else {
         if((name != null && name.getId() != id.getId()) && (brandAndModel != null && brandAndModel.getId() != id.getId())) {

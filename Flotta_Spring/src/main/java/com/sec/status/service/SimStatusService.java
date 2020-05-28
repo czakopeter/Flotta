@@ -39,7 +39,7 @@ public class SimStatusService {
   }
   
   public void deleteLastStatus(Sim sim) {
-    SimStatus status = simStatusRepository.findFirstBySimOrderByConnectDesc(sim);
+    SimStatus status = simStatusRepository.findFirstBySimOrderByBeginDesc(sim);
     if(status != null && !status.isFree()) {
       simStatusRepository.delete(status);
     }
@@ -50,7 +50,7 @@ public class SimStatusService {
 //  }
 
   public void modifyLastStatus(Sim sim, String imeiChangeReason) {
-    SimStatus ss = simStatusRepository.findFirstBySimOrderByConnectDesc(sim);
+    SimStatus ss = simStatusRepository.findFirstBySimOrderByBeginDesc(sim);
     ss.setStatus(SimStatusEnum.valueOf(imeiChangeReason));
     simStatusRepository.save(ss);
   }

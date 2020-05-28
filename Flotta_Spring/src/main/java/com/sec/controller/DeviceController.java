@@ -25,32 +25,15 @@ public class DeviceController {
   public void setMainService(MainService service) {
     this.service = service;
   }
-
-  /*
-   * @ModelAttribute public void test(Model model) { model.addAttribute("test",
-   * "test"); }
-   */
-
-  @RequestMapping("/deviceTypes")
-  public String deviceTypes(Model model) {
-    model.addAttribute("title", "DeviceTypes");
-    model.addAttribute("deviceTypes", service.findAllDeviceTypes());
-    model.addAttribute("brandList", service.findAllBrandOfDevicesType());
-    model.addAttribute("deviceType", new DeviceType());
-    return "device_templates/deviceTypes";
-  }
   
-  @PostMapping("/deviceTypes")
-  public String postDeviceTypes(Model model, @ModelAttribute DeviceType outDT) {
-    System.out.println(outDT);
-    service.saveDeviceType(outDT);
-    return deviceTypes(model);
+  @ModelAttribute
+  public void title(Model model) {
+    model.addAttribute("title", "Device");
   }
-  
+
   // TODO ha nincs DeviceType az adatbázisban akkor lehessen felvenni új Device-t
   @RequestMapping("/device/all")
   public String devices(Model model) {
-    model.addAttribute("title", "Devices");
     model.addAttribute("canCreateNew", !service.findAllBrandOfDevicesType().isEmpty());
     model.addAttribute("devices", service.findAllDevices());
     return "device_templates/deviceAll";

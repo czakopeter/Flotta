@@ -46,7 +46,6 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/login?logout")
 				.permitAll();
 		
-		
 		//adatbázis elérése böngészőből
 		http.csrf().disable();
 		http.headers().frameOptions().disable();

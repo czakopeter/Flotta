@@ -26,7 +26,7 @@ public class SubscriptionStatusService {
   }
   
   public List<SubscriptionStatus> findAllBySub(Subscription sub) {
-    return subscriptionStatusRepository.findAllBySub(sub);
+    return subscriptionStatusRepository.findAllBySubscription(sub);
   }
 
   public boolean save(Subscription sub, SubscriptionStatusEnum status, LocalDate date) {
@@ -35,8 +35,8 @@ public class SubscriptionStatusService {
   }
   
   public void deleteLastStatus(Subscription sub) {
-    long pcs = subscriptionStatusRepository.countBySub(sub);
-    SubscriptionStatus status = subscriptionStatusRepository.findFirstBySubOrderByDateDesc(sub);
+    long pcs = subscriptionStatusRepository.countBySubscription(sub);
+    SubscriptionStatus status = subscriptionStatusRepository.findFirstBySubscriptionOrderByDateDesc(sub);
     if(pcs == 1) {
       status.setStatus(SubscriptionStatusEnum.FREE);
       subscriptionStatusRepository.save(status);
@@ -46,12 +46,12 @@ public class SubscriptionStatusService {
   }
 
   public void setStatus(Subscription sub, SubscriptionStatusEnum status, LocalDate date) {
-    long pcs = subscriptionStatusRepository.countBySub(sub);
+    long pcs = subscriptionStatusRepository.countBySubscription(sub);
     
     if(pcs == 0) {
       subscriptionStatusRepository.save(new SubscriptionStatus(status, sub, date));
     } else {
-      SubscriptionStatus last = subscriptionStatusRepository.findFirstBySubOrderByDateDesc(sub);
+      SubscriptionStatus last = subscriptionStatusRepository.findFirstBySubscriptionOrderByDateDesc(sub);
       if(date.isAfter(last.getDate())) {
         //add new status
         if(!status.equals(last.getStatus())) {
@@ -59,7 +59,7 @@ public class SubscriptionStatusService {
         }
       } else if (date.isEqual(last.getDate())) {
         //modify last
-        SubscriptionStatus lastBefore = subscriptionStatusRepository.findFirstBySubAndDateBeforeOrderByDateDesc(sub, date);
+        SubscriptionStatus lastBefore = subscriptionStatusRepository.findFirstBySubscriptionAndDateBeforeOrderByDateDesc(sub, date);
         if(lastBefore != null && lastBefore.getStatus().equals(status)) {
           subscriptionStatusRepository.delete(last.getId());
         } else {

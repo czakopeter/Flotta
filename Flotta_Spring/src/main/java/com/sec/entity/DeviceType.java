@@ -24,9 +24,9 @@ public class DeviceType {
   
   private String name;
 
-  private int simNumber;
+//  private int simNumber;
 
-  private boolean microsd;
+//  private boolean microsd;
 
   @OneToMany(mappedBy = "deviceType")
   private List<Device> devices;
@@ -77,21 +77,21 @@ public class DeviceType {
     this.name = name.trim().replaceAll("\\s+", " ");
   }
 
-  public int getSimNumber() {
-    return simNumber;
-  }
-
-  public void setSimNumber(int simNumber) {
-    this.simNumber = simNumber;
-  }
-
-  public boolean isMicrosd() {
-    return microsd;
-  }
-
-  public void setMicrosd(boolean microsd) {
-    this.microsd = microsd;
-  }
+//  public int getSimNumber() {
+//    return simNumber;
+//  }
+//
+//  public void setSimNumber(int simNumber) {
+//    this.simNumber = simNumber;
+//  }
+//
+//  public boolean isMicrosd() {
+//    return microsd;
+//  }
+//
+//  public void setMicrosd(boolean microsd) {
+//    this.microsd = microsd;
+//  }
 
   public List<Device> getDevices() {
     return devices;
@@ -101,11 +101,5 @@ public class DeviceType {
     this.devices = devices;
   }
 
-  @Override
-  public String toString() {
-    return "DeviceType [id=" + id + ", visible=" + visible + ", brand=" + brand + ", model=" + model + ", name=" + name + ", simNumber=" + simNumber + ", microsd=" + microsd + "]";
-  }
-  
-  
   
 }

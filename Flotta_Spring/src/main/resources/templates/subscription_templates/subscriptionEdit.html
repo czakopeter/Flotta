@@ -26,21 +26,33 @@
             <label th:text="#{subscription.phoneNumber}">Number</label>
           </div>
           <div class="col-4">
-            <input type="text" class="form-control" id="number" name="number" th:value="*{number}" />
+            <input type="text" class="form-control" id="number" name="number" th:value="*{number}"
+              readonly="readonly"
+            />
           </div>
         </div>
         <div class="row my-2">
           <div class="col-2">
             <label th:text="#{subscription.imei}">IMEI</label>
           </div>
-          <div class="col-2">
-            <input type="hidden" id="imeiChangeReason" name="imeiChangeReason" th:value="*{imeiChangeReason}"/>
-            <input type="text" class="form-control" id="imei" name="imei"
-              th:value="*{imei}" readonly="readonly"
-            />
+          <div class="col-4">
+            <input type="hidden" id="oldImei" name="oldImei" th:value="*{oldImei}" readonly="readonly" />
+            <input type="text" id="imei" name="imei" th:value="*{imei}" class="form-control" readonly="readonly" />
+            <!--             <select id="imei" name="imei" th:value="*{imei}" class="form-control" onChange="imeiChange"> -->
+            <!--               <option th:each="sim : ${freeSims}" th:value="${sim.id}" th:text="${sim.imei}"></option> -->
+            <!--             </select> -->
           </div>
-          <div class="col-2">
-            <button type="button" class="form-control" data-toggle="modal" data-target="#simModal" data-backdrop="static">Sim change</button>
+          <div>
+            <button th:if="${not #lists.isEmpty(freeSims)}" type="button" class="btn btn-primary" data-toggle="modal"
+              data-target="#simChooserModal"
+            >Change</button>
+            <button th:if="${not #lists.isEmpty(freeSims)}" type="button" id="simChangeResetBtn" class="btn btn-primary" onClick="resetSimChange()">Reset</button>
+          </div>
+        </div>
+        <div class="row" id="reasonRow"  style="display: none;">
+          <div class="col-2" th:text="'Sim change reason'"></div>
+          <div class="col-4">
+            <input type="text" id="imeiChangeReason" name="imeiChangeReason" th:value="*{imeiChangeReason}" class="form-control"  />
           </div>
         </div>
         <div class="row my-2">
@@ -48,12 +60,17 @@
             <label th:text="#{subscription.user}">User</label>
           </div>
           <div class="col-4">
-            <select th:field="*{userId}" class="form-control" id="userId" onchange="userUpdate(this)">
+            <select th:field="*{userId}" class="form-control" id="userId"
+              onchange="userUpdate(this)"
+            >
               <option value="0" title="Nobody"></option>
               <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}"
                 th:title="${user.email}"
               ></option>
             </select>
+          </div>
+          <div class="col-2">
+            <div th:replace="fragments/subscription :: userChooserModal"></div>
           </div>
         </div>
         <div class="row my-2">
@@ -61,9 +78,12 @@
             <label th:text="#{subscription.device}">Device</label>
           </div>
           <div class="col-4">
-            <select th:field="*{deviceId}" class="form-control" id="deviceId" onchange="deviceUpdate(this)">
+            <select th:field="*{deviceId}" class="form-control" id="deviceId"
+              onchange="deviceUpdate(this)"
+            >
               <option value="0" title="Nothing"></option>
-              <option th:each="device : ${devices}" th:value="${device.id}" th:text="${device.typeName} + ' (' + ${device.serialNumber} + ')'"
+              <option th:each="device : ${devices}" th:value="${device.id}"
+                th:text="${device.typeName} + ' (' + ${device.serialNumber} + ')'"
                 th:title="${device.serialNumber}"
               ></option>
             </select>
@@ -74,7 +94,7 @@
             <label th:text="#{subscription.note}">Note</label>
           </div>
           <div class="col-4">
-            <input type="text" class="form-control" id="note" name="note" th:value="*{note}"/>
+            <input type="text" class="form-control" id="note" name="note" th:value="*{note}" />
           </div>
         </div>
         <div class="row my-2">
@@ -82,10 +102,9 @@
             <label th:text="#{subscription.date}">Date</label>
           </div>
           <div class="col-4">
-            <input type="date" class="form-control" id="date" name="date" th:value="*{date}" required="required"
-              th:min="${subscription.min}"
-            />
-            <input type="hidden" id="min" name="min" th:value="*{min}" />
+            <input type="date" class="form-control" id="date" name="date" th:value="*{date}"
+              required="required" th:min="${subscription.min}"
+            /> <input type="hidden" id="min" name="min" th:value="*{min}" />
           </div>
         </div>
         <div class="row">
@@ -101,40 +120,51 @@
       </div>
     </form>
 
-    <!-- Modal -->
-    <div class="modal" id="simModal" tabindex="-1" role="dialog" aria-hidden="true">
+
+
+
+    <div class="modal" id="simChooserModal" tabindex="-1" role="dialog"
+      aria-labelledby="simChooserModalLabel" aria-hidden="true"
+    >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id="exampleModalLabel">Select sim</h4>
+            <h5 class="modal-title" id="simChooserModal">Imei change</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">x</span>
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <lable>Change reason</lable>
-            <select id="modalImeiChangeReason">
-              <option th:each="reason : ${simChangeReasons}" th:value="${reason}"
-                th:text="${reason}"
-              ></option>
-            </select>
-            <lable>Imei</lable>
-            <select id="selectedImei">
-              <option th:each="sim : ${sims}" th:value="${sim.imei}" th:text="${sim.imei}"></option>
-            </select>
+            <div class="row my-1" th:each="sim : ${freeSims}">
+              <div class="col" th:id="'selectedImei'+ ${sim.id}" th:text="${sim.imei}"></div>
+              <div class="col-2">
+                <button type="button" th:onClick="'simChange(' + ${sim.imei} + ')'" value="Select" data-dismiss="modal">Select</button>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="setImeiChange()" data-dismiss="modal">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </div>
 
+
+
+
     <script th:inline="javascript">
-					//<![CDATA[
+// 					<![CDATA[
+// 					var reason = "";
+					var simChanged = document.getElementById('imei').value != document.getElementById('oldImei').value;
+					
+
 					window.onload = function() {
-						document.getElementById('number').readOnly = true;
+						if (simChanged) {
+							document.getElementById('reasonRow').style.display = null;
+							document.getElementById('imeiChangeReason').required = true;
+						} else {
+							document.getElementById('simChangeResetBtn').disabled = true;
+						}
 					};
 
 					function changeDate(d) {
@@ -142,26 +172,50 @@
 						document.getElementById('form').submit();
 					}
 
-					function setImeiChange() {
-						document.getElementById('imei').value = document.getElementById('selectedImei').value;
-						document.getElementById('imeiChangeReason').value = document.getElementById('modalImeiChangeReason').value;
+					function simChange(imei) {
+						document.getElementById('imei').value = imei;
+						document.getElementById('reasonRow').style.display = null;
+						document.getElementById('imeiChangeReason').required = true;
+						document.getElementById('simChangeResetBtn').disabled = false;
 					}
-
-					function simUpdate(imei) {
-						document.getElementById("selectedImei").value = imei.value;
-						$('#simStatusModal').modal()
+					
+					function resetSimChange() {
+						alert(document.getElementById('oldImei').value);
+						document.getElementById('imei').value = document.getElementById('oldImei').value;
+						document.getElementById('imeiChangeReason').value = null;
+						document.getElementById('imeiChangeReason').required = false;
+						document.getElementById('reasonRow').style.display = 'none';
+						document.getElementById('simChangeResetBtn').disabled = true;
+					}
+					
+					function imeiChange(i) {
+						// 						alert(imeiChanged);
+						// 						if(imeiChanged != (i.value != document.getElementById('oldImei').value)) {
+						// 							imeiChanged = !imeiChanged;
+						// 							var imeiChangeReason = document.getElementById('imeiChangeReason');
+						// 							if(imeiChanged) {
+						// 								imeiChangeReason.value = reason;
+						// 								imeiChangeReason.disabled = false;
+						// 								imeiChangeReason.required = true;
+						// 							} else {
+						// 								reason = imeiChangeReason.value;
+						// 								imeiChangeReason.value = '';
+						// 								imeiChangeReason.disabled = true;
+						// 								imeiChangeReason.required = false;
+						// 							}
+						// 						}
 					}
 
 					function userUpdate(user) {
 						document.getElementById('order').value = 'userCh ' + user.value;
 						document.getElementById('form').submit();
 					}
-					
+
 					function deviceUpdate(device) {
 						document.getElementById('order').value = 'deviceCh';
 						document.getElementById('form').submit();
 					}
-					
+
 					//]]>
 				</script>
 

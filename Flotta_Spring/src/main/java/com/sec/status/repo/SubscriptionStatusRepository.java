@@ -10,13 +10,13 @@ import com.sec.status.SubscriptionStatus;
 
 public interface SubscriptionStatusRepository extends CrudRepository<SubscriptionStatus, Long> {
 
-  List<SubscriptionStatus> findAllBySub(Subscription sub);
+  List<SubscriptionStatus> findAllBySubscription(Subscription sub);
 
-  long countBySub(Subscription sub);
+  long countBySubscription(Subscription sub);
 
-  SubscriptionStatus findFirstBySubOrderByDateDesc(Subscription sub);
+  SubscriptionStatus findFirstBySubscriptionOrderByDateDesc(Subscription sub);
 
-  SubscriptionStatus findFirstBySubAndDateBeforeOrderByDateDesc(Subscription sub, LocalDate date);
+  SubscriptionStatus findFirstBySubscriptionAndDateBeforeOrderByDateDesc(Subscription sub, LocalDate date);
 
 
 }
