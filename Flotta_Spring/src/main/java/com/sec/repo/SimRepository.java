@@ -10,5 +10,7 @@ public interface SimRepository extends CrudRepository<Sim, Long> {
 	List<Sim> findAll();
 
   Sim findByImei(String imei);
+
+  List<Sim> findAllBySimSubIsNullAndReasonIsNull();
 	
 }

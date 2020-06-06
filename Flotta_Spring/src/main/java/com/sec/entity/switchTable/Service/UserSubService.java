@@ -37,9 +37,9 @@ public class UserSubService {
   }
 
   public void update(Subscription sub, User user, LocalDate date) {
-    UserSub last = userSubRepository.findFirstBySubOrderByConnectDesc(sub);
+    UserSub last = userSubRepository.findFirstBySubOrderByBeginDateDesc(sub);
     
-    if(date.isAfter(last.getConnect())) {
+    if(date.isAfter(last.getBeginDate())) {
       //add new user
       if((last.getUser() != null && user != null && last.getUser().getId() != user.getId()) ||
           (last.getUser() == null && user != null) ||
@@ -47,9 +47,9 @@ public class UserSubService {
         userSubRepository.save(new UserSub(user, sub, date));
         updateSubscriptionStatus(sub, user, date);
       }
-    } else if(date.isEqual(last.getConnect())) {
+    } else if(date.isEqual(last.getBeginDate())) {
       //modify last user
-      UserSub lastBefore = userSubRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date);
+      UserSub lastBefore = userSubRepository.findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(sub, date);
       if(lastBefore != null && (
           (user == null && lastBefore.getUser() == null) ||
           (user != null && lastBefore.getUser() != null && user.getId() == lastBefore.getUser().getId())
@@ -76,17 +76,17 @@ public class UserSubService {
 
   public List<LocalDate> findAllBeginDateBySubBetween(String number, LocalDate begin, LocalDate end) {
     Subscription sub = subscriptionService.findByNumber(number);
-    List<UserSub> list = userSubRepository.findAllBySubAndConnectBetween(sub, begin, end);
+    List<UserSub> list = userSubRepository.findAllBySubAndBeginDateBetween(sub, begin, end);
     List<LocalDate> dates = new LinkedList<>();
     for(UserSub us : list) {
-      dates.add(us.getConnect());
+      dates.add(us.getBeginDate());
     }
     return dates;
   }
 
   public User getUser(String number, LocalDate begin, LocalDate end) {
     Subscription sub = subscriptionService.findByNumber(number);
-    UserSub us = userSubRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, end);
+    UserSub us = userSubRepository.findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(sub, end);
     return us.getUser();
   }
   

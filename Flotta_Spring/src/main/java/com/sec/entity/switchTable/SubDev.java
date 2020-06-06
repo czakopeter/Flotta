@@ -1,5 +1,6 @@
 package com.sec.entity.switchTable;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
@@ -16,11 +17,7 @@ import com.sec.entity.Subscription;
 
 @Entity
 @Table( name="sub_dev_st")
-public class SubDev {
-	
-	@Id
-	@GeneratedValue
-	Long id;
+public class SubDev extends BasicSwitchTable {
 	
 	@ManyToOne()
 	@JoinColumn( name = "sub_id")
@@ -43,14 +40,6 @@ public class SubDev {
     this.sub = sub;
     this.dev = dev;
     this.connect = connect;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public Subscription getSub() {
@@ -88,6 +77,19 @@ public class SubDev {
   @Override
   public String toString() {
     return "SubDev [id=" + id + ", sub=" + (sub == null ? "0" : sub.getId()) + ", dev=" + (dev == null ? "0" : dev.getId()) + ", connect=" + connect + "]";
+  }
+
+  @Override
+  public <O extends BasicSwitchTable> boolean isSameSwitchedPairs(O o) {
+    if(o == null) {
+      throw new NullPointerException();
+    }
+    if(!(o instanceof SubDev)) {
+      throw new InvalidParameterException();
+    }
+    SubDev act = (SubDev)o;
+    
+    return Device.isSameByIdOrBothNull(this.dev, act.dev) && Subscription.isSameByIdOrBothNull(this.sub, act.sub);
   }
 
 }

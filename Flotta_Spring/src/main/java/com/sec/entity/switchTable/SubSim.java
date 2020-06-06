@@ -1,5 +1,6 @@
 package com.sec.entity.switchTable;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,14 +15,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.sec.entity.Sim;
 import com.sec.entity.Subscription;
+import com.sec.entity.User;
 
 @Entity
 @Table( name="sub_sim_st")
-public class SubSim {
-  
-  @Id
-  @GeneratedValue
-  Long id;
+public class SubSim extends BasicSwitchTable {
   
   @ManyToOne(cascade = CascadeType.ALL)
 //  @ManyToOne
@@ -29,28 +27,19 @@ public class SubSim {
   private Subscription sub;
   
   @OneToOne(cascade = CascadeType.ALL)
-//  @OneToOne
   @JoinColumn( name = "sim_id")
   private Sim sim;
   
   @DateTimeFormat(pattern = "yyyy-MM-dd")
-  private LocalDate connect;
+  private LocalDate beginDate;
 
   public SubSim() {
   }
 
-  public SubSim(Subscription sub, Sim sim, LocalDate connect) {
+  public SubSim(Subscription sub, Sim sim, LocalDate beginDate) {
     this.sub = sub;
     this.sim = sim;
-    this.connect = connect;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
+    this.beginDate = beginDate;
   }
 
   public Subscription getSub() {
@@ -69,19 +58,24 @@ public class SubSim {
     this.sim = sim;
   }
 
-  public LocalDate getConnect() {
-    return connect;
+  public LocalDate getBeginDate() {
+    return beginDate;
   }
 
-  public void setConnect(LocalDate connect) {
-    this.connect = connect;
+  public void setBeginDate(LocalDate beginDate) {
+    this.beginDate = beginDate;
   }
 
-//  public LocalDate getDisconnect() {
-//    return disconnect;
-//  }
-//
-//  public void setDisconnect(LocalDate disconnect) {
-//    this.disconnect = disconnect;
-//  }
+  @Override
+  public <Other extends BasicSwitchTable> boolean isSameSwitchedPairs(Other other) {
+    if(other == null) {
+      throw new NullPointerException();
+    }
+    if(!(other instanceof SubSim)) {
+      throw new InvalidParameterException();
+    }
+    SubSim act = (SubSim)other;
+    
+    return Subscription.isSameByIdOrBothNull(this.sub, act.sub) && Sim.isSameByIdOrBothNull(this.sim, act.sim);
+  }
 }

@@ -35,9 +35,7 @@ public class MyNode {
     this.name = name;
   }
 
-  public MyNode() {
-    // TODO Auto-generated constructor stub
-  }
+  public MyNode() {}
 
   public long getId() {
     return id;

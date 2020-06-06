@@ -10,14 +10,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.sec.billing.PayDevision;
+import com.sec.entity.switchTable.GenSW;
 import com.sec.entity.switchTable.UserDev;
 import com.sec.entity.switchTable.UserSub;
 
@@ -25,11 +24,8 @@ import javax.persistence.JoinColumn;
 
 @Entity
 @Table( name="users" )
-public class User {
+public class User extends BasicEntity {
 
-	@Id @GeneratedValue
-	private Long id;
-	
 	@Column( unique=true, nullable=false )
 	private String email;
 	
@@ -38,9 +34,11 @@ public class User {
 	
 	private String fullName;
 	
-	private Boolean enabled;
+	private boolean enabled;
 	
-	@OneToMany( mappedBy = "user" )
+	private String passwordRenewerKey;
+	
+  @OneToMany( mappedBy = "user" )
 	private Set<UserSub> userSubs;
 	
 	@OneToMany( mappedBy = "user" )
@@ -54,32 +52,10 @@ public class User {
 	)
 	private Set<Role> roles = new HashSet<Role>();
 
-	
-	
 	@ManyToMany
 	private List<PayDevision> payDevs = new LinkedList<>();
-	
-	public List<PayDevision> getPayDevs() {
-    return payDevs;
-  }
-
-  public void setPayDevs(List<PayDevision> payDevs) {
-    this.payDevs = payDevs;
-  }
-  
-  public void addPayDevision(PayDevision payDevision) {
-    this.payDevs.add(payDevision);
-  }
 
   public User() {}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getEmail() {
 		return email;
@@ -104,6 +80,15 @@ public class User {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+	
+	public String getPasswordRenewerKey() {
+    return passwordRenewerKey;
+  }
+
+  public void setPasswordRenewerKey(String passwordRenewerKey) {
+    this.passwordRenewerKey = passwordRenewerKey;
+  }
+
 
 	public Set<UserSub> getUserSubs() {
 		return userSubs;
@@ -125,7 +110,7 @@ public class User {
 		return enabled;
 	}
 
-	public void setEnabled(Boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
@@ -147,10 +132,22 @@ public class User {
 				+ ", enabled=" + enabled + ", subscriptions=" + Objects.toString(userSubs, "NULL") + ", roles=" + Objects.toString(roles, "NULL") + "]";
 	}
 	
-	public boolean equals(User u) {
+	public boolean equalsByEmail(User u) {
 		if(u == null) {
 			return false;
 		}
 		return email.equals(u.getEmail());
 	}
+	
+	public List<PayDevision> getPayDevs() {
+    return payDevs;
+  }
+
+  public void setPayDevs(List<PayDevision> payDevs) {
+    this.payDevs = payDevs;
+  }
+  
+  public void addPayDevision(PayDevision payDevision) {
+    this.payDevs.add(payDevision);
+  }
 }

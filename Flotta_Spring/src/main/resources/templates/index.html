@@ -15,7 +15,7 @@
 
       <div class="container my-border">
         <div th:if="${#lists.isEmpty(subscriptions)}">
-          <label th:text="#{homepage.dontHaveAnySubscriptions}"></label>
+          <label th:text="#{homepage.youDontHaveAnySubscriptions}"></label>
         </div>
         <div th:unless="${#lists.isEmpty(subscriptions)}">
 
@@ -42,7 +42,7 @@
       
       <div class="container my-border">
         <div th:if="${#lists.isEmpty(devices)}">
-          <label th:text="#{homepage.dontHaveAnyDevices}"></label>
+          <label th:text="#{homepage.youDontHaveAnyDevices}"></label>
         </div>
         <div th:unless="${#lists.isEmpty(devices)}">
 

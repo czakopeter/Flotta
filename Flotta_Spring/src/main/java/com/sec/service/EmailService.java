@@ -1,5 +1,7 @@
 package com.sec.service;
 
+import javax.swing.text.MaskFormatter;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import com.sec.entity.User;
 
 @Service
 public class EmailService {
@@ -23,15 +27,16 @@ public class EmailService {
 	}
 
 
-	public void sendMessage(String email) {
+	public void sendMessage(User user) {
 		SimpleMailMessage message = null;
-		
+		String email = user.getEmail();
 		try {
 			message = new SimpleMailMessage();
 			message.setFrom(MESSAGE_FROM);
 			message.setTo(email);
-			message.setSubject("Sikeres regisztrálás");
-			message.setText("Kedves " + email + "! \n \n Köszönjük, hogy regisztráltál az oldalunkra!");
+			message.setSubject("Checker");
+			message.setText("Kedves " + email + "! \n \n Köszönjük, hogy regisztráltál az oldalunkra!" +
+			"\n \n <a localhost:8080/passwordChange/" + user.getPasswordRenewerKey() + "></a>");
 			javaMailSender.send(message);
 			
 		} catch (Exception e) {

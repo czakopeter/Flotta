@@ -33,13 +33,8 @@ public class SimService extends ServiceWithMsg {
   }
 	
 	public List<Sim> findAllFree() {
-	  List<Sim> free = new LinkedList<>();
-	  for(Sim s : simRepository.findAll()) {
-	    if(s.isFree()) {
-	      free.add(s);
-	    }
-	  }
-		return free;
+	  List<Sim> result = simRepository.findAllBySimSubIsNullAndReasonIsNull();
+    return result;
 	}
 
 	public Sim findById(long id) {

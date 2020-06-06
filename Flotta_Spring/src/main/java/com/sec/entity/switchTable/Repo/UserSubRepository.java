@@ -10,16 +10,16 @@ import com.sec.entity.switchTable.UserSub;
 
 public interface UserSubRepository extends CrudRepository<UserSub, Long> {
 
-  UserSub findBySubAndConnect(Subscription sub, LocalDate date);
+  UserSub findBySubAndBeginDate(Subscription sub, LocalDate date);
 
-  UserSub findFirstBySubOrderByConnectDesc(Subscription sub);
+  UserSub findFirstBySubOrderByBeginDateDesc(Subscription sub);
 
-  UserSub findFirstBySubAndConnectLessThanOrderByConnectDesc(Subscription sub, LocalDate date);
+  UserSub findFirstBySubAndBeginDateLessThanOrderByBeginDateDesc(Subscription sub, LocalDate date);
 
-  UserSub findFirstBySubAndConnectBeforeOrderByConnectDesc(Subscription sub, LocalDate date);
+  UserSub findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(Subscription sub, LocalDate date);
 
   void deleteAllBySub(Subscription sub);
 
-  List<UserSub> findAllBySubAndConnectBetween(Subscription sub, LocalDate begin, LocalDate end);
+  List<UserSub> findAllBySubAndBeginDateBetween(Subscription sub, LocalDate begin, LocalDate end);
 
 }

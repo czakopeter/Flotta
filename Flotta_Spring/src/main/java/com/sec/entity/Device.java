@@ -137,9 +137,7 @@ public class Device {
     d.setUserName(ud != null ? ud.getUser() != null ? ud.getUser().getFullName() : "" : "");
 
     LocalDate lastDevMod = getLastDeviceModificationDate();
-    System.out.println(lastDevMod);
     SubDev sd = devSubs.get(lastDevMod);
-    System.out.println(sd);
     d.setNumber(sd != null ? sd.getSub() != null ? sd.getSub().getNumber() : "" : "");
 
     LocalDate last = lastUserMod;
@@ -227,7 +225,6 @@ public class Device {
   private List<LocalDate> getDeviceModficationDateListDest() {
     List<LocalDate> dList = new LinkedList<>(devSubs.keySet());
     Collections.sort(dList, Collections.reverseOrder());
-    System.out.println("Device id: " + id + ", deviceModDateList: " + dList);
     return dList;
   }
 
@@ -283,4 +280,14 @@ public class Device {
 //    return devUsers.get(getLastUserModificationDate());
 //  }
 
+  
+  public static boolean isSameByIdOrBothNull(Device d1, Device d2) {
+    if(d1 == null && d2 == null) {
+      return true;
+    }
+    if(d1 == null || d2 == null) {
+      return false;
+    }
+    return d1.equals(d2);
+  }
 }

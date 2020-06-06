@@ -36,6 +36,8 @@ public class Sim {
   private String pin;
   
   private String puk;
+  
+  private String reason;  
 
   @OneToOne(mappedBy = "sim")
   @JoinColumn(name = "sub_id")
@@ -80,6 +82,14 @@ public class Sim {
     this.puk = puk;
   }
 
+  public String getReason() {
+    return reason;
+  }
+
+  public void setReason(String reason) {
+    this.reason = reason;
+  }
+
   public SubSim getSimSub() {
     return simSub;
   }
@@ -120,5 +130,35 @@ public class Sim {
     Collections.sort(dates, Collections.reverseOrder());
     return stats.get(dates.get(0)).getStatus().toString();
   }
+
+  public static boolean isSameByIdOrBothNull(Sim s1, Sim s2) {
+    if(s1 == null && s2 == null) {
+      return true;
+    }
+    if(s1 == null || s2 == null) {
+      return false;
+    }
+    return s1.equals(s2);
+  }
+
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Sim other = (Sim) obj;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+  
+  
 
 }

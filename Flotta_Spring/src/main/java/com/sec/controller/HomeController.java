@@ -52,6 +52,7 @@ public class HomeController {
   @PostMapping("/users")
   public String userCheck(Model model, Authentication a, @RequestParam(name = "command") String command,
       @ModelAttribute User u) {
+    System.out.println(command);
     switch (command) {
     case "add":
       service.registerUser(u);

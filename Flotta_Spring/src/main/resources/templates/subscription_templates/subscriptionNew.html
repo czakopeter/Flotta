@@ -24,16 +24,16 @@
             />
           </div>
         </div>
-        <div class="row my-2">
-          <div class="col-2">
-            <label th:text="#{subscription.imei}">IMEI</label>
-          </div>
-          <div class="col-4">
-            <select id="imei" name="imei" th:value="*{imei}" class="form-control">
-              <option th:each="sim : ${freeSims}" th:value="${sim.imei}" th:text="${sim.imei}"></option>
-            </select>
-          </div>
-        </div>
+<!--         <div class="row my-2"> -->
+<!--           <div class="col-2"> -->
+<!--             <label th:text="#{subscription.imei}">IMEI</label> -->
+<!--           </div> -->
+<!--           <div class="col-4"> -->
+<!--             <select id="imei" name="imei" th:value="*{imei}" class="form-control"> -->
+<!--               <option th:each="sim : ${freeSims}" th:value="${sim.imei}" th:text="${sim.imei}"></option> -->
+<!--             </select> -->
+<!--           </div> -->
+<!--         </div> -->
         <div class="row my-2">
           <div class="col-2">
             <label th:text="#{subscription.createDate}">Create date</label>

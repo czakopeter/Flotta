@@ -18,7 +18,7 @@ import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.enums.SubscriptionStatusEnum;
 
 @Service
-public class SubscriptionService {
+public class SubscriptionService extends ServiceWithMsg {
 	
   private Map<String, String> msg = new HashMap<String, String>();
   
@@ -53,26 +53,6 @@ public class SubscriptionService {
     return subscriptionRepository.findOne(id);
   }
 
-  public void save(SubscriptionToView subscription, LocalDate date) {
-    Subscription check = subscriptionRepository.findByNumber(subscription.getNumber());
-    if(check == null) {
-      Subscription s = new Subscription(subscription.getNumber());
-      subscriptionRepository.save(s);
-    } else {
-      addError("Number already exists");
-    }
-  }
-  
-  public String getError() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    return msg.remove(auth.getName());
-  }
-  
-  private void addError(String err) {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    msg.put(auth.getName(), err);
-  }
-
   public void userHasConnected(Subscription sub, LocalDate date) {
     subscriptionStatusService.setStatus(sub, SubscriptionStatusEnum.ACTIVE, date);
   }
@@ -83,6 +63,21 @@ public class SubscriptionService {
 
   public void deleteLastSatus(Subscription sub) {
     subscriptionStatusService.deleteLastStatus(sub);
+  }
+
+  public boolean add(SubscriptionToView stv) {
+    if(subscriptionRepository.findByNumber(stv.getNumber()) == null) {
+      Subscription entity = new Subscription(stv.getNumber(), stv.getDate());
+      subscriptionRepository.save(entity);
+      return true;
+    } else {
+      appendMsg("Number already exists");
+      return false;
+    }
+  }
+
+  public void save(Subscription sub) {
+    subscriptionRepository.save(sub);
   }
 
 }

@@ -4,14 +4,20 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.sec.entity.Device;
+import com.sec.entity.Sim;
+import com.sec.entity.User;
+
 public class SubscriptionToView {
   private long id;
   
 	private String number;
 	
+	private String oldImei;
+	
 	private String imei;
 	
-	private String imeiChangeReason;
+	private String simChangeReason;
 	
 	private long userId;
 	
@@ -51,7 +57,15 @@ public class SubscriptionToView {
 		this.number = number;
 	}
 
-	public String getImei() {
+	public String getOldImei() {
+    return oldImei;
+  }
+
+  public void setOldImei(String oldImei) {
+    this.oldImei = oldImei;
+  }
+
+  public String getImei() {
 		return imei;
 	}
 
@@ -59,12 +73,12 @@ public class SubscriptionToView {
 		this.imei = imei;
 	}
 
-	public String getImeiChangeReason() {
-    return imeiChangeReason;
+	public String getSimChangeReason() {
+    return simChangeReason;
   }
 
-  public void setImeiChangeReason(String imeiChangeReason) {
-    this.imeiChangeReason = imeiChangeReason;
+  public void setSimChangeReason(String simChangeReason) {
+    this.simChangeReason = simChangeReason;
   }
 
   public long getUserId() {
@@ -133,8 +147,22 @@ public class SubscriptionToView {
 
   @Override
   public String toString() {
-    return "SubscriptionToView [number=" + number + ", imei=" + imei + ", imeiChangeReason=" + imeiChangeReason + ", userId=" + userId + ", userName=" + userName + ", deviceId=" + deviceId + ", deviceName=" + deviceName + ", date=" + date + ", min=" + min + "]";
+    return "SubscriptionToView [number=" + number + ", imei=" + imei + ", simChangeReason=" + simChangeReason + ", userId=" + userId + ", userName=" + userName + ", deviceId=" + deviceId + ", deviceName=" + deviceName + ", date=" + date + ", min=" + min + "]";
   }
 
+  public void setUser(User user) {
+    this.userId = user != null ? user.getId() : 0;
+    this.userName = user != null ? user.getFullName() : "";
+  }
+
+  public void setSim(Sim sim) {
+    this.oldImei = sim != null ? sim.getImei() : "";
+    this.imei = sim != null ? sim.getImei() : "";
+  }
+
+  public void setDevice(Device device) {
+    this.deviceId = device != null ? device.getId() : 0;
+    this.deviceName = device != null ? device.getDeviceType().getName() : "";
+  }
 	
 }

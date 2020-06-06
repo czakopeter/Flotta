@@ -79,7 +79,7 @@ public class UserDevService {
     List<UserDev> udList = userDevRepository.findAllByUser(user);
     Set<Device> dSet = new HashSet<Device>();
     udList.forEach(ud -> {
-      if(user.equals(userDevRepository.findFirstByDevOrderByConnectDesc(ud.getDev()).getUser())) {
+      if(user.equalsByEmail(userDevRepository.findFirstByDevOrderByConnectDesc(ud.getDev()).getUser())) {
         dSet.add(ud.getDev());
       }
     });

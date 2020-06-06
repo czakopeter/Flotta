@@ -12,13 +12,13 @@ public interface SubSimRepository extends CrudRepository<SubSim, Long> {
 
   List<SubSim> findAllBySub(Subscription s);
 
-  SubSim findBySubAndConnect(Subscription s, LocalDate date);
+  SubSim findBySubAndBeginDate(Subscription s, LocalDate date);
 
-  void deleteBySubAndConnect(Subscription s, LocalDate date);
+  void deleteBySubAndBeginDate(Subscription s, LocalDate date);
 
-  SubSim findBySubAndConnect(long subId, LocalDate date);
+  SubSim findBySubAndBeginDate(long subId, LocalDate date);
 
   List<SubSim> findAllBySub(long subId);
 
-  SubSim findFirstBySubOrderByConnectDesc(Subscription sub);
+  SubSim findFirstBySubOrderByBeginDateDesc(Subscription sub);
 }

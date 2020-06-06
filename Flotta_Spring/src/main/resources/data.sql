@@ -6,8 +6,8 @@ INSERT INTO Users (email, password, full_name, enabled) VALUES ('admin', 'admin'
 INSERT INTO Users (email, password, full_name, enabled) VALUES ('user', 'user', 'User', true)
 INSERT INTO Users (email, password, full_name, enabled) VALUES ('f', 'f', 'False', false)
 
-INSERT INTO Subscriptions(number) VALUES ('201234567')
-INSERT INTO Subscriptions(number) VALUES ('207654321')
+INSERT INTO Subscriptions(number, create_date, first_available_date) VALUES ('201234567', to_date('20-01-01', 'RR-MM-DD'), to_date('20-01-01', 'RR-MM-DD'))
+INSERT INTO Subscriptions(number, create_date, first_available_date) VALUES ('207654321', to_date('20-01-02', 'RR-MM-DD'), to_date('20-01-02', 'RR-MM-DD'))
 
 INSERT INTO Sims (imei, pin, puk) VALUES ('imei1', '1111', '1111111111')
 INSERT INTO Sims (imei, pin, puk) VALUES ('imei2', '2222', '2222222222')
@@ -31,11 +31,11 @@ INSERT INTO Devices (serial_number, type_id) VALUES ('sn3', 3)
 INSERT INTO Users_roles (user_id, role_id) VALUES (1, 1)
 INSERT INTO Users_roles (user_id, role_id) VALUES (2, 2)
 
-INSERT INTO User_sub_st (user_id, sub_id, connect) VALUES (1, 1, to_date('20-01-01', 'RR-MM-DD'))
-INSERT INTO User_sub_st (user_id, sub_id, connect) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))
+INSERT INTO User_sub_st (user_id, sub_id, begin_date) VALUES (1, 1, to_date('20-01-01', 'RR-MM-DD'))
+INSERT INTO User_sub_st (user_id, sub_id, begin_date) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))
 
-INSERT INTO Sub_sim_st (sub_id, sim_id, connect) VALUES (1, 1, to_date('20-01-01', 'RR-MM-DD'))
-INSERT INTO Sub_sim_st (sub_id, sim_id, connect) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))
+INSERT INTO Sub_sim_st (sub_id, sim_id, begin_date) VALUES (1, 1, to_date('20-01-01', 'RR-MM-DD'))
+INSERT INTO Sub_sim_st (sub_id, sim_id, begin_date) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))
 
 INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (1, 1, to_date('20-01-01', 'RR-MM-DD'))
 INSERT INTO User_dev_st (user_id, dev_id, connect) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))

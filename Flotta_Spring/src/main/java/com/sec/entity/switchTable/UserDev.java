@@ -1,5 +1,6 @@
 package com.sec.entity.switchTable;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -13,15 +14,13 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.sec.entity.Device;
+import com.sec.entity.Sim;
+import com.sec.entity.Subscription;
 import com.sec.entity.User;
 
 @Entity
 @Table( name="user_dev_st")
-public class UserDev {
-	
-	@Id
-	@GeneratedValue
-	Long id;
+public class UserDev extends BasicSwitchTable {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -44,14 +43,6 @@ public class UserDev {
 		this.user = user;
 		this.dev = device;
 		this.connect = date;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public User getUser() {
@@ -93,4 +84,17 @@ public class UserDev {
 				", connect=" + Objects.toString(connect, "no connect") +
 				", disconnect=" + Objects.toString(disconnect, "no disconnect") + "]";
 	}
+
+  @Override
+  public <Other extends BasicSwitchTable> boolean isSameSwitchedPairs(Other other) {
+    if(other == null) {
+      throw new NullPointerException();
+    }
+    if(!(other instanceof UserDev)) {
+      throw new InvalidParameterException();
+    }
+    UserDev act = (UserDev)other;
+    
+    return User.isSameByIdOrBothNull(this.user, act.user) && Device.isSameByIdOrBothNull(this.dev, act.dev);
+  }
 }

@@ -26,13 +26,12 @@ public class SubscriptionController {
   }
 
   @ModelAttribute
-  public void test(Model model) {
-    System.out.println("\nSUBSCRIPTION");
+  public void title(Model model) {
+    model.addAttribute("title", "Subscription");
   }
 
   @RequestMapping("/subscription/all")
   public String subscriptions(Model model) {
-    model.addAttribute("title", "Subscriptions");
     model.addAttribute("canCreateNew", "Subscriptions");
     model.addAttribute("subscriptions", service.findAllSubscription());
     return "subscription_templates/subscriptionAll";
@@ -40,11 +39,13 @@ public class SubscriptionController {
 
   @RequestMapping("/subscription/new")
   public String addSubscription(Model model) {
-    model.addAttribute("title", "Subscriptions");
-    model.addAttribute("subscription", new SubscriptionToView());
-    model.addAttribute("users", service.findAllUser());
-    model.addAttribute("sims", service.findAllFreeSim());
-    return "subscription_templates/subscriptionNew";
+    if(service.canCreateSubscription()) {
+      model.addAttribute("subscription", new SubscriptionToView());
+      model.addAttribute("freeSims", service.findAllFreeSim());
+      return "subscription_templates/subscriptionNew";
+    } else {
+      return "redirect:/subscription/all";
+    }
   }
 
   @PostMapping("/subscription/new")
@@ -52,13 +53,11 @@ public class SubscriptionController {
     String[] orderPart = order.split(" ");
     switch (orderPart[0]) {
     case "save":
-      if (service.saveSubscription(stv)) {
+      if (service.addSubscription(stv)) {
         return "redirect:/subscription/all";
       } else {
         model.addAttribute("subscription", stv);
-        model.addAttribute("users", service.findAllUser());
-        model.addAttribute("sims", service.findAllFreeSim());
-        model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
+        model.addAttribute("freeSims", service.findAllFreeSim());
         model.addAttribute("error", service.getSubscriptionServiceError());
         return "subscription_templates/subscriptionNew";
       }
@@ -67,31 +66,22 @@ public class SubscriptionController {
     default:
       break;
     }
-    model.addAttribute("subscription", stv);
-    model.addAttribute("users", service.findAllUser());
-    model.addAttribute("sims", service.findAllFreeSim());
-    model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
-    model.addAttribute("error", service.getSubscriptionServiceError());
-    return "subscription_templates/subscriptionNew";
+    return "redirect:/subscription/all";
   }
 
   @RequestMapping("/subscription/{id}")
   public String subscription(Model model, @PathVariable("id") long id) {
-    model.addAttribute("title", "Subscriptions");
     SubscriptionToView stv = service.findSubscriptionById(id);
     model.addAttribute("subscription", stv);
-    model.addAttribute("sims", service.findAllFreeSim());
+    model.addAttribute("freeSims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
     model.addAttribute("dates", service.findSubscriptionDatesById(id));
-    model.addAttribute("simChangeReasons", service.getSimChangeReasons());
     return "subscription_templates/subscriptionEdit";
   }
 
   @PostMapping("/subscription/{id}")
   public String subscription(Model model, @PathVariable("id") long id, @RequestParam(name = "order", defaultValue = "save") String order, @ModelAttribute() SubscriptionToView stv) {
-    System.out.println(order);
-    System.out.println(stv);
     String[] orderPart = order.split(" ");
     switch (orderPart[0]) {
     case "save":
@@ -104,10 +94,11 @@ public class SubscriptionController {
     case "deviceCh":
       stv.setEditable(true);
       if(stv.getDeviceId() != 0) {
-        DeviceToView selectedDevice = service.findDeviceById(stv.getDeviceId());
-        if(selectedDevice.getDate().isAfter(LocalDate.parse(stv.getMin()))) {
-          stv.setMin(selectedDevice.getDate().toString());
-        }
+        //TODO min dátum állítása ha a kijelölt eszköz elérhetőségének dátuma később van
+//        DeviceToView selectedDevice = service.findDeviceById(stv.getDeviceId());
+//        if(selectedDevice.getDate().isAfter(LocalDate.parse(stv.getMin()))) {
+//          stv.setMin(selectedDevice.getDate().toString());
+//        }
       }
       break;
     case "dateSliceCh":
@@ -116,7 +107,7 @@ public class SubscriptionController {
     default:
       break;
     }
-    model.addAttribute("sims", service.findAllFreeSim());
+    model.addAttribute("freeSims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
     model.addAttribute("dates", service.findSubscriptionDatesById(id));

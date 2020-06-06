@@ -26,21 +26,28 @@
             <label th:text="#{subscription.phoneNumber}">Number</label>
           </div>
           <div class="col-4">
-            <input type="text" class="form-control" id="number" name="number" th:value="*{number}" />
+            <input type="text" class="form-control" id="number" name="number" th:value="*{number}" readonly="readonly"/>
           </div>
         </div>
         <div class="row my-2">
           <div class="col-2">
             <label th:text="#{subscription.imei}">IMEI</label>
           </div>
-          <div class="col-2">
-            <input type="hidden" id="imeiChangeReason" name="imeiChangeReason" th:value="*{imeiChangeReason}"/>
-            <input type="text" class="form-control" id="imei" name="imei"
-              th:value="*{imei}" readonly="readonly"
-            />
+          <div class="col-4">
+            <input type="hidden" id="oldImei" name="oldImei" th:value="*{oldImei}" readonly="readonly" />
+            <input type="text" id="imei" name="imei" th:value="*{imei}" class="form-control" readonly="readonly" />
           </div>
-          <div class="col-2">
-            <button type="button" class="form-control" data-toggle="modal" data-target="#simModal" data-backdrop="static">Sim change</button>
+          <div>
+            <input th:if="${not #lists.isEmpty(freeSims)}" id="simChangeBtn" type="button" class="btn btn-primary" data-toggle="modal"
+              data-target="#simChooserModal" value="Change"
+            />
+            <button th:if="${not #lists.isEmpty(freeSims)}" type="button" id="simChangeResetBtn" class="btn btn-primary" onClick="resetSimChange()">Reset</button>
+          </div>
+        </div>
+        <div class="row" id="reasonRow"  style="display: none;">
+          <div class="col-2" th:text="'Sim change reason'"></div>
+          <div class="col-4">
+            <input type="text" id="simChangeReason" name="simChangeReason" th:value="*{simChangeReason}" class="form-control"  />
           </div>
         </div>
         <div class="row my-2">
@@ -101,31 +108,27 @@
       </div>
     </form>
 
-    <!-- Modal -->
-    <div class="modal" id="simModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal" id="simChooserModal" tabindex="-1" role="dialog"
+      aria-labelledby="simChooserModalLabel" aria-hidden="true"
+    >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id="exampleModalLabel">Select sim</h4>
+            <h5 class="modal-title" id="simChooserModal">Imei change</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">x</span>
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <lable>Change reason</lable>
-            <select id="modalImeiChangeReason">
-              <option th:each="reason : ${simChangeReasons}" th:value="${reason}"
-                th:text="${reason}"
-              ></option>
-            </select>
-            <lable>Imei</lable>
-            <select id="selectedImei">
-              <option th:each="sim : ${sims}" th:value="${sim.imei}" th:text="${sim.imei}"></option>
-            </select>
+            <div class="row my-1" th:each="sim : ${freeSims}">
+              <div class="col" th:id="'selectedImei'+ ${sim.id}" th:text="${sim.imei}"></div>
+              <div class="col-2">
+                <button type="button" class="btn btn-primary" th:onClick="|simChange('${sim.imei}')|" value="Select" data-dismiss="modal">Select</button>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="setImeiChange()" data-dismiss="modal">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
@@ -133,8 +136,35 @@
 
     <script th:inline="javascript">
 					//<![CDATA[
+					//simStatus
+					//	-1 sub dont have sim
+					//	0 sub have own sim
+					//	1 sub change sim
+					var simStatus;
+					if(document.getElementById('oldImei').value == '') {
+						simStatus = -1;
+					} else {
+						simStatus = document.getElementById('imei').value != document.getElementById('oldImei').value ? 1 : 0;
+					}
+					var simChanged = document.getElementById('imei').value != document.getElementById('oldImei').value;
+					
 					window.onload = function() {
-						document.getElementById('number').readOnly = true;
+						switch(simStatus) {
+							case -1:
+								if(document.getElementById('imei').value == '') {
+									document.getElementById('button').disabled = true;
+								}
+								document.getElementById('simChangeBtn').value = 'Select';
+								document.getElementById('simChangeResetBtn').style.display = 'none';
+								break;
+							case 0:
+								document.getElementById('simChangeResetBtn').disabled = true;
+								break;
+							case 1:
+								document.getElementById('reasonRow').style.display = null;
+								document.getElementById('simChangeReason').required = true;
+								break;
+						}
 					};
 
 					function changeDate(d) {
@@ -142,14 +172,26 @@
 						document.getElementById('form').submit();
 					}
 
-					function setImeiChange() {
-						document.getElementById('imei').value = document.getElementById('selectedImei').value;
-						document.getElementById('imeiChangeReason').value = document.getElementById('modalImeiChangeReason').value;
+					function simChange(imei) {
+						switch(simStatus) {
+							case -1:
+								document.getElementById('button').disabled = false;
+								break;
+							default:
+								document.getElementById('reasonRow').style.display = null;
+								document.getElementById('simChangeReason').required = true;
+								document.getElementById('simChangeResetBtn').disabled = false;
+								break;
+						}
+						document.getElementById('imei').value = imei;
 					}
-
-					function simUpdate(imei) {
-						document.getElementById("selectedImei").value = imei.value;
-						$('#simStatusModal').modal()
+					
+					function resetSimChange() {
+						document.getElementById('imei').value = document.getElementById('oldImei').value;
+						document.getElementById('simChangeReason').value = null;
+						document.getElementById('simChangeReason').required = false;
+						document.getElementById('reasonRow').style.display = 'none';
+						document.getElementById('simChangeResetBtn').disabled = true;
 					}
 
 					function userUpdate(user) {

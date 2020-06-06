@@ -14,7 +14,6 @@ import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
 import com.sec.billing.exception.FileUploadException;
-import com.sec.billing.exception.UnknonwFeeItemDescriptionException;
 import com.sec.entity.User;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
 

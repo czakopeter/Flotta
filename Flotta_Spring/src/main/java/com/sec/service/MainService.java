@@ -145,35 +145,29 @@ public class MainService {
 	  return subscriptionService.findById(id).getAllModificationDateDesc();
 	}
 	
-	public boolean saveSubscription(SubscriptionToView subscription) {
-	  subscriptionService.save(subscription, subscription.getDate());
-	  Sim sim = simService.findByImei(subscription.getImei());
-	  User user = userService.findById(subscription.getUserId());
-	  Device dev = deviceService.findById(subscription.getDeviceId());
-	  Subscription sub = subscriptionService.findByNumber(subscription.getNumber());
-	  
-	  subSimService.save(sub, sim, subscription.getDate());
-	  userSubService.save(sub, user, subscription.getDate());
-	  subDevService.save(sub, dev, subscription.getDate());
-	  subNoteService.save(sub, subscription.getNote(), subscription.getDate());
-	  return true;
-  }
-	
 	public boolean updateSubscription(long id, SubscriptionToView stv) {
 	  Subscription sub = subscriptionService.findById(id);
 	  Sim sim = simService.findByImei(stv.getImei());
     User user = userService.findById(stv.getUserId());
     Device dev = deviceService.findById(stv.getDeviceId());
     
-    subSimService.update(sub.getId(), sim.getId(), stv.getDate(), stv.getImeiChangeReason());
-    userSubService.update(sub, user, stv.getDate());
-    subDevService.updateFromSubscription(sub, dev, stv.getDate());
-    subNoteService.update(sub, stv.getNote(), stv.getDate());
+    sub.addSim(sim, stv.getSimChangeReason(), stv.getDate());
+    sub.addUser(user, stv.getDate());
+    sub.addDevice(dev, stv.getDate());
+    subscriptionService.save(sub);
+    
+//    Modification through switch table
+//    subSimService.update(sub, sim, stv.getDate(), stv.getSimChangeReason());
+//    userSubService.update(sub, user, stv.getDate());
+//    subDevService.updateFromSubscription(sub, dev, stv.getDate());
+//    subNoteService.update(sub, stv.getNote(), stv.getDate());
+//    sub.setLastMod(sub.getAllModificationDateDesc().get(0));
+    
     return true;
   }
 	
 	public String getSubscriptionServiceError() {
-    return subscriptionService.getError();
+    return subscriptionService.removeMsg();
   }
 	
 	public SubscriptionToView findSubscriptionById(long id) {
@@ -187,7 +181,8 @@ public class MainService {
 	//TODO put UserServiceImp function here
 	//-------- USER SERVICE --------
 	public String registerUser(User user) {
-		user.addRoles("ADMIN");
+//		user.addRoles("ADMIN");
+		user.addRoles("FIRST");
 		if(userService.registerUser(user)) {
 			return "ok";
 		} else {
@@ -470,5 +465,12 @@ public class MainService {
   public String getSimError() {
     return simService.removeMsg();
   }
-  
+
+  public boolean canCreateSubscription() {
+    return !simService.findAllFree().isEmpty();
+  }
+
+  public boolean addSubscription(SubscriptionToView stv) {
+    return subscriptionService.add(stv);
+  }
 }
