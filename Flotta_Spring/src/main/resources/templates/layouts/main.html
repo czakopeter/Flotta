@@ -56,9 +56,9 @@
     </div>
     <div class="ml-auto mr-3">
       <div sec:authorize="isAuthenticated()" class="form-inline">
-        <label class="mr-1" th:text="#{main.greeting}">Wellcome</label> <span class="mr-2"
-          th:text="${#authentication.getPrincipal().getFullName()}"
-        > Somebody </span>
+        <label class="mr-1" th:text="#{main.greeting}">Wellcome</label> <a class="mr-2"
+          href="/profile" th:text="${#authentication.getPrincipal().getFullName()}"
+        >Somebody</a>
         <form id="frmlogout" th:action="@{/logout}" method="post" class="form-inline">
           <a href="javascript:{}"
             onclick="document.getElementById('frmlogout').submit(); return false;"
@@ -68,7 +68,10 @@
       </div>
     </div>
     <div class="navbar-nav mr-3">
-      <span><a href="?lang=hu" class="mr-1">HU</a><a href="?lang=en">EN</a> </span>
+      <span>
+        <a href="?lang=hu" class="mr-1" onclick="document.cookie='localeCookie=hu'">HU</a>
+        <a href="?lang=en" onclick="document.cookie='localeCookie=en'">EN</a>
+         </span>
     </div>
   </div>
 

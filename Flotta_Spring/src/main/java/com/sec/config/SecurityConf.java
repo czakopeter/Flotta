@@ -1,13 +1,5 @@
 package com.sec.config;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -35,16 +27,17 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 	public void configureAuth(AuthenticationManagerBuilder auth) throws Exception{
 		auth.userDetailsService(userService);
 	}
-
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/db/**").permitAll()
-				.antMatchers("/admin/**").hasRole("ADMIN")
-				.antMatchers("/registration").permitAll()
-				.antMatchers("/reg").permitAll()
+			//TODO adatbázishoz csak ADMIN, .antMatchers("/db/**").hasRole("ADMIN")
+			  .antMatchers("/db/**").permitAll()
+			  .antMatchers("/verifyAndChangePassword/**", "/registration").permitAll()
+				.antMatchers("/billing/**").hasAnyRole("FINANCIAL", "ADMIN")
+				.antMatchers("/subscription/**", "/device/**", "/deviceType/**").hasAnyRole("MOBILE", "ADMIN")
+				.antMatchers("/profile/**").authenticated()
 				.anyRequest().authenticated()
 				.and()
 			.formLogin()

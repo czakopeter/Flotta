@@ -1,10 +1,18 @@
 INSERT INTO Roles (role) VALUES ('ADMIN')
 INSERT INTO Roles (role) VALUES ('USER')
-INSERT INTO Roles (role) VALUES ('GUEST')
+INSERT INTO Roles (role) VALUES ('MOBILE')
+INSERT INTO Roles (role) VALUES ('FINANCIAL')
+INSERT INTO Roles (role) VALUES ('F')
 
 INSERT INTO Users (email, password, full_name, enabled) VALUES ('admin', 'admin', 'Admin', true)
-INSERT INTO Users (email, password, full_name, enabled) VALUES ('user', 'user', 'User', true)
-INSERT INTO Users (email, password, full_name, enabled) VALUES ('f', 'f', 'False', false)
+INSERT INTO Users (email, password, full_name, enabled) VALUES ('u', 'u', 'User', true)
+INSERT INTO Users (email, password, full_name, enabled) VALUES ('m', 'm', 'Mobile', true)
+INSERT INTO Users (email, password, full_name, enabled) VALUES ('f', 'f', 'Financial', true)
+
+INSERT INTO Users_roles (user_id, role_id) VALUES (1, 1)
+INSERT INTO Users_roles (user_id, role_id) VALUES (2, 2)
+INSERT INTO Users_roles (user_id, role_id) VALUES (3, 3)
+INSERT INTO Users_roles (user_id, role_id) VALUES (4, 5)
 
 INSERT INTO Subscriptions(number, create_date, first_available_date) VALUES ('201234567', to_date('20-01-01', 'RR-MM-DD'), to_date('20-01-01', 'RR-MM-DD'))
 INSERT INTO Subscriptions(number, create_date, first_available_date) VALUES ('207654321', to_date('20-01-02', 'RR-MM-DD'), to_date('20-01-02', 'RR-MM-DD'))
@@ -27,9 +35,6 @@ INSERT INTO Device_types (brand, model, name, sim_number, microsd, visible) VALU
 INSERT INTO Devices (serial_number, type_id) VALUES ('sn1', 1)
 INSERT INTO Devices (serial_number, type_id) VALUES ('sn2', 2)
 INSERT INTO Devices (serial_number, type_id) VALUES ('sn3', 3)
-
-INSERT INTO Users_roles (user_id, role_id) VALUES (1, 1)
-INSERT INTO Users_roles (user_id, role_id) VALUES (2, 2)
 
 INSERT INTO User_sub_st (user_id, sub_id, begin_date) VALUES (1, 1, to_date('20-01-01', 'RR-MM-DD'))
 INSERT INTO User_sub_st (user_id, sub_id, begin_date) VALUES (2, 2, to_date('20-01-02', 'RR-MM-DD'))

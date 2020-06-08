@@ -1,7 +1,5 @@
 package com.sec.service;
 
-import javax.swing.text.MaskFormatter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,34 +14,35 @@ import com.sec.entity.User;
 public class EmailService {
     private final Log log = LogFactory.getLog(this.getClass());
     
-	@Value("${spring.mail.username}")
-	private String MESSAGE_FROM;
+    @Value("${spring.mail.username}")
+    private String MESSAGE_FROM;
 	
-	private JavaMailSender javaMailSender;
+//    private JavaMailSender javaMailSender;
+//
+//    @Autowired
+//    public void setJavaMailSender(JavaMailSender javaMailSender) {
+//      this.javaMailSender = javaMailSender;
+//    }
 
-	@Autowired
-	public void setJavaMailSender(JavaMailSender javaMailSender) {
-		this.javaMailSender = javaMailSender;
-	}
-
+    @Autowired
+    public JavaMailSender emailSender;
 
 	public void sendMessage(User user) {
-		SimpleMailMessage message = null;
+	  //TODO  username or password not accepted
 		String email = user.getEmail();
 		try {
-			message = new SimpleMailMessage();
-			message.setFrom(MESSAGE_FROM);
+		  SimpleMailMessage message = new SimpleMailMessage();
+//			message.setFrom(MESSAGE_FROM);
 			message.setTo(email);
 			message.setSubject("Checker");
-			message.setText("Kedves " + email + "! \n \n Köszönjük, hogy regisztráltál az oldalunkra!" +
-			"\n \n <a localhost:8080/passwordChange/" + user.getPasswordRenewerKey() + "></a>");
-			javaMailSender.send(message);
+			message.setText("Dear " + email + "! \n \n Please verify your profile and change password!"
+			    + " \n \n <a href=\"localhost:8080/verifyAndChangePassword/" + user.getPasswordRenewerKey() + "\">Click here<a/>");
 			
+			emailSender.send(message);
 		} catch (Exception e) {
 			log.error("Hiba e-mail küldéskor az alábbi címre: " + email + "  " + e);
 		}
 		
-
 	}
 	
 	

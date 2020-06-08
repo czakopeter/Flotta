@@ -1,7 +1,7 @@
 package com.sec.service;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,8 @@ import com.sec.status.service.SimStatusService;
 
 @Service
 public class SimService extends ServiceWithMsg {
+  
+  private static String[] changeReasons = {"CHANGED", "STOLE", "LOST"};
 	
 	private SimRepository simRepository;
 	
@@ -76,5 +78,9 @@ public class SimService extends ServiceWithMsg {
       appendMsg("Imei (" + sim.getImei() + ") already exists");
       return false;
     }
+  }
+
+  public List<String> getAllChagneReason() {
+    return Arrays.asList(changeReasons);
   }
 }

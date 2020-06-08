@@ -12,8 +12,8 @@
 	border-style: solid;
 	border-color: #b3ccff;
 	border-radius: 5px;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px
 }
 
 body h2 {

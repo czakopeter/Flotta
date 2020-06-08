@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" layout:decorator="layouts/main">
+<head>
+<title>Flotta</title>
+</head>
+<body>
+    
+	<div layout:fragment="loginContent">
+  
+  
+        <div th:replace="fragments/message :: message"></div>
+        
+		<div id="err" th:if="${msg == 'error'}" th:value="${msg}" class="alert alert-danger">Registration failed</div>
+    
+		<form name="registration" th:action="@{/registration}" th:object="${user}" method="post" class="form-signin">
+			<h2 class="form-signin-heading" th:text="#{registration.registration}">Registration</h2>
+				<input type="text" id="fullName" name="fullName" th:field="*{fullName}" class="form-control col-4 my-1" placeholder="Full name"  /> 
+		 	    <input type="text" id="email" name="username" th:field="*{email}" class="form-control col-4 my-1" placeholder="E-mail address"  /> 
+			<button class="btn btn-primary" type="submit" th:text="#{button.registrate}"></button>
+		</form>
+
+	</div>
+
+</body>
+</html>

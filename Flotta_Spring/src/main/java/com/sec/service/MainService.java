@@ -194,9 +194,33 @@ public class MainService {
 		return userService.findAll();
 	}
 	
-	public User findUser(String email) {
+	public User findUserByEmail(String email) {
 		return userService.findByEmail(email);
 	}
+	
+	public boolean changePassword(String newPsw, String confirmNewPsw) {
+    return userService.changePassword(newPsw, confirmNewPsw);
+ }
+
+ public String getUserError() {
+   return userService.removeMsg();
+ }
+ 
+ public boolean firstUserRegistration(User user) {
+   return userService.firstUserRegistration(user);
+ }
+ 
+ public boolean registrationAvailable() {
+   return userService.registrationAvailable();
+ }
+ 
+ public boolean isValidKeyOfUser(String key) {
+   return userService.isValidKeyOfUser(key);
+ }
+ 
+ public boolean verifyAndChangePassword(String key, String password, String confirmPassword) {
+   return userService.verifyAndChangePassword(key, password, confirmPassword);
+ }
 
 //-------- SIM SERVICE --------
 	
@@ -213,11 +237,7 @@ public class MainService {
   }
   
   public List<String> getSimChangeReasons() {
-    List<String> r = new LinkedList<>();
-    r.add("CHANGED");
-    r.add("STOLE");
-    r.add("LOST");
-    return r;
+    return simService.getAllChagneReason();
   }
   
   public List<Sim> findAllSim() {
@@ -273,41 +293,6 @@ public class MainService {
     
     return dtv;
   }
-  
-//  private DeviceToView toView(Device device, LocalDate date) {
-//    DeviceToView dtv = new DeviceToView();
-//    dtv.setId(device.getId());
-//    dtv.setSerialNumber(device.getSerialNumber());
-//    dtv.setTypeName(device.getDeviceType().getName());
-//    
-////    dtv.setEditable(true);
-//    
-//    User user = userDevService.findLastUser(device);
-//    if(user != null) {
-//      dtv.setUserId(user.getId());
-//      dtv.setUserName(user.getFullName());
-//    } else {
-//      dtv.setUserId(0);
-//      dtv.setUserName("");
-//    }
-//    
-//    Subscription sub = subDevService.findLastSub(device);
-//    if(sub != null) {
-//      dtv.setNumber(sub.getNumber());
-//    } else {
-//      dtv.setNumber("");
-//    }
-//    
-//    DevNote note = devNoteService.findLastNote(device);
-//    
-//    if(note != null) {
-//      dtv.setNote(note.getNote());
-//    } else {
-//      dtv.setNote("");
-//    }
-//    
-//    return dtv;
-//  }
   
   public List<DeviceToView> findAllDevices() {
     List<DeviceToView> list = new LinkedList<>();
@@ -473,4 +458,7 @@ public class MainService {
   public boolean addSubscription(SubscriptionToView stv) {
     return subscriptionService.add(stv);
   }
+
+  
+
 }

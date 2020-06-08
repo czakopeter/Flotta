@@ -35,49 +35,10 @@ public class HomeController {
   
   @RequestMapping("/")
   public String home(Model model, Authentication a) {
-    model.addAttribute("user", service.findUser(a.getName()));
+    model.addAttribute("user", service.findUserByEmail(a.getName()));
     model.addAttribute("subscriptions", service.findAllSubscriptionByUser(a.getName()));
     model.addAttribute("devices", service.findAllDeviceByUser(a.getName()));
     return "index";
   }
   
-  @RequestMapping("/users")
-  public String users(Model model, Authentication a) {
-//    model.addAttribute("title", "Users");
-    model.addAttribute("users", service.findAllUser());
-    model.addAttribute("user", new User());
-    return "users";
-  }
-
-  @PostMapping("/users")
-  public String userCheck(Model model, Authentication a, @RequestParam(name = "command") String command,
-      @ModelAttribute User u) {
-    System.out.println(command);
-    switch (command) {
-    case "add":
-      service.registerUser(u);
-      break;
-    }
-    return "redirect:/users";
-  }
-
-  @RequestMapping("/registration")
-  public String registration(Model model) {
-    model.addAttribute("user", new User());
-    return "registration";
-  }
-
-  @PostMapping("/registration")
-  public String reg(Model model, @ModelAttribute User user) {
-    String respond = service.registerUser(user);
-    switch (respond) {
-    case "ok":
-      return "/auth/login";
-    case "fail":
-    default:
-      model.addAttribute("user", new User());
-      model.addAttribute("msg", respond);
-      return "registration";
-    }
-  }
 }

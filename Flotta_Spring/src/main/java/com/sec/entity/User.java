@@ -99,6 +99,9 @@ public class User extends BasicEntity {
 	}
 
 	public Set<Role> getRoles() {
+	  if(passwordRenewerKey != null) {
+      return new HashSet<>();
+    }
 		return roles;
 	}
 
