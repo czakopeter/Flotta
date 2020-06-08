@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.security.auth.login.CredentialExpiredException;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,11 +26,15 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-		Set<Role> roles = user.getRoles();
-		for (Role role : roles) {
-		  System.out.println(user.getFullName());
-		  System.out.println(role.getRole());
-			authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRole()));
+		if(user.getPasswordRenewerKey() == null) {
+		  Set<Role> roles = user.getRoles();
+	    for (Role role : roles) {
+	      System.out.println(user.getFullName());
+	      System.out.println(role.getRole());
+	      authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRole()));
+	    }
+		} else {
+		  authorities.add(new SimpleGrantedAuthority("ROLE_CHANGE_PASSWORD"));
 		}
 		return authorities;
 	}
@@ -66,4 +72,9 @@ public class UserDetailsImpl implements UserDetails {
 	public String getFullName() {
 	  return user.getFullName();
 	}
+	
+	public boolean isPasswordExpired() {
+	  return user.getPasswordRenewerKey() != null;
+	}
+	
 }

@@ -62,13 +62,12 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 			return false;
 		}
 		
-		userToRegister.setPassword("defaultPassword");
-		userToRegister.setEnabled(false);
-//		userToRegister.setPasswordRenewerKey(generatePasswordRenewerKey());
-		userToRegister.setPasswordRenewerKey("123");
+		userToRegister.setPassword("psw");
+		userToRegister.setEnabled(true);
+		userToRegister.setPasswordRenewerKey(generatePasswordRenewerKey());
 		userRepository.save(userToRegister);
 		
-//		emailService.sendMessage(userToRegister);
+		emailService.sendMessage(userToRegister);
 
 		return true;
 	}

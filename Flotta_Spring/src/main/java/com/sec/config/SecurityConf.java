@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @Configuration
@@ -46,12 +48,19 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 				.and()
 			.logout()
 				.logoutSuccessUrl("/login?logout")
-				.permitAll();
+				.permitAll()
+		  .and()
+		    .exceptionHandling().accessDeniedHandler(accessDeniedHandler());
 		
 		
 		//adatbázis elérése böngészőből
 		http.csrf().disable();
 		http.headers().frameOptions().disable();
-	}	
+	}
+	
+	@Bean
+  public AccessDeniedHandler accessDeniedHandler() {
+      return new CustomAccessDeniedHandler();
+  }
 	
 }
