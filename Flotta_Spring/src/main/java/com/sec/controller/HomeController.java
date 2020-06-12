@@ -35,10 +35,23 @@ public class HomeController {
   
   @RequestMapping("/")
   public String home(Model model, Authentication a) {
-    model.addAttribute("user", service.findUserByEmail(a.getName()));
+//    model.addAttribute("user", service.findUserByEmail(a.getName()));
     model.addAttribute("subscriptions", service.findAllSubscriptionByUser(a.getName()));
     model.addAttribute("devices", service.findAllDeviceByUser(a.getName()));
     return "index";
+  }
+  
+  @RequestMapping("/accessDenied")
+  public String accessDenied(Model model) {
+    model.addAttribute("title", "no title");
+    model.addAttribute("error", "Access denied");
+    return "accessDenied";
+  }
+  
+  @RequestMapping("/loginError")
+  public String loginError(Model model) {
+    model.addAttribute("error", "Incorrect email or password!");
+    return "auth/login";
   }
   
 }

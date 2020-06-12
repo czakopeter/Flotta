@@ -1,6 +1,5 @@
 package com.sec.controller;
 
-import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.service.MainService;
 
@@ -32,7 +30,7 @@ public class SubscriptionController {
 
   @RequestMapping("/subscription/all")
   public String subscriptions(Model model) {
-    model.addAttribute("canCreateNew", "Subscriptions");
+    model.addAttribute("canCreateNew", service.canCreateSubscription());
     model.addAttribute("subscriptions", service.findAllSubscription());
     return "subscription_templates/subscriptionAll";
   }

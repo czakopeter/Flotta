@@ -24,7 +24,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     if (auth != null && userDetails.isPasswordExpired()) {
       response.sendRedirect(request.getContextPath() + "/profile");
     } else {
-      response.sendRedirect(request.getContextPath() + "/");
+      response.sendRedirect(request.getContextPath() + "/accessDenied");
     }
 
   }

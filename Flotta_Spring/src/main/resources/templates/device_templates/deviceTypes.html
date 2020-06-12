@@ -8,95 +8,134 @@
   <div layout:fragment="loginContent">
 
     <h2>Device Types</h2>
-    <table class="table">
-      <tr>
-        <td>Show invisible <input type="checkbox" id="show" onclick="change_visible()" />
-        </td>
-        <td><button type="submit" class="btn btn-primary" data-target="#edit"
-            data-backdrop="static" data-toggle="modal" onclick="reset_modal()">New</button>
-            </td>
-      </tr>
-    </table>
+    
+    <button type="submit" class="btn btn-primary" data-target="#edit" data-backdrop="static"
+      data-toggle="modal" onclick="reset_modal()"
+    >New</button>
 
 
-    <table class="table" id="table">
-      <tr>
-        <th>Brand</th>
-        <th>Model</th>
-        <th>Name</th>
-        <th>SIM number</th>
-        <th>Has MicroSD slot</th>
-        <th>Visible</th>
-<!--         <th style="display: none;">Visible</th> -->
-        <th></th>
-      </tr>
-      <tr th:each="deviceType, i : ${deviceTypes}">
-        <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
-        <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
-        <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
-        <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
-        <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
-        <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
-        <td th:id="visible + ${i.count}"  th:text="${deviceType.visible}"></td>
-        <td><button type="button" class="btn btn-primary"
-            th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
-            data-toggle="modal">Edit</button></td>
-      </tr>
-    </table>
+    <div class="tab mt-5">
+      <button name="tabbtn" class="btn btn-light active"
+        onclick="changeTab(this, 'visibleTab')"
+      >Visible</button>
+      <button name="tabbtn" class="btn btn-light" onclick="changeTab(this, 'invisibleTab')">Invisible</button>
+    </div>
+
+    <div id="visibleTab" class="tabcontent">
+      <h3>Visible</h3>
+      <table class="table" id="table">
+        <tr>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Name</th>
+          <th>SIM number</th>
+          <th>Has MicroSD slot</th>
+          <th></th>
+        </tr>
+        <tr th:each="deviceType, i : ${deviceTypes}" th:if="${deviceType.visible == true}">
+          <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
+          <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;" ></td>
+          <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
+          <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
+          <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
+          <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
+          <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+          <td><button type="button" class="btn btn-primary"
+              th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
+              data-toggle="modal"
+            >Edit</button></td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="invisibleTab" class="tabcontent">
+      <h3>Invisible</h3>
+      <table class="table" id="table">
+        <tr>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Name</th>
+          <th>SIM number</th>
+          <th>Has MicroSD slot</th>
+          <th></th>
+        </tr>
+        <tr th:each="deviceType, i : ${deviceTypes}" th:if="${deviceType.visible == false}">
+          <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
+          <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;"></td>
+          <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
+          <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
+          <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
+          <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
+          <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+          <td><button type="button" class="btn btn-primary"
+              th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
+              data-toggle="modal"
+            >Edit</button></td>
+        </tr>
+      </table>
+    </div>
 
 
     <!-- Modal -->
     <div class="modal " id="edit" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-        <form id="modalForm" action="/deviceTypes" th:object="${deviceType}" method="post">
-          <div class="modal-header">
-            <h4 class="modal-title" id="exampleModalLabel">Create device type</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">x</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            
+          <form id="modalForm" action="/deviceTypes" th:object="${deviceType}" method="post">
+            <div class="modal-header">
+              <h4 class="modal-title" id="exampleModalLabel">Create device type</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">x</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
               <input type="hidden" id="id" name="id" />
               <div class="form-group">
                 <label class="form-control-label">Name:</label> <input type="checkbox"
-                  id="autoNameGenerate" checked="checked" onclick="autoNameGenerateChange()" /> <input
-                  type="text" class="form-control" id="name" name="name" readonly="readonly" required="required" />
+                  id="autoNameGenerate" checked="checked" onclick="autoNameGenerateChange()"
+                /> <input type="text" class="form-control" id="name" name="name" readonly="readonly"
+                  required="required"
+                />
               </div>
 
               <div class="form-group">
                 <label class="form-control-label">Brand</label> <input list="brands" id="brand"
-                  name="brand" class="form-control" oninput="nameAutoComplete()" required="required" />
+                  name="brand" class="form-control" oninput="nameAutoComplete()" required="required"
+                />
                 <datalist id="brands">
                   <option th:each="b : ${brandList}" th:value="${b}"></option>
                 </datalist>
               </div>
               <div class="form-group">
                 <label class="form-control-label">Model</label> <input type="text" id="model"
-                  name="model" class="form-control" oninput="nameAutoComplete()" required="required" placeholder="Model" />
+                  name="model" class="form-control" oninput="nameAutoComplete()" required="required"
+                  placeholder="Model"
+                />
               </div>
               <div class="form-group">
                 <label class="form-control-label">SIM number</label> <select id="simNumber"
-                  name="simNumber" class="form-control" oninput="nameAutoComplete()">
+                  name="simNumber" class="form-control" oninput="nameAutoComplete()"
+                >
                   <option value="1">1</option>
                   <option value="2">2</option>
                 </select>
               </div>
               <div class="form-group">
                 <label class="form-control-label">Has MicroSD slot</label> <input type="checkbox"
-                  id="microsd" name="microsd" />
+                  id="microsd" name="microsd"
+                />
               </div>
               <div class="form-group">
                 <label class="form-control-label">Visible</label> <input type="checkbox"
-                  id="visible" name="visible" />
+                  id="visible" name="visible"
+                />
               </div>
-            
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
-          </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+            </div>
           </form>
         </div>
       </div>
@@ -107,69 +146,64 @@
 
 
     <script th:inline="javascript">
-		//<![CDATA[
-			window.onload = function() {
-				change_visible();
-			};
-			
-		function change_visible() {
-			var table = document.getElementById('table');
-			var row;
-			if(document.getElementById('visible').checked) {
-				alert(table);
-				for (row of table.rows) {
-					row.style.display = '';
-				}
-			} else {
-				for (row of table.rows) {
-					if(row.cells[6].innerHTML == 'false') {
-						row.style.display = 'none';
+					//<![CDATA[
+					window.onload = function() {
+						changeTab(document.getElementsByClassName("tabbtn")[0], 'visibleTab')
+					};
+
+					function reset_modal() {
+						document.getElementById('id').value = '';
+						document.getElementById('brand').value = '';
+						document.getElementById('model').value = '';
+						document.getElementById('name').value = '';
+						document.getElementById('simNumber').value = '1';
+						document.getElementById('microsd').checked = true;
+						document.getElementById('visible').checked = true;
 					}
-				}
-			}
-		}
-		
-		function reset_modal() {
-			document.getElementById('id').value = '';
-			document.getElementById('brand').value = '';
-			document.getElementById('model').value = '';
-			document.getElementById('name').value = '';
-			document.getElementById('simNumber').value = '1';
-			document.getElementById('microsd').checked = true;
-			document.getElementById('visible').checked = true;
-		}
-		
-		function set_modal(i) {
-			alert(document.getElementById('microsd').checked);
-			alert(document.getElementById('microsd' + i).innerHTML);
-			document.getElementById('id').value = document.getElementById('id' + i).innerHTML;
-			document.getElementById('brand').value = document.getElementById('brand' + i).innerHTML;
-			document.getElementById('model').value = document.getElementById('model' + i).innerHTML;
-			document.getElementById('name').value = document.getElementById('name' + i).innerHTML;
-			document.getElementById('simNumber').value = document.getElementById('simNumber' + i).innerHTML;
-			document.getElementById('microsd').checked = document.getElementById('microsd' + i).innerHTML;
-			document.getElementById('visible').checked = document.getElementById('visible' + i).innerHTML;
-		}
-		
-		function nameAutoComplete() {
-			var sim = document.getElementById('simNumber').value;
-			if(document.getElementById('autoNameGenerate').checked) {
-				document.getElementById('name').value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
-			}
-		}
-		
-		function autoNameGenerateChange() {
-			var name = document.getElementById('name');
-			if(document.getElementById('autoNameGenerate').checked) {
-				name.readOnly = true;
-				name.value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
-			} else {
-				name.readOnly = false;
-			}
-		}
-		
-		//]]>
-		</script>
+
+					function set_modal(i) {
+						document.getElementById('id').value = document.getElementById('id' + i).innerHTML;
+						document.getElementById('brand').value = document.getElementById('brand' + i).innerHTML;
+						document.getElementById('model').value = document.getElementById('model' + i).innerHTML;
+						document.getElementById('name').value = document.getElementById('name' + i).innerHTML;
+						document.getElementById('simNumber').value = document.getElementById('simNumber' + i).innerHTML;
+						document.getElementById('microsd').checked = document.getElementById('microsd' + i).innerHTML == 'true';
+						document.getElementById('visible').checked = document.getElementById('visible' + i).innerHTML == 'true';
+					}
+
+					function nameAutoComplete() {
+						var sim = document.getElementById('simNumber').value;
+						if (document.getElementById('autoNameGenerate').checked) {
+							document.getElementById('name').value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
+						}
+					}
+
+					function autoNameGenerateChange() {
+						var name = document.getElementById('name');
+						if (document.getElementById('autoNameGenerate').checked) {
+							name.readOnly = true;
+							name.value = document.getElementById('brand').value + ' ' + document.getElementById('model').value + ' ' + (document.getElementById('simNumber').value == '2' ? 'DS' : '');
+						} else {
+							name.readOnly = false;
+						}
+					}
+
+					function changeTab(btn, tabName) {
+						var i, tabcontent, tabbtn;
+						tabcontent = document.getElementsByClassName("tabcontent");
+						for (i = 0; i < tabcontent.length; i++) {
+							tabcontent[i].style.display = "none";
+						}
+						tabbtn = document.getElementsByName("tabbtn");
+						for (i = 0; i < tabbtn.length; i++) {
+							tabbtn[i].className = tabbtn[i].className.replace(" active", "");
+						}
+						document.getElementById(tabName).style.display = "block";
+						btn.className += " active";
+					}
+
+					//]]>
+				</script>
 
   </div>
 </body>

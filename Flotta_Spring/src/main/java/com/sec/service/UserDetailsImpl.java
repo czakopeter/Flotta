@@ -29,12 +29,10 @@ public class UserDetailsImpl implements UserDetails {
 		if(user.getPasswordRenewerKey() == null) {
 		  Set<Role> roles = user.getRoles();
 	    for (Role role : roles) {
-	      System.out.println(user.getFullName());
-	      System.out.println(role.getRole());
-	      authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRole()));
+	      authorities.add(new SimpleGrantedAuthority(role.getRole()));
 	    }
 		} else {
-		  authorities.add(new SimpleGrantedAuthority("ROLE_CHANGE_PASSWORD"));
+		  authorities.add(new SimpleGrantedAuthority("CHANGE_PASSWORD"));
 		}
 		return authorities;
 	}
@@ -74,7 +72,10 @@ public class UserDetailsImpl implements UserDetails {
 	}
 	
 	public boolean isPasswordExpired() {
-	  return user.getPasswordRenewerKey() != null;
+	  return user.isPasswordExpired();
 	}
 	
+	public boolean hasRole(String role) {
+	  return user.hasRole(role);
+	}
 }

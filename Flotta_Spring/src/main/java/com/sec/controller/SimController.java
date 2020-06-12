@@ -53,9 +53,6 @@ public class SimController {
   public String sims(Model model, @ModelAttribute Sim sim, @RequestParam(name = "command") String command, @RequestParam(name = "date") String date) {
     System.out.println(date);
     switch (command) {
-    case "add":
-//      service.saveSim(sim, LocalDate.parse(date));
-      break;
     default: 
       break;
     }

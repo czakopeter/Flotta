@@ -180,14 +180,11 @@ public class MainService {
 	
 	//TODO put UserServiceImp function here
 	//-------- USER SERVICE --------
-	public String registerUser(User user) {
-//		user.addRoles("ADMIN");
-		user.addRoles("FIRST");
+	public boolean registerUser(User user) {
 		if(userService.registerUser(user)) {
-			return "ok";
-		} else {
-			return "error";
+			return true;
 		}
+		return false;
 	}
 		
 	public List<User> findAllUser() {
@@ -214,14 +211,10 @@ public class MainService {
    return userService.registrationAvailable();
  }
  
- public boolean isValidKeyOfUser(String key) {
-   return userService.isValidKeyOfUser(key);
+ public boolean varification(String key) {
+   return userService.varification(key);
  }
  
- public boolean verifyAndChangePassword(String key, String password, String confirmPassword) {
-   return userService.verifyAndChangePassword(key, password, confirmPassword);
- }
-
 //-------- SIM SERVICE --------
 	
   public List<Sim> findAllFreeSim() {
@@ -459,6 +452,16 @@ public class MainService {
     return subscriptionService.add(stv);
   }
 
-  
+  public List<User> findAllUserByStatus(int status) {
+    return userService.findAllByStatus(status);
+  }
+
+  public User findUserById(long id) {
+    return userService.findById(id);
+  }
+
+  public boolean updateUser(long id, boolean[] roles, List<String> rolesName) {
+    return userService.update(id, roles, rolesName);
+  }
 
 }

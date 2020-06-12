@@ -8,7 +8,7 @@
 
     <h2>Devices</h2>
 
-    <a th:if="canCreateNew" href="/device/new" class="btn btn-primary my-2" th:text="#{button.new}">New</a>
+    <a  href="/device/new" class="btn btn-primary my-2" th:text="#{button.new}" th:classappend="${canCreateNew ? '' : 'disabled'}">New</a>
 
     <table class="table">
       <tr>

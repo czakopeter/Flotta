@@ -36,6 +36,8 @@ public class User extends BasicEntity {
 	
 	private boolean enabled;
 	
+	private int status;
+	
 	private String passwordRenewerKey;
 	
   @OneToMany( mappedBy = "user" )
@@ -51,6 +53,15 @@ public class User extends BasicEntity {
 		inverseJoinColumns = {@JoinColumn(name="role_id")}  
 	)
 	private Set<Role> roles = new HashSet<Role>();
+	
+	public static String[] STATUS_STRING = {"WAITING FOR VALIDATION", "REQUIRED PASSWORD CHANGE", "ENABLED", "DISABLED"};
+	
+	
+	public static int WAITING_FOR_VALIDATION = 0;
+	public static int REQUIRED_PASSWORD_CHANGE = 1;
+	public static int ENABLED = 2;
+	public static int DISABLED = 3;
+	
 
 	@ManyToMany
 	private List<PayDevision> payDevs = new LinkedList<>();
@@ -90,7 +101,15 @@ public class User extends BasicEntity {
   }
 
 
-	public Set<UserSub> getUserSubs() {
+  public int getStatus() {
+    return status;
+  }
+
+  public void setStatus(int status) {
+    this.status = status;
+  }
+
+  public Set<UserSub> getUserSubs() {
 		return userSubs;
 	}
 
@@ -153,4 +172,22 @@ public class User extends BasicEntity {
   public void addPayDevision(PayDevision payDevision) {
     this.payDevs.add(payDevision);
   }
+
+  public boolean hasRole(String role) {
+    for(Role r : roles) {
+      if(r.getRole().equalsIgnoreCase(role)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public String getStatusName() {
+    return STATUS_STRING[status];
+  }
+
+  public boolean isPasswordExpired() {
+    return status == REQUIRED_PASSWORD_CHANGE;
+  }
+  
 }

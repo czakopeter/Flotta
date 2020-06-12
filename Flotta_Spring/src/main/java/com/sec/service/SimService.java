@@ -69,13 +69,14 @@ public class SimService extends ServiceWithMsg {
     }
   }
 
+  //TODO check imei, pin, puk format
   public boolean add(Sim sim) {
     Sim check = simRepository.findByImei(sim.getImei());
     if(check == null) {
       simRepository.save(sim);
       return true;
     } else {
-      appendMsg("Imei (" + sim.getImei() + ") already exists");
+      appendMsg("Imei " + sim.getImei() + " already exists");
       return false;
     }
   }

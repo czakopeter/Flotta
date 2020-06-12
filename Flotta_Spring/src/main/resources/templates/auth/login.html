@@ -6,44 +6,44 @@
 <body>
 
   <div layout:fragment="loginContent">
-    
+
     <h2 class="form-signin-heading" th:text="#{login.login}">Login</h2>
-    
+
     <div th:replace="fragments/message :: message"></div>
-        
+
     <form name="login" th:action="@{/login}" method="post" class="form-signin">
-      
+
       <div id="err" th:if="${param.error}" class="alert alert-danger">Hibás felhasználói
         név és jelszó</div>
-      <div th:if="${param.logout}" class="alert alert-success" >Sikeresen kijelentkeztél</div>
-      <div class="row  my-2">
-        <div class="col-2">
-          <label for="username" th:text="#{login.username}">Username</label>
+      <div th:if="${param.logout}" class="alert alert-success">Sikeresen kijelentkeztél</div>
+      <!--         <div class="row my-2 justify-content-center"> -->
+      <div class="row">
+        <div class="col-4 ">
+          <label for="username" th:text="#{login.email}">Email</label>
         </div>
+      </div>
+      <div class="row mb-1">
         <div class="col-4">
-          <input value="admin" type="text" id="username" name="username" class="form-control"
-            th:placeholder="#{login.username}" required="required"
+          <input type="text" id="username" name="username" class="form-control"
+            th:placeholder="#{login.email}" required="required"
           />
         </div>
       </div>
-      <div class="row  my-2">
-        <div class="col-2">
+      <div class="row">
+        <div class="col-4">
           <label for="password" th:text="#{login.password}">Password</label>
         </div>
+      </div>
+      <div class="row mb-3">
         <div class="col-4">
-          <input value="admin" type="password" id="password" name="password" class="form-control"
+          <input type="password" id="password" name="password" class="form-control"
             th:placeholder="#{login.password}" required="required"
           />
         </div>
       </div>
-
-      <div class="checkbox">
-        <input id="remember-me" name="remember-me" type="checkbox"
-          th:text="#{login.rememberMe}"
-        />
-      </div>
       <button class="btn btn-lg btn-primary" type="submit" th:text="#{login.login}">Login</button>
-    </form>
+
+  </form>
 
   </div>
 

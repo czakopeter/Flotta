@@ -15,7 +15,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @Configuration
 public class SecurityConf extends WebSecurityConfigurerAdapter {
-	
 
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -36,14 +35,25 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			//TODO adatbázishoz csak ADMIN, .antMatchers("/db/**").hasRole("ADMIN")
 			  .antMatchers("/db/**").permitAll()
-			  .antMatchers("/verifyAndChangePassword/**", "/registration").permitAll()
-				.antMatchers("/billing/**").hasAnyRole("FINANCIAL", "ADMIN")
-				.antMatchers("/subscription/**", "/device/**", "/deviceType/**").hasAnyRole("MOBILE", "ADMIN")
-				.antMatchers("/profile/**").authenticated()
-				.anyRequest().authenticated()
+			  .antMatchers("/verification/**", "/registration", "/accessDennied").permitAll()
+//				.antMatchers("/billing/**").hasAnyRole("FINANCIAL", "ADMIN")
+//				.antMatchers("/subscription/**", "/device/**", "/deviceType/**", "/sim/**").hasAnyRole("MOBILE", "ADMIN")
+//				.antMatchers("users/**").hasRole("ADMIN")
+//				.antMatchers("/profile/**").authenticated()
+//				.antMatchers("/").not().hasAnyRole("CHANGE_PASSWORD", "ANONYMOUS")
+//				.anyRequest().authenticated()
+			  .antMatchers("/billing/**").hasAnyAuthority("FINANCIAL", "ADMIN")
+        .antMatchers("/subscription/**", "/device/**", "/deviceType/**", "/sim/**").hasAnyAuthority("MOBILE", "ADMIN")
+        .antMatchers("/users/**").hasAnyAuthority("ADMIN")
+        .antMatchers("/profile/**").authenticated()
+        .antMatchers("/").hasAnyAuthority("ADMIN", "USER", "FINANCIAL", "MOBIL")
+        .anyRequest().authenticated()
 				.and()
 			.formLogin()
 				.loginPage("/login")
+				.failureUrl("/loginError")
+				//belépést követően a kezdőlapra irányítsa át
+				.defaultSuccessUrl("/", false)
 				.permitAll()
 				.and()
 			.logout()

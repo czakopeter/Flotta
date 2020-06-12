@@ -1,7 +1,9 @@
 package com.sec.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 //import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.sec.entity.Role;
 import com.sec.entity.User;
+import com.sec.repo.RoleRepository;
 import com.sec.repo.UserRepository;
 import com.sec.validator.Validator;
 
@@ -24,6 +27,8 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 	
 	private EmailService emailService;
 	
+	private RoleRepository roleRepository;
+	
 	@Autowired
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
@@ -32,6 +37,11 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 	@Autowired
 	public void setEmailService(EmailService emailService) {
     this.emailService = emailService;
+  }
+	
+	@Autowired
+  public void setRoleRepository(RoleRepository roleRepository) {
+    this.roleRepository = roleRepository;
   }
 
   @Override
@@ -61,20 +71,22 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 		if (userCheck != null) {
 			return false;
 		}
-		
-		userToRegister.setPassword("psw");
-		userToRegister.setEnabled(true);
-		userToRegister.setPasswordRenewerKey(generatePasswordRenewerKey());
-		userRepository.save(userToRegister);
-		
-		emailService.sendMessage(userToRegister);
-
+		userToRegister.setEnabled(false);
+		userToRegister.setStatus(User.WAITING_FOR_VALIDATION);
+		userToRegister.addRoles("USER");
+		userToRegister.setPassword(generateKey(16));
+		userToRegister.setPasswordRenewerKey(generateKey(16));
+		if(emailService.sendMessage(userToRegister)) {
+		  userRepository.save(userToRegister);
+		} else {
+		  return false;
+		}
 		return true;
 	}
 
-	public String generatePasswordRenewerKey() {
+	public String generateKey(int length) {
 		Random random = new Random();
-		char[] key = new char[16]; 
+		char[] key = new char[length]; 
 		for (int i = 0; i < key.length; i++) {
 			key[i] = (char) ('a' + random.nextInt(26));
 		}
@@ -89,11 +101,13 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
     userRepository.save(user);
   }
   
+  //az kötelező jelszó csere után a menű nem jelenik a szerepkörök szerint
   public boolean changePassword(String password, String confirmPsw) {
     if(password != null && password.contentEquals(confirmPsw)) {
       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
       User user = userRepository.findByEmail(auth.getName());
       user.setPassword(password);
+      user.setPasswordRenewerKey(null);
       userRepository.save(user);
       return true;
     } else {
@@ -103,39 +117,82 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
   }
 
   public boolean registrationAvailable() {
-    return userRepository.findAll().isEmpty();
+    for(User user : findAll()) {
+      if(user.hasRole("ADMIN")) {
+        return false;
+      }
+    }
+    return true;
   }
   
   public boolean firstUserRegistration(User user) {
     if(userRepository.findAll().isEmpty()) {
-      user.addRoles("ADMIN");
+      
       user.setEnabled(false);
-      user.setPasswordRenewerKey(generatePasswordRenewerKey());
-      user.setPassword("password");
-      userRepository.save(user);
-      emailService.sendMessage(user);
-      return true;
+      user.addRoles("ADMIN");
+      user.setStatus(User.WAITING_FOR_VALIDATION);
+      user.setPassword(generateKey(16));
+      user.setPasswordRenewerKey(generateKey(16));
+      if(emailService.sendMessage(user)) {
+        userRepository.save(user);
+      } else {
+        return false;
+      }
     }
-    return false;
+    return true;
   }
 
-  public boolean isValidKeyOfUser(String key) {
-    return userRepository.findByPasswordRenewerKey(key) != null;
-  }
-
-  public boolean verifyAndChangePassword(String key, String password, String confirmPassword) {
+  public boolean varification(String key) {
     User user = userRepository.findByPasswordRenewerKey(key);
-    if(user == null) {
-      appendMsg("Invalid key '" + key + "'!");
-    } else if(Validator.equalsAndValidPassword(password, confirmPassword)) {
-      user.setPasswordRenewerKey(null);
-      user.setPassword(password);
+    if(user != null) {
       user.setEnabled(true);
+      user.setStatus(User.ENABLED);
       userRepository.save(user);
       return true;
-    } else {
-      appendMsg("Invalid password");
     }
     return false;
   }
+
+  public List<User> findAllByStatus(int status) {
+    return userRepository.findAllByStatus(status);
+  }
+
+  public boolean update(long id, boolean[] roles, List<String> rolesName) {
+    
+    User user = userRepository.findOne(id);
+    
+    if(user != null) {
+      System.out.println("nem null user");
+      try {
+        user.setRoles(toRoleSet(roles, rolesName));
+        userRepository.save(user);
+        return true;
+      } catch (IllegalArgumentException e) {
+        appendMsg(e.getMessage());
+      }
+    } else {
+      appendMsg("User doesn't exists!");
+    }
+    return false;
+  }
+  
+  private Set<Role> toRoleSet(boolean[] roles, List<String> rolesName) throws IllegalArgumentException {
+    Set<Role> result = new HashSet<>();
+    if(roles.length != 4 || rolesName.size() != 4) {
+      throw new IllegalArgumentException("Size of argument boolean array not exactly 4!");
+    }
+    for(int i = 0; i < roles.length; i++) {
+      if(roles[i]) {
+        Role r = roleRepository.findByRole(rolesName.get(i).toUpperCase());
+        if(r == null) {
+          throw new IllegalArgumentException("Role '" + rolesName.get(i) + "' doesn't exists!");
+        }
+        result.add(r);
+      }
+    }
+    result.add(roleRepository.findByRole("BASIC"));
+    
+    return result;
+  }
+
 }

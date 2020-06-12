@@ -9,7 +9,10 @@
 <title>Flotta</title>
 
 <link rel="stylesheet" href="/css/my.css" th:href="@{/css/my.css}" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+  crossorigin="anonymous"
+/>
 
 <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
 <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />
@@ -21,37 +24,35 @@
 </head>
 <body>
 
-  
   <div class="navbar navbar-expand mx-1 my-menu">
-    <div sec:authorize="isAuthenticated()" class="navbar-nav">
+    <div sec:authorize="isAuthenticated() and not hasAuthority('CHANGE_PASSWORD')" class="navbar-nav">
       <ul class="nav nav-pills">
         <li class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'Homepage' ? 'active' :''" href="/" th:text="#{main.homepage}"
         >Homepage</a></li>
-        <li class="nav-item"><a class="nav-link"
+        <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item"><a class="nav-link"
+          th:classappend="${title} == 'User' ? 'active' :''" href="/user/all" th:text="#{main.users}"
+        >User</a></li>
+        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'Subscription' ? 'active' :''" href="/subscription/all"
           th:text="#{main.subscriptions}"
         >Subscription</a></li>
-        <li class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'User' ? 'active' :''" href="/users" th:text="#{main.users}"
-        >User</a></li>
-        <li class="nav-item"><a class="nav-link"
+        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'Sim' ? 'active' :''" href="/sim/all" th:text="#{main.sims}"
         >Sim</a></li>
-        <li class="nav-item"><a class="nav-link"
+        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'Device' ? 'active' :''" href="/device/all"
           th:text="#{main.devices}"
         >Device</a></li>
-        <li class="nav-item"><a class="nav-link"
+        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'DeviceType' ? 'active' :''" href="/deviceTypes"
           th:text="#{main.deviceTypes}"
         >Device type</a></li>
-        <li class="nav-item"><a class="nav-link"
+        <li sec:authorize="hasAnyAuthority('FINANCLE','ADMIN')" class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'Billing' ? 'active' :''" href="/billing/all"
           th:text="#{main.billing}"
         >Billing</a></li>
-        <li class="nav-item"><a class="nav-link"
-           href="/finance">Test</a></li>
+        <li class="nav-item"><a class="nav-link" href="/finance">Test</a></li>
       </ul>
     </div>
     <div class="ml-auto mr-3">
@@ -68,28 +69,33 @@
       </div>
     </div>
     <div class="navbar-nav mr-3">
-      <span>
-        <a href="?lang=hu" class="mr-1" onclick="document.cookie='localeCookie=hu'">HU</a>
+      <span> <a href="?lang=hu" class="mr-1" onclick="document.cookie='localeCookie=hu'">HU</a>
         <a href="?lang=en" onclick="document.cookie='localeCookie=en'">EN</a>
-         </span>
+      </span>
     </div>
   </div>
 
   <div class="container">
-
-
+  
     <div layout:fragment="loginContent"></div>
-
-
 
 
     <div th:replace="footer :: footer"></div>
 
   </div>
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"
+  ></script>
 
 </body>
 </html>

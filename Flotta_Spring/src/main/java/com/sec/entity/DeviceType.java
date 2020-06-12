@@ -16,8 +16,6 @@ public class DeviceType {
   @GeneratedValue
   private Long id;
 
-  private boolean visible;
-
   private String brand;
 
   private String model;
@@ -26,6 +24,8 @@ public class DeviceType {
 
   private int simNumber;
 
+  private boolean visible;
+  
   private boolean microsd;
 
   @OneToMany(mappedBy = "deviceType")
@@ -105,7 +105,5 @@ public class DeviceType {
   public String toString() {
     return "DeviceType [id=" + id + ", visible=" + visible + ", brand=" + brand + ", model=" + model + ", name=" + name + ", simNumber=" + simNumber + ", microsd=" + microsd + "]";
   }
-  
-  
   
 }

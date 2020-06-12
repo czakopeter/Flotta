@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+<title>BoxInBox - Users</title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <h2 th:text="#{user.editUser}">Edit user</h2>
+    
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    
+    <form th:object="${user}" method="post" id="form">
+      <input type="hidden" id="order" name="order" />
+      <div class="container">
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{user.fullName}">Full name</label>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" id="fullName" name="fullName" th:value="*{fullName}"
+              readonly="readonly"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{user.email}">Email</label>
+          </div>
+          <div class="col-4">
+            <input type="email" class="form-control" id="email" name="email" th:value="*{email}"
+              readonly="readonly"
+            />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{role.roles}">Roles</label>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{role.admin}">Admin</label>
+            <input type="hidden" id="roleName" name="roleName" value="admin" />
+          </div>
+          <div class="col-2">
+            <input type="checkbox" class="form-control" id="adminRole" name="adminRole" th:checked="${user.hasRole('admin')}" />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{role.user}">User</label>
+            <input type="hidden" id="roleName" name="roleName" value="user" />
+          </div>
+          <div class="col-2">
+            <input type="checkbox" class="form-control" id="userRole" name="userRole" th:checked="${user.hasRole('user')}" />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{role.mobile}">Mobile</label>
+            <input type="hidden" id="roleName" name="roleName" value="mobile" />
+          </div>
+          <div class="col-2">
+            <input type="checkbox" class="form-control" id="mobileRole" name="mobileRole" th:checked="${user.hasRole('mobile')}" />
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <label th:text="#{role.finance}">Finance</label>
+            <input type="hidden" id="roleName" name="roleName" value="finance" />
+          </div>
+          <div class="col-2">
+            <input type="checkbox" class="form-control" id="financeRole" name="financeRole" th:checked="${user.hasRole('finance')}" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <button type="submit" id="button" class="btn btn-primary"
+              th:formaction="'/user/' + ${user.id}" formmethod="post"
+              th:text="#{button.save}"
+            >Save</button>
+            <a href="/user/all" class="btn btn-primary" th:text="#{button.back}">Back</a>
+          </div>
+        </div>
+      </div>
+    </form>
+    
+
+  </div>
+
+
+</body>
+</html>
