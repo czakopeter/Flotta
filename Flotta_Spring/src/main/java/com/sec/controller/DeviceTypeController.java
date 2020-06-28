@@ -28,7 +28,7 @@ public class DeviceTypeController {
   }
 
   @RequestMapping("/deviceTypes")
-  public String deviceTypes(Model model) {
+  public String listDeviceTypes(Model model) {
     model.addAttribute("deviceTypes", service.findAllDeviceTypes());
     model.addAttribute("brandList", service.findAllBrandOfDevicesType());
     model.addAttribute("deviceType", new DeviceType());
@@ -36,8 +36,8 @@ public class DeviceTypeController {
   }
   
   @PostMapping("/deviceTypes")
-  public String postDeviceTypes(Model model, @ModelAttribute DeviceType outDT) {
-    service.saveDeviceType(outDT);
-    return deviceTypes(model);
+  public String addDeviceType(Model model, @ModelAttribute DeviceType deviceType) {
+    service.saveDeviceType(deviceType);
+    return listDeviceTypes(model);
   }
 }

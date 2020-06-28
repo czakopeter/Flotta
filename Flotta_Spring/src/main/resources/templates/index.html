@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" layout:decorator="layouts/main">
+<html lang="en" layout:decorator="layouts/main">
 <head>
-<title></title>
+<title>Flotta</title>
 </head>
 <body>
 
@@ -9,7 +9,7 @@
 
     <div class="shadow p-5 mb-5 bg-white rounded">
 
-<!--       <h2 th:text="#{main.greeting} + ' ' + ${user.fullName} + '!'"></h2> -->
+      <!--       <h2 th:text="#{main.greeting} + ' ' + ${user.fullName} + '!'"></h2> -->
 
       <br />
 
@@ -29,17 +29,17 @@
               </tr>
             </thead>
             <tbody>
-            <tr th:each="subscription : ${subscriptions}">
-              <td th:text="${subscription.number}"></td>
-              <td th:text="${subscription.imei}"></td>
-              <td th:text="${subscription.userName}"></td>
-              <td th:text="${subscription.deviceName}"></td>
-            </tr>
+              <tr th:each="subscription : ${subscriptions}">
+                <td th:text="${subscription.number}"></td>
+                <td th:text="${subscription.imei}"></td>
+                <td th:text="${subscription.userName}"></td>
+                <td th:text="${subscription.deviceName}"></td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-      
+
       <div class="container my-border">
         <div th:if="${#lists.isEmpty(devices)}">
           <label th:text="#{homepage.youDontHaveAnyDevices}"></label>
@@ -49,7 +49,7 @@
           <table class="table table-sm">
             <thead>
               <tr>
-              
+
                 <th th:text="#{device.serialNumber}">Serial number</th>
                 <th th:text="#{device.typeName}">Type name</th>
                 <th th:text="#{device.user}">User</th>
@@ -57,17 +57,17 @@
               </tr>
             </thead>
             <tbody>
-            <tr th:each="device : ${devices}">
-              <td th:text="${device.serialNumber}"></td>
-              <td th:text="${device.typeName}"></td>
-              <td th:text="${device.userName}"></td>
-              <td th:text="${device.number}"></td>
-            </tr>
+              <tr th:each="device : ${devices}">
+                <td th:text="${device.serialNumber}"></td>
+                <td th:text="${device.typeName}"></td>
+                <td th:text="${device.userName}"></td>
+                <td th:text="${device.number}"></td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-      
+
     </div>
 
 

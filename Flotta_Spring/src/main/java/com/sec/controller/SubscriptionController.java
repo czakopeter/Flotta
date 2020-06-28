@@ -1,9 +1,11 @@
 package com.sec.controller;
 
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,14 +30,14 @@ public class SubscriptionController {
     model.addAttribute("title", "Subscription");
   }
 
-  @RequestMapping("/subscription/all")
-  public String subscriptions(Model model) {
+  @GetMapping("/subscription/all")
+  public String listSubscriptions(Model model) {
     model.addAttribute("canCreateNew", service.canCreateSubscription());
     model.addAttribute("subscriptions", service.findAllSubscription());
     return "subscription_templates/subscriptionAll";
   }
 
-  @RequestMapping("/subscription/new")
+  @GetMapping("/subscription/new")
   public String addSubscription(Model model) {
     if(service.canCreateSubscription()) {
       model.addAttribute("subscription", new SubscriptionToView());
@@ -47,10 +49,7 @@ public class SubscriptionController {
   }
 
   @PostMapping("/subscription/new")
-  public String addSubscription(Model model, @ModelAttribute("subscription") SubscriptionToView stv, @RequestParam(name = "order", defaultValue = "save") String order) {
-    String[] orderPart = order.split(" ");
-    switch (orderPart[0]) {
-    case "save":
+  public String addSubscription(Model model, @ModelAttribute("subscription") SubscriptionToView stv) {
       if (service.addSubscription(stv)) {
         return "redirect:/subscription/all";
       } else {
@@ -59,15 +58,9 @@ public class SubscriptionController {
         model.addAttribute("error", service.getSubscriptionServiceError());
         return "subscription_templates/subscriptionNew";
       }
-    case "update":
-      break;
-    default:
-      break;
-    }
-    return "redirect:/subscription/all";
   }
 
-  @RequestMapping("/subscription/{id}")
+  @GetMapping("/subscription/{id}")
   public String subscription(Model model, @PathVariable("id") long id) {
     SubscriptionToView stv = service.findSubscriptionById(id);
     model.addAttribute("subscription", stv);
@@ -113,5 +106,9 @@ public class SubscriptionController {
     model.addAttribute("simChangeReasons", service.getSimChangeReasons());
     return stv.isEditable() ? "subscription_templates/subscriptionEdit" : "subscription_templates/subscriptionView";
   }
-
+  
+  @GetMapping("/subscription/{id}/view/{date}")
+  public String viewSubscription(Model model, @PathVariable("id") long id, @PathVariable("date") LocalDate date) {
+    return "subscription_templates/subscriptionView";
+  }
 }

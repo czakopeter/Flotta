@@ -1,22 +1,18 @@
 package com.sec.controller;
 
-import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sec.entity.Device;
-import com.sec.entity.Sim;
-import com.sec.entity.Subscription;
-import com.sec.entity.User;
 import com.sec.service.MainService;
-import com.sec.service.UserDetailsImpl;
 
 @Controller
 public class HomeController {
@@ -28,8 +24,15 @@ public class HomeController {
     this.service = service;
   }
 
+  @Autowired
+  private SessionRegistry sr;
+  
+  
   @ModelAttribute
   public void title(Model model) {
+    System.out.println(sr.getAllPrincipals());
+    System.out.println(LocaleContextHolder.getLocale());
+//    System.out.println(LocaleContextHolder);
     model.addAttribute("title", "Homepage");
   }
   

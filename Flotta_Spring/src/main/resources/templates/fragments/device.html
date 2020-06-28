@@ -109,6 +109,83 @@
       <a href="/device/all" class="btn btn-primary">Back</a>
     </form>
   </div>
+  
+  <div th:fragment="deviceTypeTabPanelAndJavaScript">
+    <div class="tab mt-5">
+      <button name="tabbtn" class="btn btn-light active"
+        onclick="changeTab(this, 'visibleTab')"
+      >Visible</button>
+      <button name="tabbtn" class="btn btn-light" onclick="changeTab(this, 'invisibleTab')">Invisible</button>
+    </div>
+
+    <div id="visibleTab" class="tabcontent">
+      <h3>Visible</h3>
+      <table class="table" id="table">
+        <tr>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Name</th>
+          <th>SIM number</th>
+          <th>Has MicroSD slot</th>
+          <th></th>
+        </tr>
+        <tr th:each="deviceType, i : ${deviceTypes}" th:if="${deviceType.visible == true}">
+          <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
+          <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;" ></td>
+          <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
+          <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
+          <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
+          <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
+          <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+          <td><button type="button" class="btn btn-primary"
+              th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
+              data-toggle="modal"
+            >Edit</button></td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="invisibleTab" class="tabcontent">
+      <h3>Invisible</h3>
+      <table class="table" id="table">
+        <tr>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Name</th>
+          <th>SIM number</th>
+          <th>Has MicroSD slot</th>
+          <th></th>
+        </tr>
+        <tr th:each="deviceType, i : ${deviceTypes}" th:if="${deviceType.visible == false}">
+          <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
+          <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;"></td>
+          <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
+          <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
+          <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
+          <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
+          <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+          <td><button type="button" class="btn btn-primary"
+              th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
+              data-toggle="modal"
+            >Edit</button></td>
+        </tr>
+      </table>
+    </div>
+    
+<!--     function changeTab(btn, tabName) { -->
+<!--             var i, tabcontent, tabbtn; -->
+<!--             tabcontent = document.getElementsByClassName("tabcontent"); -->
+<!--             for (i = 0; i < tabcontent.length; i++) { -->
+<!--               tabcontent[i].style.display = "none"; -->
+<!--             } -->
+<!--             tabbtn = document.getElementsByName("tabbtn"); -->
+<!--             for (i = 0; i < tabbtn.length; i++) { -->
+<!--               tabbtn[i].className = tabbtn[i].className.replace(" active", ""); -->
+<!--             } -->
+<!--             document.getElementById(tabName).style.display = "block"; -->
+<!--             btn.className += " active"; -->
+<!--           } -->
+  </div>
 
 
 

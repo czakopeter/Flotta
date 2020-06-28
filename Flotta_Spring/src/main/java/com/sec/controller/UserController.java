@@ -1,8 +1,5 @@
 package com.sec.controller;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -20,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sec.entity.User;
-import com.sec.entity.viewEntity.DeviceToView;
-import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.service.MainService;
 
 @Controller
@@ -36,17 +31,13 @@ public class UserController {
 
   @ModelAttribute
   public void title(Model model) {
+    System.out.println(LocaleContextHolder.getLocale());
     model.addAttribute("title", "User");
   }
   
   @RequestMapping("/user/all")
-  public String users(Model model, Authentication a) {
-    model.addAttribute("enabledUsers", service.findAllUserByStatus(User.ENABLED));
-    model.addAttribute("disabledUsers", service.findAllUserByStatus(User.DISABLED));
-    model.addAttribute("requiredPasswordChangUsers", service.findAllUserByStatus(User.REQUIRED_PASSWORD_CHANGE));
-    model.addAttribute("waitingForValidationUsers", service.findAllUserByStatus(User.WAITING_FOR_VALIDATION));
+  public String listUsers(Model model, Authentication a) {
     model.addAttribute("users", service.findAllUser());
-    model.addAttribute("user", new User());
     return "user_templates/userAll";
   }
 
@@ -67,21 +58,15 @@ public class UserController {
   }
   
   @RequestMapping("/user/{id}")
-  public String subscription(Model model, @PathVariable("id") long id) {
+  public String user(Model model, @PathVariable("id") long id) {
     model.addAttribute("user", service.findUserById(id));
     return "user_templates/userEdit";
   }
   
   @PostMapping("/user/{id}")
-  public String subscription(Model model, @PathVariable("id") long id, @ModelAttribute("user") User user
-      , @RequestParam(name = "adminRole", required = false) boolean adminRole
-      , @RequestParam(name = "userRole", required = false) boolean userRole
-      , @RequestParam(name = "mobileRole", required = false) boolean mobileRole
-      , @RequestParam(name = "financeRole", defaultValue = "false") boolean financeRole
-      , @RequestParam(name = "roleName") List<String> rolesName) {
-    
-      boolean[] roles = {adminRole, userRole, mobileRole, financeRole};
-    if(!service.updateUser(id, roles, rolesName)) {
+  public String user(Model model, @PathVariable("id") long id, @RequestParam() Map<String, Boolean> roles) {
+      
+    if(!service.updateUser(id, roles)) {
       model.addAttribute("error", service.getUserError());
     }
     model.addAttribute("user", service.findUserById(id));
@@ -94,8 +79,8 @@ public class UserController {
   }
   
   @PostMapping("/profile/changePassword")
-  public String passwordChange(Model model, @RequestParam(name = "new-password") String newPsw, @RequestParam(name = "confirm-new-password") String confirmNewPsw) {
-    if(service.changePassword(newPsw, confirmNewPsw)) {
+  public String passwordChange(Model model, @RequestParam Map<String, String> params) {
+    if(service.changePassword(params.get("old-password"), params.get("new-password"), params.get("confirm-new-password"))) {
       model.addAttribute("success", "Change password was success");
     } else {
       model.addAttribute("error", service.getUserError());
@@ -117,13 +102,9 @@ public class UserController {
   @PostMapping("/registration")
   public String firstUserRegistration(Model model, @ModelAttribute User user, RedirectAttributes redirectAttributes) {
     if(service.firstUserRegistration(user)) {
-//      model.addAttribute("success", "Registration is success! We send a verification email to "
-//          + user.getEmail() + 
-//          " address! You must verify your registration!");
-//      return "user_templates/registration";
-      redirectAttributes.addFlashAttribute("success", "Successful registration! Verification email has been sent to "
+      redirectAttributes.addFlashAttribute("success", "Successful registration! Activation email has been sent to "
           + user.getEmail() + 
-          " address! You must verify it!");
+          " address! You must activate it!");
       return "redirect:/login";
     } else {
       model.addAttribute("user", user);
@@ -132,18 +113,32 @@ public class UserController {
     }
   }
   
-  @GetMapping("/verification/{key}")
-  public String verifyAndChangePassword(@PathVariable("key") String key, RedirectAttributes redirectAttributes) {
-    if(service.varification(key)) {
-      redirectAttributes.addFlashAttribute("success", "Successful validation!");
+  @GetMapping("/activation/{key}")
+  public String activation(@PathVariable("key") String key, RedirectAttributes redirectAttributes) {
+    if(service.activation(key)) {
+      redirectAttributes.addFlashAttribute("success", "Successful activation!");
     } else {
       redirectAttributes.addFlashAttribute("error", "Invalid key '" + key + "'!");
     }
     return "redirect:/login";
   }
   
+  @GetMapping("/passwordReset")
+  public String passwordReset() {
+    return "/passwordReset";
+  }
+  
+  @PostMapping("/passwordReset")
+  public String passwordReset(RedirectAttributes redirectAttributes, @RequestParam("email") String email) {
+    if(service.passwordReset(email)) {
+      redirectAttributes.addFlashAttribute("waring", "The email has been sent to " + email + " address!");
+    }
+    return "redirect:/login";
+  }
+  
   @GetMapping("/login")
   public String login(Model model) {
+//    model.addAttribute("warning", ResourceBundle.getBundle("messages", LocaleContextHolder.getLocale()).getString("button.save"));
     return "auth/login";
   }
 }

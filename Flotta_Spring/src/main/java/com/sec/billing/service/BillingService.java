@@ -13,6 +13,7 @@ import com.sec.billing.Bill;
 import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
+import com.sec.billing.PayDivision;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.entity.User;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
@@ -25,6 +26,8 @@ public class BillingService {
   private CategoryService categoryService;
   
   private BillPartitionTemplateService billPartitionTemplateService;
+  
+  private PayDivisionService payDivisionService;
 
   @Autowired
   public void setBillService(BillService billService) {
@@ -39,6 +42,11 @@ public class BillingService {
   @Autowired
   public void setBillPartitionTemplateService(BillPartitionTemplateService billPartitionTemplateService) {
     this.billPartitionTemplateService = billPartitionTemplateService;
+  }
+  
+  @Autowired
+  public void setPayDivisionService(PayDivisionService payDivisionService ) {
+    this.payDivisionService = payDivisionService;
   }
   
   // beolvassa a számlát
@@ -73,30 +81,12 @@ public class BillingService {
     return categoryService.findAll();
   }
 
-  public void addCategory(String category) {
-    categoryService.save(category);
+  public boolean addCategory(String category) {
+    return categoryService.save(category);
   }
 
   public List<BillPartitionTemplate> findAllBillPartitionTemplate() {
-    List<BillPartitionTemplate> result = new LinkedList<>();
-    BillPartitionTemplate bpt = new BillPartitionTemplate();
-    bpt.setId(1);
-    bpt.setName("basic");
-    List<Category> cList = categoryService.findAll();
-    bpt.addToConnection("Mobil telefon szolgaltatas", cList.get(0));
-    bpt.addToConnection("Telekom mobilhalozaton belul", cList.get(1));
-    bpt.addToConnection("Belfoldi mas mobilhalozat / Telenor", cList.get(1));
-    bpt.addToConnection("Belfoldi mas mobilhalozat / Vodafone", cList.get(1));
-    bpt.addToConnection("Mobil net 1GB", cList.get(2));
-    result.add(bpt);
-    
-    billPartitionTemplateService.save(bpt);
-    
-    bpt.addToConnection("Internet", cList.get(2));
-    
-    billPartitionTemplateService.save(bpt);
-    
-    return result;
+    return  billPartitionTemplateService.findAll();
   }
   
   public List<FeeItem> findAllFeeItemByBillId(long id) {
@@ -145,4 +135,36 @@ public class BillingService {
   public void save(List<FeeItem> fees) {
     billService.save(fees);
   }
+
+  public BillPartitionTemplate findBillPartitionTemplateById(long id) {
+    return billPartitionTemplateService.findById(id);
+  }
+
+  public List<String> findAllBillDescription() {
+    return billPartitionTemplateService.findAllBillDescription();
+  }
+
+  public boolean addPayDivision(PayDivision payDevision, List<Long> categories, List<Integer> scales) {
+    return payDivisionService.addPayDivision(payDevision, idListToCategoryList(categories), scales);
+  }
+
+  public List<PayDivision> findAllPayDivision() {
+    return payDivisionService.findAll();
+  }
+
+  public PayDivision findPayDivisionById(long id) {
+    return payDivisionService.findPayDivisionById(id);
+  }
+
+  public boolean editPayDivision(long id, List<Long> categories, List<Integer> scales) {
+    return payDivisionService.editPayDivision(id, idListToCategoryList(categories), scales);
+  }
+
+  public List<Category> getUnusedCategoryOfPayDivision(long id) {
+    List<Category> result = new LinkedList<>(categoryService.findAll());
+    PayDivision pd = payDivisionService.findPayDivisionById(id);
+    result.removeAll(pd.getCategoryScale().keySet());
+    return result;
+  }
+  
 }

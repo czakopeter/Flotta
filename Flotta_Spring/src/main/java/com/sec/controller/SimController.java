@@ -3,10 +3,12 @@ package com.sec.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sec.entity.Sim;
 import com.sec.service.MainService;
@@ -26,40 +28,30 @@ public class SimController {
     model.addAttribute("title", "Sim");
   }
   
-  @RequestMapping("/sim/all")
-  public String simsList(Model model) {
+  @GetMapping("/sim/all")
+  public String listSims(Model model) {
+    System.out.println("-----------");
     model.addAttribute("sims", service.findAllSim());
-    return "sim_templates/simAll";
+//    return "sim_templates/simAll";
+//    return "redirect:/sim/all";
+    return "redirect:/simAll";
   }
   
   @RequestMapping("sim/new")
-  public String createSim(Model model) {
+  public String addSim(Model model) {
     model.addAttribute("sim", new Sim());
     return "sim_templates/simNew";
   }
   
   @PostMapping("sim/new")
-  public String addSim(Model model, @ModelAttribute Sim sim) {
+  public String addSim(Model model, @ModelAttribute Sim sim, RedirectAttributes ra) {
     if(service.addSim(sim)) {
+      ra.addFlashAttribute("success", "Creation was success");
       return "redirect:/sim/all";
     } else {
       model.addAttribute("sim", sim);
       model.addAttribute("error", service.getSimError());
       return "sim_templates/simNew";
     }
-  }
-  
-  @PostMapping("/sim/all")
-  public String sims(Model model, @ModelAttribute Sim sim, @RequestParam(name = "command") String command, @RequestParam(name = "date") String date) {
-    System.out.println(date);
-    switch (command) {
-    default: 
-      break;
-    }
-    model.addAttribute("title", "Sims");
-//    model.addAttribute("sims", service.findAllFreeSim());
-    model.addAttribute("sims", service.findAllSim());
-    model.addAttribute("sim", new Sim());
-    return "sim_templates/sims";
   }
 }

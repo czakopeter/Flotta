@@ -28,20 +28,20 @@ public class DevNoteService {
   }
 
   public void update(Device dev, String note, LocalDate date) {
-    DevNote last = devNoteRepository.findFirstByDevOrderByDateDesc(dev);
+    DevNote last = devNoteRepository.findFirstByDevOrderByBeginDateDesc(dev);
     if(last == null) {
       save(dev, note, date);
       return;}
     
-    if(date.isAfter(last.getDate())) {
+    if(date.isAfter(last.getBeginDate())) {
       if((last.getNote().isEmpty()) ||
           (note.isEmpty()) ||
           !note.equalsIgnoreCase(last.getNote())) {
         devNoteRepository.save(new DevNote(dev, note, date));
       }
-    } else if(date.isEqual(last.getDate())) {
+    } else if(date.isEqual(last.getBeginDate())) {
       //modifying
-      DevNote lastBefore = devNoteRepository.findFirstByDevAndDateBeforeOrderByDateDesc(dev, date);
+      DevNote lastBefore = devNoteRepository.findFirstByDevAndBeginDateBeforeOrderByBeginDateDesc(dev, date);
       if(lastBefore != null && (
           note.equalsIgnoreCase(lastBefore.getNote())
           )) {
@@ -56,7 +56,7 @@ public class DevNoteService {
   }
 
   public DevNote findLastNote(Device device) {
-    return devNoteRepository.findFirstByDevOrderByDateDesc(device);
+    return devNoteRepository.findFirstByDevOrderByBeginDateDesc(device);
   }
 
 }

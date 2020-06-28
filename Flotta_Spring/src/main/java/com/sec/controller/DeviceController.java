@@ -58,7 +58,7 @@ public class DeviceController {
   }
   
   @RequestMapping("device/{id}")
-  public String setForEdit(Model model, @PathVariable("id") long id) {
+  public String device(Model model, @PathVariable("id") long id) {
     model.addAttribute("device", service.findDeviceById(id));
     model.addAttribute("dates", service.findDeviceDatesById(id));
     model.addAttribute("users", service.findAllUser());
@@ -66,7 +66,7 @@ public class DeviceController {
   }
   
   @PostMapping("device/{id}")
-  public String saveEdit(Model model, @PathVariable("id") long id, @RequestParam(name = "order", defaultValue = "save") String order, @ModelAttribute() DeviceToView dtv) {
+  public String device(Model model, @PathVariable("id") long id, @RequestParam(name = "order", defaultValue = "save") String order, @ModelAttribute() DeviceToView dtv) {
     String[] orderPart = order.split(" ");
     switch (orderPart[0]) {
     case "save":

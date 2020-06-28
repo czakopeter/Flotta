@@ -27,7 +27,7 @@ import com.sec.status.DeviceStatus;
 
 @Entity
 @Table(name = "devices")
-public class Device {
+public class Device extends BasicEntity {
 
   @Id
   @GeneratedValue
@@ -40,20 +40,22 @@ public class Device {
   private DeviceType deviceType;
 
   @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
-  @MapKey(name = "connect")
+  @MapKey(name = "beginDate")
   private Map<LocalDate, UserDev> devUsers;
 
-  @OneToMany(mappedBy = "sub", cascade = CascadeType.ALL)
-  @MapKey(name = "connect")
+  @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
+  @MapKey(name = "beginDate")
   private Map<LocalDate, SubDev> devSubs;
 
   @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
-  @MapKey(name = "date")
+  @MapKey(name = "beginDate")
   private Map<LocalDate, DevNote> notes;
 
   @OneToMany(mappedBy = "dev", cascade = CascadeType.ALL)
   @MapKey(name = "date")
   private Map<LocalDate, DeviceStatus> statuses = new HashMap<LocalDate, DeviceStatus>();
+  
+  private LocalDate createDate;
 
   public Device() {
   }
@@ -62,17 +64,14 @@ public class Device {
     this.serialNumber = serialNumber;
   }
 
-  public Device(String serialNumber, DeviceType deviceType) {
+  public Device(String serialNumber, DeviceType deviceType, LocalDate date) {
     this.serialNumber = serialNumber;
     this.deviceType = deviceType;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
+    this.createDate = date;
+//    this.firstAvailableDate = date;
+    devUsers.put(date, new UserDev(null, this, date));
+    devSubs.put(date, new SubDev(null, this, date));
+    notes.put(date, new DevNote(this, "", date));
   }
 
   public String getSerialNumber() {

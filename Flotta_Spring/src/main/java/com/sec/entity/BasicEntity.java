@@ -7,19 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.sec.entity.switchTable.BasicSwitchTable;
 
 @MappedSuperclass
 public class BasicEntity {
   @Id
   @GeneratedValue
   protected long id;
-  
-  @DateTimeFormat (pattern="yyyy-MM-dd")
-  protected LocalDate firstAvailableDate;
   
   public long getId() {
     return id;
@@ -29,27 +29,20 @@ public class BasicEntity {
     this.id = id;
   }
   
-  public LocalDate getFirstAvailableDate() {
-    return firstAvailableDate;
-  }
-
-  public void setFirstAvailableDate(LocalDate date) {
-    this.firstAvailableDate = date;
-  }
-
-  protected LocalDate getLatestDate(Map<LocalDate, ? extends Object> map) {
+  protected LocalDate getLatestDate(Map<LocalDate, ? extends BasicSwitchTable> map) {
     if(map == null || map.isEmpty()) {
-      return null;
+      throw new IllegalArgumentException("Map should contains at least one element");
     }
     List<LocalDate> dates = new LinkedList<>(map.keySet());
     Collections.sort(dates, Collections.reverseOrder());
     return dates.get(0);
   }
   
-  protected LocalDate floorDate(List<LocalDate> dates, LocalDate date) {
-    if (dates == null || dates.isEmpty()) {
+  public static LocalDate floorDate(Map<LocalDate, ? extends BasicSwitchTable> map, LocalDate date) {
+    if (map == null || map.isEmpty()) {
       return null;
     }
+    List<LocalDate> dates = new LinkedList<>(map.keySet());
     if (dates.contains(date)) {
       return date;
     }
@@ -88,4 +81,26 @@ public class BasicEntity {
     return true;
   }
   
+  public static boolean areTwoLastAreSame(Map<LocalDate, ? extends BasicSwitchTable> map) {
+    if(map == null) {
+      throw new NullPointerException();
+    }
+    if(map.size() > 1) {
+      List<LocalDate> dates = new LinkedList<>(map.keySet());
+      Collections.sort(dates, Collections.reverseOrder());
+      return equals(map.get(dates.get(0)), map.get(dates.get(1)));
+    }
+    return false;
+  }
+  
+  public static boolean equals(BasicSwitchTable o1, BasicSwitchTable o2) {
+    if(o1 == null || o2 == null) {
+      throw new NullPointerException();
+    }
+    if(o1.getClass() != o2.getClass()) {
+      throw new IllegalArgumentException();
+    }
+    
+    return o1.isSameSwitchedPairs(o2);
+  }
 }

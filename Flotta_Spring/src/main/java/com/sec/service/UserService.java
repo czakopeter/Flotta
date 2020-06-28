@@ -2,20 +2,26 @@ package com.sec.service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 //import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import com.sec.entity.Role;
 import com.sec.entity.User;
+import com.sec.enums.UserStatusEnum;
 import com.sec.repo.RoleRepository;
 import com.sec.repo.UserRepository;
 import com.sec.validator.Validator;
@@ -28,6 +34,7 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 	private EmailService emailService;
 	
 	private RoleRepository roleRepository;
+	
 	
 	@Autowired
 	public UserService(UserRepository userRepository) {
@@ -46,7 +53,7 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 
   @Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = findByEmail(username);
+		User user = userRepository.findByEmail(username);
 		if (user == null) {
 			throw new UsernameNotFoundException(username);
 		}
@@ -55,10 +62,6 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 
 	public User findByEmail(String email) {
 		return userRepository.findByEmail(email);
-	}
-	
-	public List<User> getUsers(String email) {
-		return userRepository.findAll();
 	}
 	
 	public List<User> findAll() {
@@ -72,8 +75,8 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 			return false;
 		}
 		userToRegister.setEnabled(false);
-		userToRegister.setStatus(User.WAITING_FOR_VALIDATION);
-		userToRegister.addRoles("USER");
+		userToRegister.setStatus(UserStatusEnum.WAITING_FOR_ACTIVATION);
+		userToRegister.addRoles(roleRepository.findByRole("BASIC"));
 		userToRegister.setPassword(generateKey(16));
 		userToRegister.setPasswordRenewerKey(generateKey(16));
 		if(emailService.sendMessage(userToRegister)) {
@@ -84,7 +87,7 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 		return true;
 	}
 
-	public String generateKey(int length) {
+	private String generateKey(int length) {
 		Random random = new Random();
 		char[] key = new char[length]; 
 		for (int i = 0; i < key.length; i++) {
@@ -102,16 +105,19 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
   }
   
   //az kötelező jelszó csere után a menű nem jelenik a szerepkörök szerint
-  public boolean changePassword(String password, String confirmPsw) {
-    if(password != null && password.contentEquals(confirmPsw)) {
-      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-      User user = userRepository.findByEmail(auth.getName());
-      user.setPassword(password);
+  public boolean changePassword(String oldPsw, String newPsw, String confirmPsw) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    User user = userRepository.findByEmail(auth.getName());
+    if(user.getPassword().equals(oldPsw) && newPsw != null && newPsw.contentEquals(confirmPsw)) {
+      user.setPassword(newPsw);
       user.setPasswordRenewerKey(null);
       userRepository.save(user);
+      emailService.sendEmailAboutPasswordChange(true);
+      refreshAuthorization(new UserDetailsImpl(user));
       return true;
     } else {
-      appendMsg("Confirm password is different");
+      appendMsg("Probleb with the added data!");
+      emailService.sendEmailAboutPasswordChange(false);
       return false;
     }
   }
@@ -129,8 +135,8 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
     if(userRepository.findAll().isEmpty()) {
       
       user.setEnabled(false);
-      user.addRoles("ADMIN");
-      user.setStatus(User.WAITING_FOR_VALIDATION);
+      user.addRoles(roleRepository.findByRole("ADMIN"));
+      user.setStatus(UserStatusEnum.WAITING_FOR_ACTIVATION);
       user.setPassword(generateKey(16));
       user.setPasswordRenewerKey(generateKey(16));
       if(emailService.sendMessage(user)) {
@@ -142,11 +148,11 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
     return true;
   }
 
-  public boolean varification(String key) {
+  public boolean activation(String key) {
     User user = userRepository.findByPasswordRenewerKey(key);
     if(user != null) {
       user.setEnabled(true);
-      user.setStatus(User.ENABLED);
+      user.setStatus(UserStatusEnum.REQUIRED_PASSWORD_CHANGE);
       userRepository.save(user);
       return true;
     }
@@ -157,14 +163,11 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
     return userRepository.findAllByStatus(status);
   }
 
-  public boolean update(long id, boolean[] roles, List<String> rolesName) {
-    
+  public boolean modifyRoles(long id, Map<String, Boolean> roles) {
     User user = userRepository.findOne(id);
-    
     if(user != null) {
-      System.out.println("nem null user");
       try {
-        user.setRoles(toRoleSet(roles, rolesName));
+        user.setRoles(toRoleSet(roles));
         userRepository.save(user);
         return true;
       } catch (IllegalArgumentException e) {
@@ -176,23 +179,35 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
     return false;
   }
   
-  private Set<Role> toRoleSet(boolean[] roles, List<String> rolesName) throws IllegalArgumentException {
+  private Set<Role> toRoleSet(Map<String, Boolean> roles) {
     Set<Role> result = new HashSet<>();
-    if(roles.length != 4 || rolesName.size() != 4) {
-      throw new IllegalArgumentException("Size of argument boolean array not exactly 4!");
-    }
-    for(int i = 0; i < roles.length; i++) {
-      if(roles[i]) {
-        Role r = roleRepository.findByRole(rolesName.get(i).toUpperCase());
-        if(r == null) {
-          throw new IllegalArgumentException("Role '" + rolesName.get(i) + "' doesn't exists!");
-        }
+    for(String key : roles.keySet()) {
+      Role r = roleRepository.findByRole(key.toUpperCase());
+      if(r != null) {
         result.add(r);
       }
     }
     result.add(roleRepository.findByRole("BASIC"));
     
     return result;
+  }
+
+  public boolean passwordReset(String email) {
+    User user = userRepository.findByEmail(email);
+    if(user != null) {
+      user.setPassword(generateKey(16));
+      user.setPasswordRenewerKey(generateKey(16));
+      user.setStatus(UserStatusEnum.WAITING_FOR_ACTIVATION);
+      userRepository.save(user);
+      emailService.sendMessage(user);
+      return true;
+    }
+    return false;
+  }
+  
+  private void refreshAuthorization(UserDetails user) {
+    UsernamePasswordAuthenticationToken a = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+    SecurityContextHolder.getContext().setAuthentication(a);
   }
 
 }

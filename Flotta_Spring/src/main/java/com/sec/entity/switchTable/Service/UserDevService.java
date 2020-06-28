@@ -39,18 +39,18 @@ public class UserDevService {
   }
 
   public void update(Device dev, User user, LocalDate date) {
-    UserDev last = userDevRepository.findFirstByDevOrderByConnectDesc(dev);
+    UserDev last = userDevRepository.findFirstByDevOrderByBeginDateDesc(dev);
     
-    if(date.isAfter(last.getConnect())) {
+    if(date.isAfter(last.getBeginDate())) {
       if((last.getUser() != null && user != null && last.getUser().getId() != user.getId()) || 
           (last.getUser() == null && user != null) ||
           (last.getUser() != null && user == null)) {
         userDevRepository.save(new UserDev(user, dev, date));
         updateDeviceStatus(dev, user, date);
       }
-    } else if(date.isEqual(last.getConnect())) {
+    } else if(date.isEqual(last.getBeginDate())) {
       //modifying
-      UserDev lastBefore = userDevRepository.findFirstByDevAndConnectBeforeOrderByConnectDesc(dev, date);
+      UserDev lastBefore = userDevRepository.findFirstByDevAndBeginDateBeforeOrderByBeginDateDesc(dev, date);
       if(lastBefore != null && (
           (user == null && lastBefore.getUser() == null) ||
           (user != null && lastBefore.getUser() != null && user.getId() == lastBefore.getUser().getId())
@@ -79,7 +79,7 @@ public class UserDevService {
     List<UserDev> udList = userDevRepository.findAllByUser(user);
     Set<Device> dSet = new HashSet<Device>();
     udList.forEach(ud -> {
-      if(user.equalsByEmail(userDevRepository.findFirstByDevOrderByConnectDesc(ud.getDev()).getUser())) {
+      if(user.equalsByEmail(userDevRepository.findFirstByDevOrderByBeginDateDesc(ud.getDev()).getUser())) {
         dSet.add(ud.getDev());
       }
     });
@@ -87,7 +87,7 @@ public class UserDevService {
   }
 
   public User findLastUser(Device device) {
-    return userDevRepository.findFirstByDevOrderByConnectDesc(device).getUser();
+    return userDevRepository.findFirstByDevOrderByBeginDateDesc(device).getUser();
   }
   
 }

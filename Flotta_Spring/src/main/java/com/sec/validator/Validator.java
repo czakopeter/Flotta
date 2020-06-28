@@ -13,4 +13,25 @@ public class Validator {
   public static boolean validHunPhoneNumber(String number) {
     return number.matches("20|30|70|50[0-9](7)");
   }
+  
+  //Luhn algorithm
+  public static boolean imieCheckWithLuhnAlg(String imei) {
+    int i = 1;
+    int count = 0;
+    int checkDigit = Character.getNumericValue(imei.charAt(imei.length() - 1));
+    while(i < imei.length()) {
+      char ch = imei.charAt(i - 1);
+      if(!Character.isDigit(ch)) {
+        return false;
+      }
+      if(i % 2 == 1) {
+        count += Character.getNumericValue(ch);
+      } else {
+        int n = Character.getNumericValue(ch);
+        count += n / 10;
+        count += n % 10;
+      }
+    }
+    return 10 - checkDigit == count % 10;
+  }
 }

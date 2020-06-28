@@ -1,6 +1,6 @@
 package com.sec.billing;
 
-import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class PayDevision {
+public class PayDivision {
   
   @Id
   @GeneratedValue
@@ -23,9 +23,9 @@ public class PayDevision {
   private boolean available;
   
   @ElementCollection
-  private Map<String, Integer> categoryRatio = new HashMap<>();
+  private Map<Category, Integer> categoryScale = new HashMap<>();
   
-  public PayDevision() {
+  public PayDivision() {
   }
 
   public long getId() {
@@ -52,28 +52,28 @@ public class PayDevision {
     this.available = available;
   }
 
-  public void add(String category, int ratio) {
-    if(!categoryRatio.containsKey(category) && validRatio(ratio)) {
-      categoryRatio.put(category, ratio);
+  public void add(Category category, int scale) {
+    if(validScale(scale)) {
+      categoryScale.put(category, scale);
     }
   }
 
-  public Map<String, Integer> getCategoryRatio() {
-    return categoryRatio;
+  public Map<Category, Integer> getCategoryScale() {
+    return categoryScale;
   }
 
-  public void setCategoryRatio(Map<String, Integer> categoryRatio) {
-    this.categoryRatio = categoryRatio;
+  public void setCategoryScale(Map<Category, Integer> categoryScale) {
+    this.categoryScale = categoryScale;
   }
 
-  public void setCatRatio(String category, int ratio) {
-    if(categoryRatio.containsKey(category) && validRatio(ratio)) {
-      categoryRatio.put(category, ratio);
-    }
+  private boolean validScale(int ratio) {
+    return ratio >= 0 && ratio <= 100 && ratio % 5 == 0;
   }
   
-  private boolean validRatio(int ratio) {
-    return ratio >= 0 && ratio <= 100 && ratio % 5 == 0;
+  public List<Category> getOrderedCategories() {
+    List<Category> result = new LinkedList<Category>(categoryScale.keySet());
+    Collections.sort(result);
+    return result;
   }
   
 }

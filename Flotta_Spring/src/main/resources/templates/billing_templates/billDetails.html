@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" layout:decorator="layouts/main">
+<html lang="en" layout:decorator="layouts/main">
 <head>
-<title></title>
+<title>Flotta</title>
 </head>
 <body>
 
@@ -17,19 +17,19 @@
       </div>
       <div class="row my-2">
         <div class="col-2"><label th:text="#{bill.fromDate}">From</label></div>
-        <div class="col-2"><label th:text="${bill.fromDate}">Invoice number</label></div>
+        <div class="col-2"><label th:text="${bill.fromDate}">From date</label></div>
       </div>
       <div class="row my-2">
         <div class="col-2"><label th:text="#{bill.emdDate}">To</label></div>
-        <div class="col-2"><label th:text="${bill.endDate}">Invoice number</label></div>
+        <div class="col-2"><label th:text="${bill.endDate}">End date</label></div>
       </div>
       <div class="row my-2">
         <div class="col-2"><label th:text="#{bill.invoiceNetAmount}">Net amount</label></div>
-        <div class="col-2"><label th:text="${bill.invoiceNetAmount} + ' Ft'">Invoice number</label></div>
+        <div class="col-2"><label th:text="${bill.invoiceNetAmount} + ' Ft'">Net amount</label></div>
       </div>
       <div class="row my-2">
         <div class="col-2"><label th:text="#{bill.invoiceTaxAmount}">Tax amount</label></div>
-        <div class="col-2"><label th:text="${bill.invoiceTaxAmount} + ' Ft'">Invoice number</label></div>
+        <div class="col-2"><label th:text="${bill.invoiceTaxAmount} + ' Ft'">Tax amount</label></div>
       </div>
 
 

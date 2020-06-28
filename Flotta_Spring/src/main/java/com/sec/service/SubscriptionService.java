@@ -20,8 +20,6 @@ import com.sec.enums.SubscriptionStatusEnum;
 @Service
 public class SubscriptionService extends ServiceWithMsg {
 	
-  private Map<String, String> msg = new HashMap<String, String>();
-  
 	private SubscriptionRepository subscriptionRepository;
 	
 	private SubscriptionStatusService subscriptionStatusService;
@@ -35,8 +33,6 @@ public class SubscriptionService extends ServiceWithMsg {
 	public void setSubscriptionStatusService(SubscriptionStatusService subscriptionStatusService) {
     this.subscriptionStatusService = subscriptionStatusService;
   }
-
-
 
   public Subscription findByNumber(String number) {
 		if(number != null) {
@@ -52,7 +48,7 @@ public class SubscriptionService extends ServiceWithMsg {
   public Subscription findById(long id) {
     return subscriptionRepository.findOne(id);
   }
-
+  
   public void userHasConnected(Subscription sub, LocalDate date) {
     subscriptionStatusService.setStatus(sub, SubscriptionStatusEnum.ACTIVE, date);
   }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" layout:decorator="layouts/main">
+<html lang="en" layout:decorator="layouts/main">
 <head>
-<title>BoxInBox - Users</title>
+<title>Flotta</title>
 </head>
 <body>
 
@@ -18,7 +18,7 @@
         <th>Status</th>
         <th></th>
       </tr>
-      <tr th:each="user : ${enabledUsers}">
+      <tr th:each="user : ${users}">
         <td th:text="${user.email}"></td>
         <td th:text="${user.fullName}"></td>
         <td th:text="${user.getStatusName()}"></td>

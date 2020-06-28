@@ -4,8 +4,6 @@ import java.security.InvalidParameterException;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -28,18 +26,15 @@ public class SubDev extends BasicSwitchTable {
 	private Device dev;
 	
 	@DateTimeFormat (pattern="yyyy-MM-dd")
-	private LocalDate connect;
-	
-	@DateTimeFormat (pattern="yyyy-MM-dd")
 	private LocalDate disconnect;
 
 	public SubDev() {
 	}
 	
-  public SubDev(Subscription sub, Device dev, LocalDate connect) {
+  public SubDev(Subscription sub, Device dev, LocalDate date) {
     this.sub = sub;
     this.dev = dev;
-    this.connect = connect;
+    this.beginDate = date;
   }
 
   public Subscription getSub() {
@@ -58,14 +53,6 @@ public class SubDev extends BasicSwitchTable {
     this.dev = dev;
   }
 
-  public LocalDate getConnect() {
-    return connect;
-  }
-
-  public void setConnect(LocalDate connect) {
-    this.connect = connect;
-  }
-
   public LocalDate getDisconnect() {
     return disconnect;
   }
@@ -76,18 +63,18 @@ public class SubDev extends BasicSwitchTable {
 
   @Override
   public String toString() {
-    return "SubDev [id=" + id + ", sub=" + (sub == null ? "0" : sub.getId()) + ", dev=" + (dev == null ? "0" : dev.getId()) + ", connect=" + connect + "]";
+    return "SubDev [id=" + id + ", sub=" + (sub == null ? "0" : sub.getId()) + ", dev=" + (dev == null ? "0" : dev.getId()) + ", beginDate=" + beginDate + "]";
   }
 
   @Override
-  public <O extends BasicSwitchTable> boolean isSameSwitchedPairs(O o) {
-    if(o == null) {
+  public <Other extends BasicSwitchTable> boolean isSameSwitchedPairs(Other other) {
+    if(other == null) {
       throw new NullPointerException();
     }
-    if(!(o instanceof SubDev)) {
+    if(!(other instanceof SubDev)) {
       throw new InvalidParameterException();
     }
-    SubDev act = (SubDev)o;
+    SubDev act = (SubDev)other;
     
     return Device.isSameByIdOrBothNull(this.dev, act.dev) && Subscription.isSameByIdOrBothNull(this.sub, act.sub);
   }

@@ -10,12 +10,12 @@ import com.sec.entity.switchTable.SubDev;
 
 public interface SubDevRepository extends CrudRepository<SubDev, Long> {
 
-  SubDev findFirstBySubOrderByConnectDesc(Subscription sub);
+  SubDev findFirstBySubOrderByBeginDateDesc(Subscription sub);
 
-  SubDev findFirstBySubAndConnectBeforeOrderByConnectDesc(Subscription sub, LocalDate date);
+  SubDev findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(Subscription sub, LocalDate date);
 
-  SubDev findFirstByDevOrderByConnectDesc(Device device);
+  SubDev findFirstByDevOrderByBeginDateDesc(Device device);
 
-  SubDev findFirstByDevAndConnectBeforeOrderByConnectDesc(Device dev, LocalDate date);
+  SubDev findFirstByDevAndBeginDateBeforeOrderByBeginDateDesc(Device dev, LocalDate date);
   
 }

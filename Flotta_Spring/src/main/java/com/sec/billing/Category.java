@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "categories")
-public class Category {
+public class Category implements Comparable<Category> {
   
   @Id
   @GeneratedValue
@@ -35,6 +35,11 @@ public class Category {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  @Override
+  public int compareTo(Category o) {
+    return name.compareToIgnoreCase(o.name);
   }
   
 }

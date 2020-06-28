@@ -25,34 +25,41 @@
 <body>
 
   <div class="navbar navbar-expand mx-1 my-menu">
-    <div sec:authorize="isAuthenticated() and not hasAuthority('CHANGE_PASSWORD')" class="navbar-nav">
+    <div sec:authorize="isAuthenticated()" class="navbar-nav">
       <ul class="nav nav-pills">
-        <li class="nav-item"><a class="nav-link"
+        <li sec:authorize="hasAnyAuthority('BASIC')" class="nav-item"><a class="nav-link"
           th:classappend="${title} == 'Homepage' ? 'active' :''" href="/" th:text="#{main.homepage}"
         >Homepage</a></li>
-        <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'User' ? 'active' :''" href="/user/all" th:text="#{main.users}"
+        <li sec:authorize="hasAnyAuthority('USER_MNGR','ADMIN')" class="nav-item"><a
+          class="nav-link" th:classappend="${title} == 'User' ? 'active' :''" href="/user/all"
+          th:text="#{main.users}"
         >User</a></li>
-        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Subscription' ? 'active' :''" href="/subscription/all"
-          th:text="#{main.subscriptions}"
+        <li sec:authorize="hasAnyAuthority('SUBSCRIPTION_MNGR','ADMIN')" class="nav-item"><a
+          class="nav-link" th:classappend="${title} == 'Subscription' ? 'active' :''"
+          href="/subscription/all" th:text="#{main.subscriptions}"
         >Subscription</a></li>
-        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Sim' ? 'active' :''" href="/sim/all" th:text="#{main.sims}"
+        <li sec:authorize="hasAnyAuthority('SUBSCRIPTION_MNGR','ADMIN')" class="nav-item"><a
+          class="nav-link" th:classappend="${title} == 'Sim' ? 'active' :''" href="/sim/all"
+          th:text="#{main.sims}"
         >Sim</a></li>
-        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Device' ? 'active' :''" href="/device/all"
+        <li sec:authorize="hasAnyAuthority('DEVICE_MNGR','ADMIN')" class="nav-item"><a
+          class="nav-link" th:classappend="${title} == 'Device' ? 'active' :''" href="/device/all"
           th:text="#{main.devices}"
         >Device</a></li>
-        <li sec:authorize="hasAnyAuthority('MOBILE','ADMIN')" class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'DeviceType' ? 'active' :''" href="/deviceTypes"
-          th:text="#{main.deviceTypes}"
+        <li sec:authorize="hasAnyAuthority('DEVICE_MNGR','ADMIN')" class="nav-item"><a
+          class="nav-link" th:classappend="${title} == 'DeviceType' ? 'active' :''"
+          href="/deviceTypes" th:text="#{main.deviceTypes}"
         >Device type</a></li>
-        <li sec:authorize="hasAnyAuthority('FINANCLE','ADMIN')" class="nav-item"><a class="nav-link"
-          th:classappend="${title} == 'Billing' ? 'active' :''" href="/billing/all"
-          th:text="#{main.billing}"
-        >Billing</a></li>
-        <li class="nav-item"><a class="nav-link" href="/finance">Test</a></li>
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle"
+          data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Billing</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/finance/category/all">Categories</a>
+            <a class="dropdown-item" href="/finance/billPartitionTemplate/all">Partition templates</a>
+            <a class="dropdown-item" href="/finance/chargeRatio/all">Pay divisions</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Separated link</a>
+          </div>
+         </li>
       </ul>
     </div>
     <div class="ml-auto mr-3">
@@ -69,18 +76,20 @@
       </div>
     </div>
     <div class="navbar-nav mr-3">
-      <span> <a href="?lang=hu" class="mr-1" onclick="document.cookie='localeCookie=hu'">HU</a>
-        <a href="?lang=en" onclick="document.cookie='localeCookie=en'">EN</a>
+      <span> <a href="?lang=hu" class="mr-1" onclick="document.cookie='lang=hu'">HU</a> <a
+        href="?lang=en" onclick="document.cookie='lang=en'"
+      >EN</a>
       </span>
+      <!--       <span> <a href="?lang=hu" class="mr-1">HU</a> -->
+      <!--         <a href="?lang=en">EN</a> -->
+      <!--       </span> -->
     </div>
   </div>
 
   <div class="container">
-  
+
     <div layout:fragment="loginContent"></div>
 
-
-    <div th:replace="footer :: footer"></div>
 
   </div>
 

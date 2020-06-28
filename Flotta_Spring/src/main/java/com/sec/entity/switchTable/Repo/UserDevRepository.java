@@ -11,9 +11,9 @@ import com.sec.entity.switchTable.UserDev;
 
 public interface UserDevRepository extends CrudRepository<UserDev, Long>{
 
-  UserDev findFirstByDevOrderByConnectDesc(Device dev);
+  UserDev findFirstByDevOrderByBeginDateDesc(Device dev);
 
-  UserDev findFirstByDevAndConnectBeforeOrderByConnectDesc(Device dev, LocalDate date);
+  UserDev findFirstByDevAndBeginDateBeforeOrderByBeginDateDesc(Device dev, LocalDate date);
 
   List<UserDev> findAllByUser(User user);
   

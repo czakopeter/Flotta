@@ -12,8 +12,8 @@ public interface DevNoteRepository extends CrudRepository<DevNote, Long>{
 
   List<DevNote> findAllByDev(Device dev);
 
-  DevNote findFirstByDevOrderByDateDesc(Device dev);
+  DevNote findFirstByDevOrderByBeginDateDesc(Device dev);
 
-  DevNote findFirstByDevAndDateBeforeOrderByDateDesc(Device dev, LocalDate date);
+  DevNote findFirstByDevAndBeginDateBeforeOrderByBeginDateDesc(Device dev, LocalDate date);
 
 }

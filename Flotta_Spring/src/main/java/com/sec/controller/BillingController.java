@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,21 +32,6 @@ public class BillingController {
   @ModelAttribute
   private void title(Model model) {
     model.addAttribute("title", "Billing");
-  }
-  
-  @RequestMapping("/billing/category")
-  public String categories(Model model) {
-    model.addAttribute("categories", service.findAllCategory());
-    model.addAttribute("add", new String());
-    return "billing_templates/category";
-  }
-  
-  @PostMapping("/billing/category")
-  public String addCategory(Model model, @ModelAttribute("add") String outCat) {
-    service.addCategory(outCat);
-    model.addAttribute("categories", service.findAllCategory());
-    model.addAttribute("add", new String());
-    return "billing_templates/category";
   }
   
   @RequestMapping("billing/all")
@@ -93,6 +79,7 @@ public class BillingController {
     return "redirect:/billing/all";
   }
   
+  //TODO show full header of bill
   @RequestMapping("billing/{invoiceNumber}")
   public String bill(Model model, @PathVariable("invoiceNumber") String invoiceNumber) {
    System.out.println(invoiceNumber);

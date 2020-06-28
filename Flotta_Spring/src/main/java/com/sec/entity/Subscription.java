@@ -43,11 +43,11 @@ public class Subscription extends BasicEntity {
   private Map<LocalDate, UserSub> subUsers = new HashMap<>();
 
   @OneToMany(mappedBy = "sub", cascade = CascadeType.ALL)
-  @MapKey(name = "connect")
+  @MapKey(name = "beginDate")
   private Map<LocalDate, SubDev> subDev = new HashMap<>();
 
   @OneToMany(mappedBy = "sub", cascade = CascadeType.ALL)
-  @MapKey(name = "date")
+  @MapKey(name = "beginDate")
   private Map<LocalDate, SubNote> notes = new HashMap<>();
 
   @OneToMany(mappedBy = "sub")
@@ -55,6 +55,8 @@ public class Subscription extends BasicEntity {
   private Map<LocalDate, SubscriptionStatus> statuses = new HashMap<>();
 
   private LocalDate createDate;
+  
+  private LocalDate firstAvailableDate;
   
   public Subscription() {
   }
@@ -67,8 +69,8 @@ public class Subscription extends BasicEntity {
     this.number = number;
     this.createDate = date;
     this.firstAvailableDate = date;
-    this.notes.put(date, new SubNote(this, "", date));
     this.subSim.put(date, new SubSim(this, null, date));
+    this.notes.put(date, new SubNote(this, "", date));
     this.subDev.put(date, new SubDev(this, null, date));
     this.subUsers.put(date, new UserSub(null, this, date));
   }
@@ -128,6 +130,14 @@ public class Subscription extends BasicEntity {
   public void setCreateDate(LocalDate createDate) {
     this.createDate = createDate;
   }
+  
+  public LocalDate getFirstAvailableDate() {
+    return firstAvailableDate;
+  }
+
+  public void setFirstAvailableDate(LocalDate firstAvailableDate) {
+    this.firstAvailableDate = firstAvailableDate;
+  }
 
   @Override
   public String toString() {
@@ -142,21 +152,21 @@ public class Subscription extends BasicEntity {
     stv.setMin(firstAvailableDate.toString());
     stv.setEditable(true);
 
-    stv.setSim(subSim.get(getLastSimModificationDate()).getSim());
+    stv.setSim(subSim.get(getLatestDate(subSim)).getSim());
 
-    stv.setUser(subUsers.get(getLastUserModificationDate()).getUser());
+    stv.setUser(subUsers.get(getLatestDate(subUsers)).getUser());
 
-    stv.setDevice(subDev.get(getLastDeviceModificationDate()).getDev());
+    stv.setDevice(subDev.get(getLatestDate(subDev)).getDev());
 
-    stv.setNote(notes.get(getLastNoteModificationDate()).getNote());
+    stv.setNote(notes.get(getLatestDate(notes)).getNote());
 
     return stv;
   }
 
   public SubscriptionToView toView(LocalDate date) {
     if (date.isBefore(createDate)) {
-
     }
+      
     SubscriptionToView stv = new SubscriptionToView();
     stv.setId(id);
     stv.setNumber(number);
@@ -164,67 +174,14 @@ public class Subscription extends BasicEntity {
     stv.setMin("");
     stv.setEditable(!date.isBefore(firstAvailableDate));
 
-    stv.setSim(subSim.get(floorDate(new LinkedList<>(subSim.keySet()), date)).getSim());
+    stv.setSim(subSim.get(floorDate(subSim, date)).getSim());
 
-    stv.setUser(subUsers.get(floorDate(new LinkedList<>(subUsers.keySet()), date)).getUser());
+    stv.setUser(subUsers.get(floorDate(subUsers, date)).getUser());
 
-    stv.setDevice(subDev.get(floorDate(new LinkedList<>(subDev.keySet()), date)).getDev());
+    stv.setDevice(subDev.get(floorDate(subDev, date)).getDev());
 
-    stv.setNote(notes.get(floorDate(new LinkedList<>(notes.keySet()), date)).getNote());
+    stv.setNote(notes.get(floorDate(notes, date)).getNote());
     return stv;
-  }
-
-  private LocalDate getLastSimModificationDate() {
-    try {
-      return getSimModficationDateListDest().get(0);
-    } catch (IndexOutOfBoundsException e) {
-      return null;
-    }
-  }
-
-  private List<LocalDate> getSimModficationDateListDest() {
-    List<LocalDate> dates = new LinkedList<>(subSim.keySet());
-    Collections.sort(dates, Collections.reverseOrder());
-    return dates;
-  }
-
-  private LocalDate getLastUserModificationDate() {
-    try {
-      return getUserModficationDateListDest().get(0);
-    } catch (IndexOutOfBoundsException e) {
-      return null;
-    }
-  }
-
-  private List<LocalDate> getUserModficationDateListDest() {
-    List<LocalDate> dates = new LinkedList<>(subUsers.keySet());
-    Collections.sort(dates, Collections.reverseOrder());
-    return dates;
-  }
-
-  private LocalDate getLastDeviceModificationDate() {
-    try {
-      return getDeviceModficationDateListDest().get(0);
-    } catch (IndexOutOfBoundsException e) {
-      return null;
-    }
-  }
-
-  private List<LocalDate> getDeviceModficationDateListDest() {
-    List<LocalDate> dates = new LinkedList<>(subDev.keySet());
-    Collections.sort(dates, Collections.reverseOrder());
-    return dates;
-  }
-
-  private LocalDate getLastNoteModificationDate() {
-    if (notes.isEmpty()) {
-      return null;
-    } else {
-      List<LocalDate> dates = new LinkedList<>(notes.keySet());
-      Collections.sort(dates, Collections.reverseOrder());
-      return dates.get(0);
-    }
-
   }
 
   public List<LocalDate> getAllModificationDateDesc() {
@@ -246,26 +203,17 @@ public class Subscription extends BasicEntity {
       System.out.println("Subscription: subSim switch table can't be empty");
     } else {
       LocalDate lastSimModDate = getLatestDate(subSim);
-      if (date.isAfter(lastSimModDate)) {
-        SubSim last = subSim.get(lastSimModDate);
-        if (last.getSim() == null && sim != null) {
+      SubSim last = subSim.get(lastSimModDate);
+      if(last.getSim() == null) {
+        last.setSim(sim);
+      } else if (date.isAfter(lastSimModDate)) {
+        if (!Sim.isSameByIdOrBothNull(sim, last.getSim())) {
           subSim.put(date, new SubSim(this, sim, date));
-        } else if (!equals(sim, last.getSim())) {
           last.getSim().setReason(reason);
-          subSim.put(date, new SubSim(this, sim, date));
+          firstAvailableDate = date;
         }
       }
     }
-  }
-
-  private boolean equals(Sim s1, Sim s2) {
-    if (s1 == null && s2 == null) {
-      return true;
-    }
-    if (s1 == null || s2 == null) {
-      return false;
-    }
-    return s1.getId() == s2.getId();
   }
 
   public void addUser(User user, LocalDate date) {
@@ -295,19 +243,19 @@ public class Subscription extends BasicEntity {
     }
   }
   
-  private void add(Map<LocalDate, ? extends BasicSwitchTable> map, BasicEntity entity, LocalDate date) {
-    boolean addSuccess = false;
-    boolean isLastAMarker = areTwoLastAreSame(map);
-    if(notValidForAdd(map, entity, date)) {
-      return;
-    } else {
-      LocalDate lastModDate = getLatestDate(map);
-      
-    }
-    if(addSuccess) {
-      firstAvailableDate = date;
-    }
-  }
+//  private void add(Map<LocalDate, ? extends BasicSwitchTable> map, BasicEntity entity, LocalDate date) {
+//    boolean addSuccess = false;
+//    boolean isLastAMarker = areTwoLastAreSame(map);
+//    if(notValidForAdd(map, entity, date)) {
+//      return;
+//    } else {
+//      LocalDate lastModDate = getLatestDate(map);
+//      
+//    }
+//    if(addSuccess) {
+//      firstAvailableDate = date;
+//    }
+//  }
   
   private boolean notValidForAdd(Map<LocalDate, ? extends BasicSwitchTable> map, BasicEntity entity, LocalDate date) {
     if(map == null || map.isEmpty() || date == null) {
@@ -335,27 +283,4 @@ public class Subscription extends BasicEntity {
     }
   }
   
-  private boolean areTwoLastAreSame(Map<LocalDate, ? extends BasicSwitchTable> map) {
-    if(map == null) {
-      throw new NullPointerException();
-    }
-    if(map.size() > 1) {
-      List<LocalDate> dates = new LinkedList<>(map.keySet());
-      Collections.sort(dates, Collections.reverseOrder());
-      return equals(map.get(dates.get(0)), map.get(dates.get(1)));
-    }
-    return false;
-  }
-  
-  private boolean equals(BasicSwitchTable o1, BasicSwitchTable o2) {
-    if(o1 == null || o2 == null) {
-      throw new NullPointerException();
-    }
-    if(o1.getClass() != o2.getClass()) {
-      throw new IllegalArgumentException();
-    }
-    
-    return o1.isSameSwitchedPairs(o2);
-  }
-
 }

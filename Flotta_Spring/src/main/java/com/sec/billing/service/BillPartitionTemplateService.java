@@ -1,8 +1,12 @@
 package com.sec.billing.service;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,8 +37,8 @@ public class BillPartitionTemplateService {
     }
   }
 
-  public BillPartitionTemplate findTemplate(long templateId) {
-    return billPartitionTemplateRepository.findOne(templateId);
+  public BillPartitionTemplate findById(long id) {
+    return billPartitionTemplateRepository.findOne(id);
   }
 
   public Map<Category, List<FeeItem> > partition(Bill bill, long templateId) {
@@ -48,17 +52,36 @@ public class BillPartitionTemplateService {
   }
   
   public List<String> getTemplateMissingFeeItemDescription(long templateId) {
-    return templateMissingFeeItemDescription.remove(templateId);
+    List<String> descriptions = templateMissingFeeItemDescription.remove(templateId);
+    Collections.sort(descriptions);
+    return descriptions;
   }
 
   public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Category> categories) {
     BillPartitionTemplate bpt = billPartitionTemplateRepository.findOne(templateId);
+    Map<String, Category> connection = bpt.getConnection();
     
-    for(int i = 0; i < descriptions.size(); i++) {
-      bpt.addToConnection(descriptions.get(i), categories.get(i));
+    int i = 0;
+    for(String description : descriptions) {
+      connection.put(description, categories.get(i));
+      i++;
     }
     
     billPartitionTemplateRepository.save(bpt);
+  }
+
+  public List<BillPartitionTemplate> findAll() {
+    return billPartitionTemplateRepository.findAll();
+  }
+
+  public List<String> findAllBillDescription() {
+    Set<String> descriptions = new HashSet<>();
+    for(BillPartitionTemplate template: billPartitionTemplateRepository.findAll()) {
+      descriptions.addAll(template.getConnection().keySet());
+    }
+    List<String> result = new LinkedList<>(descriptions);
+    Collections.sort(result);
+    return result;
   }
   
 }

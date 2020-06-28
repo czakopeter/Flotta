@@ -7,8 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -33,20 +34,16 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-			//TODO adatbázishoz csak ADMIN, .antMatchers("/db/**").hasRole("ADMIN")
+			//TODO adatbázishoz csak ADMIN,
+//			  .antMatchers("/db/**").hasRole("ADMIN")
 			  .antMatchers("/db/**").permitAll()
-			  .antMatchers("/verification/**", "/registration", "/accessDennied").permitAll()
-//				.antMatchers("/billing/**").hasAnyRole("FINANCIAL", "ADMIN")
-//				.antMatchers("/subscription/**", "/device/**", "/deviceType/**", "/sim/**").hasAnyRole("MOBILE", "ADMIN")
-//				.antMatchers("users/**").hasRole("ADMIN")
-//				.antMatchers("/profile/**").authenticated()
-//				.antMatchers("/").not().hasAnyRole("CHANGE_PASSWORD", "ANONYMOUS")
-//				.anyRequest().authenticated()
-			  .antMatchers("/billing/**").hasAnyAuthority("FINANCIAL", "ADMIN")
-        .antMatchers("/subscription/**", "/device/**", "/deviceType/**", "/sim/**").hasAnyAuthority("MOBILE", "ADMIN")
-        .antMatchers("/users/**").hasAnyAuthority("ADMIN")
-        .antMatchers("/profile/**").authenticated()
-        .antMatchers("/").hasAnyAuthority("ADMIN", "USER", "FINANCIAL", "MOBIL")
+			  .antMatchers("/activation/**", "/registration", "/accessDennied", "/passwordReset").permitAll()
+			  .antMatchers("/billing/**", "/finance/**").hasAnyAuthority("FINANCE_MNGR", "ADMIN")
+			  .antMatchers("/subscription/**", "/sim/**").hasAnyAuthority("SUBSCRIPTION_MNGR", "ADMIN")
+        .antMatchers("/device/**", "/deviceType/**").hasAnyAuthority("DEVICE_MNGR", "ADMIN")
+        .antMatchers("/user/**").hasAnyAuthority("USER_MNGR","ADMIN")
+        .antMatchers("/profile/**", "/").hasAnyAuthority("BASIC", "PASSWORD")
+        
         .anyRequest().authenticated()
 				.and()
 			.formLogin()
@@ -63,6 +60,8 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 		    .exceptionHandling().accessDeniedHandler(accessDeniedHandler());
 		
 		
+		http.sessionManagement().maximumSessions(3).sessionRegistry(getSessionRegistry());
+		
 		//adatbázis elérése böngészőből
 		http.csrf().disable();
 		http.headers().frameOptions().disable();
@@ -72,5 +71,9 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
   public AccessDeniedHandler accessDeniedHandler() {
       return new CustomAccessDeniedHandler();
   }
+	
+	@Bean SessionRegistry getSessionRegistry() {
+	  return new SessionRegistryImpl();
+	}
 	
 }

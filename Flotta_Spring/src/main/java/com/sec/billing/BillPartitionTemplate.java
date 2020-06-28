@@ -1,5 +1,6 @@
 package com.sec.billing;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -95,6 +96,12 @@ public class BillPartitionTemplate {
       throw new UnknonwFeeItemDescriptionException(unknownFreeItemDesc);
     }
     return result;
+  }
+  
+  public List<String> getSortedDescriptions() {
+    List<String> descriptions = new LinkedList<>(connection.keySet());
+    Collections.sort(descriptions);
+    return descriptions;
   }
   
 }

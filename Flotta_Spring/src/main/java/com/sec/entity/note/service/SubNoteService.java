@@ -28,17 +28,17 @@ public class SubNoteService {
   }
 
   public void update(Subscription sub, String note, LocalDate date) {
-    SubNote last = subNoteRepository.findFirstBySubOrderByDateDesc(sub);
+    SubNote last = subNoteRepository.findFirstBySubOrderByBeginDateDesc(sub);
     
-    if(date.isAfter(last.getDate())) {
+    if(date.isAfter(last.getBeginDate())) {
       if((last.getNote().isEmpty()) ||
           (note.isEmpty()) ||
           !note.equalsIgnoreCase(last.getNote())) {
         subNoteRepository.save(new SubNote(sub, note, date));
       }
-    } else if(date.isEqual(last.getDate())) {
+    } else if(date.isEqual(last.getBeginDate())) {
       //modifying
-      SubNote lastBefore = subNoteRepository.findFirstBySubAndDateBeforeOrderByDateDesc(sub, date);
+      SubNote lastBefore = subNoteRepository.findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(sub, date);
       if(lastBefore != null && (
           note.equalsIgnoreCase(lastBefore.getNote())
           )) {

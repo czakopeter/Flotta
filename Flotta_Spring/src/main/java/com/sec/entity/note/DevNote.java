@@ -1,5 +1,6 @@
 package com.sec.entity.note;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
@@ -9,21 +10,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.sec.entity.Device;
+import com.sec.entity.Subscription;
+import com.sec.entity.switchTable.BasicSwitchTable;
 
 @Entity
 @Table( name = "dev_note" )
-public class DevNote {
+public class DevNote extends BasicSwitchTable {
 
-  @Id
-  @GeneratedValue
-  private Long id;
-  
   private String note;
 
   @ManyToOne
   private Device dev;
-
-  private LocalDate date;
 
 
   public DevNote() {
@@ -32,15 +29,7 @@ public class DevNote {
   public DevNote(Device dev, String note, LocalDate date) {
     this.dev = dev;
     this.note = note;
-    this.date = date;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
+    this.beginDate = date;
   }
 
   public String getNote() {
@@ -59,12 +48,17 @@ public class DevNote {
     this.dev = dev;
   }
   
-  public LocalDate getDate() {
-    return date;
-  }
-
-  public void setDate(LocalDate date) {
-    this.date = date;
+  @Override
+  public <Other extends BasicSwitchTable> boolean isSameSwitchedPairs(Other other) {
+    if(other == null) {
+      throw new NullPointerException();
+    }
+    if(!(other instanceof DevNote)) {
+      throw new InvalidParameterException();
+    }
+    DevNote act = (DevNote)other;
+    
+    return (act.note == null && this.note == null || this.note.equals(act.note)) && Device.isSameByIdOrBothNull(this.dev, act.dev);
   }
   
 }

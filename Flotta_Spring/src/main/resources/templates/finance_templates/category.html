@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" layout:decorator="layouts/main">
+<html lang="en" layout:decorator="layouts/main">
 <head>
-<title></title>
+<title>Flotta</title>
 </head>
 <body>
 
@@ -19,9 +19,9 @@
         </div>
         <div class="row my-1">
           <div class="col-4">
-            <form action="/billing/category" th:object="${add}" method="post">
-              <input type="text" id="add" name="add" />
-              <button type="submit">Add</button>
+            <form action="/finance/category/all" th:object="${add}" method="post">
+              <input type="text" class="form-control mb-2" id="add" name="add" placeholder="Enter new category" required="required" />
+              <button type="submit" class="btn btn-primary">Add</button>
             </form>
           </div>
         </div>

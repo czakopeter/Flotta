@@ -1,79 +1,46 @@
 <!DOCTYPE html>
-<html lang="hu" layout:decorator="layouts/main">
+<html lang="en" layout:decorator="layouts/main">
 <head>
-<title>BoxInBox - Device Types</title>
+<title>Flotta</title>
 </head>
 <body>
 
   <div layout:fragment="loginContent">
 
     <h2>Device Types</h2>
-    
+
+
     <button type="submit" class="btn btn-primary" data-target="#edit" data-backdrop="static"
       data-toggle="modal" onclick="reset_modal()"
     >New</button>
 
+    <select class="form-control" onchange="changeVisibilityFormSelect(this)">
+      <option value="all" th:text="#{deviceType.filer.all}">All</option>
+      <option value="active" selected="selected" th:text="#{deviceType.filer.active}">Active</option>
+      <option value="archived" th:text="#{deviceType.filer.archived}">Archived</option>
+    </select>
 
-    <div class="tab mt-5">
-      <button name="tabbtn" class="btn btn-light active"
-        onclick="changeTab(this, 'visibleTab')"
-      >Visible</button>
-      <button name="tabbtn" class="btn btn-light" onclick="changeTab(this, 'invisibleTab')">Invisible</button>
-    </div>
-
-    <div id="visibleTab" class="tabcontent">
-      <h3>Visible</h3>
-      <table class="table" id="table">
-        <tr>
-          <th>Brand</th>
-          <th>Model</th>
-          <th>Name</th>
-          <th>SIM number</th>
-          <th>Has MicroSD slot</th>
-          <th></th>
-        </tr>
-        <tr th:each="deviceType, i : ${deviceTypes}" th:if="${deviceType.visible == true}">
-          <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
-          <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;" ></td>
-          <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
-          <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
-          <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
-          <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
-          <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
-          <td><button type="button" class="btn btn-primary"
-              th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
-              data-toggle="modal"
-            >Edit</button></td>
-        </tr>
-      </table>
-    </div>
-
-    <div id="invisibleTab" class="tabcontent">
-      <h3>Invisible</h3>
-      <table class="table" id="table">
-        <tr>
-          <th>Brand</th>
-          <th>Model</th>
-          <th>Name</th>
-          <th>SIM number</th>
-          <th>Has MicroSD slot</th>
-          <th></th>
-        </tr>
-        <tr th:each="deviceType, i : ${deviceTypes}" th:if="${deviceType.visible == false}">
-          <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
-          <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;"></td>
-          <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
-          <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
-          <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
-          <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
-          <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
-          <td><button type="button" class="btn btn-primary"
-              th:onclick="|set_modal(${i.count})|" data-target="#edit" data-backdrop="static"
-              data-toggle="modal"
-            >Edit</button></td>
-        </tr>
-      </table>
-    </div>
+    <table class="table table-sm" id="table">
+      <tr>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Name</th>
+        <th>SIM number</th>
+        <th>Has MicroSD slot</th>
+      </tr>
+      <tr th:each="deviceType, i : ${deviceTypes}" th:id="${i.count}">
+        <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;"></td>
+        <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
+        <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
+        <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
+        <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
+        <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
+        <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+        <td><button type="button" class="btn btn-primary" th:onclick="|set_modal(${i.count})|"
+            data-target="#edit" data-backdrop="static" data-toggle="modal"
+          >Edit</button></td>
+      </tr>
+    </table>
 
 
     <!-- Modal -->
@@ -142,14 +109,14 @@
     </div>
 
 
-
-
-
     <script th:inline="javascript">
 					//<![CDATA[
+						
 					window.onload = function() {
-						changeTab(document.getElementsByClassName("tabbtn")[0], 'visibleTab')
+						
 					};
+					
+					changeVisibility('active');
 
 					function reset_modal() {
 						document.getElementById('id').value = '';
@@ -187,20 +154,46 @@
 							name.readOnly = false;
 						}
 					}
-
-					function changeTab(btn, tabName) {
-						var i, tabcontent, tabbtn;
-						tabcontent = document.getElementsByClassName("tabcontent");
-						for (i = 0; i < tabcontent.length; i++) {
-							tabcontent[i].style.display = "none";
-						}
-						tabbtn = document.getElementsByName("tabbtn");
-						for (i = 0; i < tabbtn.length; i++) {
-							tabbtn[i].className = tabbtn[i].className.replace(" active", "");
-						}
-						document.getElementById(tabName).style.display = "block";
-						btn.className += " active";
+					
+					function changeVisibilityFormSelect(type) {
+						changeVisibility(type.value);
 					}
+					
+					function changeVisibility(type) {
+						var rows = document.getElementById('table').rows;
+						var i = 1;
+						for(i; i < rows.length; i++) {
+							switch (type) {
+							case 'all':
+								if(rows[i].cells.namedItem('visible' + rows[i].id).innerHTML == 'true') {
+									rows[i].style.background = '#aaffaa';
+								} else {
+									rows[i].style.background = '#ffaaaa';
+								}
+								rows[i].style.display = null;
+								continue;
+							case 'active':
+								if(rows[i].cells.namedItem('visible' + rows[i].id).innerHTML == 'true') {
+									rows[i].style.display = null;
+								} else {
+									rows[i].style.display = 'none';
+								}
+								rows[i].style.background = '';
+								continue;
+							case 'archived':
+								if(rows[i].cells.namedItem('visible' + rows[i].id).innerHTML == 'false') {
+									rows[i].style.display = null;
+								} else {
+									rows[i].style.display = 'none';
+								}
+								rows[i].style.background = '';
+								continue;
+							}
+							
+						}
+						
+					}
+					
 
 					//]]>
 				</script>

@@ -11,6 +11,8 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.sec.entity.User;
@@ -34,7 +36,7 @@ public class EmailService extends ServiceWithMsg {
       MimeMessageHelper helper = new MimeMessageHelper(message, true);
       helper.setTo(user.getEmail());
       helper.setSubject("Verify");
-      helper.setText("<a href=\"localhost:8080/verification/" + user.getPasswordRenewerKey() + "\">HERE</a><br>Initial password: " + user.getPassword(), true);
+      helper.setText("<a href=\"localhost:8080/activation/" + user.getPasswordRenewerKey() + "\">Activate here</a><br>Initial password: " + user.getPassword(), true);
       emailSender.send(message);
     } catch (MessagingException e) {
       log.error("Multipart creation failed " + e);
@@ -43,6 +45,44 @@ public class EmailService extends ServiceWithMsg {
       return false;
     }
     return true;
+	}
+	
+	private MimeMessage createMessage(User to, String subject, String msg) {
+	  MimeMessage message = emailSender.createMimeMessage();
+	  try {
+      MimeMessageHelper helper = new MimeMessageHelper(message, true);
+      helper.setTo(to.getEmail());
+      helper.setSubject("Verify");
+      helper.setText("<a href=\"localhost:8080/activation/" + to.getPasswordRenewerKey() + "\">Activate here</a><br>Initial password: " + to.getPassword(), true);
+	  }catch (MessagingException e) {
+	    log.error("Multipart creation failed " + e);
+	    return null;
+    }
+	  return message;
+	}
+	
+	public boolean sendEmailAboutPasswordChange(boolean success) {
+	  Authentication  auth = SecurityContextHolder.getContext().getAuthentication();
+	  User user = (User)auth.getPrincipal();
+	  MimeMessage message = createMessage(user, "Password change", success ? successPassworChange() : failedPasswordChange());
+	  if(message == null) {
+	    return false;
+	  }
+	  try {
+	    emailSender.send(message);
+    } catch (MailSendException e) {
+      return false;
+    }
+	  
+	  return true;
+	}
+	
+	private String successPassworChange() {
+	  return "Password change has been success!";
+	}
+	
+	private String failedPasswordChange() {
+	  return "Password change has been failed!";
 	}
 	
 }

@@ -1,4 +1,4 @@
-package com.sec.entity;
+ package com.sec.entity;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,15 +15,16 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.sec.billing.PayDevision;
+import com.sec.billing.PayDivision;
 import com.sec.entity.switchTable.GenSW;
 import com.sec.entity.switchTable.UserDev;
 import com.sec.entity.switchTable.UserSub;
+import com.sec.enums.UserStatusEnum;
 
 import javax.persistence.JoinColumn;
 
 @Entity
-@Table( name="users" )
+@Table(name = "users")
 public class User extends BasicEntity {
 
 	@Column( unique=true, nullable=false )
@@ -35,8 +36,6 @@ public class User extends BasicEntity {
 	private String fullName;
 	
 	private boolean enabled;
-	
-	private int status;
 	
 	private String passwordRenewerKey;
 	
@@ -54,17 +53,20 @@ public class User extends BasicEntity {
 	)
 	private Set<Role> roles = new HashSet<Role>();
 	
-	public static String[] STATUS_STRING = {"WAITING FOR VALIDATION", "REQUIRED PASSWORD CHANGE", "ENABLED", "DISABLED"};
+//	private int status;
+//	
+//	public static String[] STATUS_STRING = {"WAITING FOR VALIDATION", "REQUIRED PASSWORD CHANGE", "ENABLED", "DISABLED"};
+//	
+//	public static int WAITING_FOR_ACTIVATION = 0;
+//	public static int REQUIRED_PASSWORD_CHANGE = 1;
+//	public static int ENABLED = 2;
+//	public static int DISABLED = 3;
 	
-	
-	public static int WAITING_FOR_VALIDATION = 0;
-	public static int REQUIRED_PASSWORD_CHANGE = 1;
-	public static int ENABLED = 2;
-	public static int DISABLED = 3;
+	private UserStatusEnum status;
 	
 
 	@ManyToMany
-	private List<PayDevision> payDevs = new LinkedList<>();
+	private List<PayDivision> payDevs = new LinkedList<>();
 
   public User() {}
 
@@ -100,14 +102,13 @@ public class User extends BasicEntity {
     this.passwordRenewerKey = passwordRenewerKey;
   }
 
-
-  public int getStatus() {
-    return status;
-  }
-
-  public void setStatus(int status) {
-    this.status = status;
-  }
+//  public int getStatus() {
+//    return status;
+//  }
+//
+//  public void setStatus(int status) {
+//    this.status = status;
+//  }
 
   public Set<UserSub> getUserSubs() {
 		return userSubs;
@@ -136,18 +137,12 @@ public class User extends BasicEntity {
 		this.enabled = enabled;
 	}
 
-	public void addRoles(String roleName) {
+	public void addRoles(Role role) {
 		if (this.roles == null || this.roles.isEmpty()) 
 			this.roles = new HashSet<>();
-		this.roles.add(new Role(roleName));
+		this.roles.add(role);
 	}
 	
-	public void removeRole(String roleName) {
-		if(this.roles != null) {
-			this.roles.remove(new Role(roleName));
-		}
-	}
-
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", email=" + email + ", password=" + password + ", fullName=" + fullName
@@ -161,15 +156,15 @@ public class User extends BasicEntity {
 		return email.equals(u.getEmail());
 	}
 	
-	public List<PayDevision> getPayDevs() {
+	public List<PayDivision> getPayDevs() {
     return payDevs;
   }
 
-  public void setPayDevs(List<PayDevision> payDevs) {
+  public void setPayDevs(List<PayDivision> payDevs) {
     this.payDevs = payDevs;
   }
   
-  public void addPayDevision(PayDevision payDevision) {
+  public void addPayDevision(PayDivision payDevision) {
     this.payDevs.add(payDevision);
   }
 
@@ -182,12 +177,29 @@ public class User extends BasicEntity {
     return false;
   }
   
+//  public String getStatusName() {
+//    return STATUS_STRING[status];
+//  }
+//
+//  public boolean isPasswordExpired() {
+//    return status == REQUIRED_PASSWORD_CHANGE;
+//  }
+  
   public String getStatusName() {
-    return STATUS_STRING[status];
+    return status.toString();
+  }
+  
+  public UserStatusEnum getStatus() {
+    return status;
   }
 
-  public boolean isPasswordExpired() {
-    return status == REQUIRED_PASSWORD_CHANGE;
+  public void setStatus(UserStatusEnum status) {
+    this.status = status;
   }
+
+  public boolean isPasswordChangeRequired() {
+    return status.equals(UserStatusEnum.REQUIRED_PASSWORD_CHANGE);
+  }
+  
   
 }

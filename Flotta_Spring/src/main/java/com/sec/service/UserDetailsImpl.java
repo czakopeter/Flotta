@@ -32,7 +32,7 @@ public class UserDetailsImpl implements UserDetails {
 	      authorities.add(new SimpleGrantedAuthority(role.getRole()));
 	    }
 		} else {
-		  authorities.add(new SimpleGrantedAuthority("CHANGE_PASSWORD"));
+		  authorities.add(new SimpleGrantedAuthority("PASSWORD"));
 		}
 		return authorities;
 	}
@@ -72,7 +72,7 @@ public class UserDetailsImpl implements UserDetails {
 	}
 	
 	public boolean isPasswordExpired() {
-	  return user.isPasswordExpired();
+	  return user.isPasswordChangeRequired();
 	}
 	
 	public boolean hasRole(String role) {

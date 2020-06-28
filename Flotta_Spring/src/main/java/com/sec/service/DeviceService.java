@@ -14,13 +14,13 @@ import com.sec.repo.DeviceRepository;
 import com.sec.status.service.DeviceStatusService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
+import com.sec.entity.Subscription;
+import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.enums.DeviceStatusEnum;
 
 @Service
-public class DeviceService {
+public class DeviceService extends ServiceWithMsg{
   
-  private Map<String, String> msg = new HashMap<String, String>();
-
   private DeviceRepository deviceRepository;
   
   private DeviceStatusService deviceStatusService;
@@ -74,6 +74,17 @@ public class DeviceService {
 //    }
 //  }
 
+  public boolean add(DeviceToView dtv, DeviceType deviceType) {
+    if(deviceRepository.findBySerialNumber(dtv.getNumber()) == null) {
+      Device entity = new Device(dtv.getNumber(), deviceType, dtv.getDate());
+      deviceRepository.save(entity);
+      return true;
+    } else {
+      appendMsg("Number already exists");
+      return false;
+    }
+  }
+  
   public Device save(String serialNumber, DeviceType deviceType, LocalDate date) {
     Device check = deviceRepository.findBySerialNumber(serialNumber);
     if(check == null) {
@@ -81,20 +92,16 @@ public class DeviceService {
       d.setDeviceType(deviceType);
       return deviceRepository.save(d);
     } else {
-      addError("Serial number already exists");
+      appendMsg("Serial number already exists");
       return null;
     }
   }
   
   public String getError() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    return msg.remove(auth.getName());
+    return removeMsg();
   }
   
-  private void addError(String err) {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    msg.put(auth.getName(), err);
-  }
+  
 
   public void userHasConnected(Device dev, LocalDate date) {
     deviceStatusService.setStatus(dev, DeviceStatusEnum.ACTIVE, date);

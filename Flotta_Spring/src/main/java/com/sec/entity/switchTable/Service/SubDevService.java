@@ -30,30 +30,30 @@ public class SubDevService {
       throw new NullPointerException();
     }
 
-    SubDev lastFromSub = subDevRepository.findFirstBySubOrderByConnectDesc(sub);
+    SubDev lastFromSub = subDevRepository.findFirstBySubOrderByBeginDateDesc(sub);
 
-    if (equals(dev, lastFromSub.getDev())) {
+    if (Device.isSameByIdOrBothNull(dev, lastFromSub.getDev())) {
       return;
     }
 
     closeDevice(dev, date);
     
-    if (date.isAfter(lastFromSub.getConnect())) {
+    if (date.isAfter(lastFromSub.getBeginDate())) {
       if (lastFromSub.getDev() != null) {
         subDevRepository.save(new SubDev(null, lastFromSub.getDev(), date));
       }
       subDevRepository.save(new SubDev(sub, dev, date));
-    } else if (date.isEqual(lastFromSub.getConnect())) {
+    } else if (date.isEqual(lastFromSub.getBeginDate())) {
       
     }
 
     if (dev == null) {
-      if (date.isEqual(lastFromSub.getConnect())) {
+      if (date.isEqual(lastFromSub.getBeginDate())) {
         if (lastFromSub.getDev() == null) {
           // nothing
         } else {
-          SubDev lastBeforeFromSub = subDevRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date);
-          SubDev lastBeforeFromDev = subDevRepository.findFirstByDevAndConnectBeforeOrderByConnectDesc(lastFromSub.getDev(), date);
+          SubDev lastBeforeFromSub = subDevRepository.findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(sub, date);
+          SubDev lastBeforeFromDev = subDevRepository.findFirstByDevAndBeginDateBeforeOrderByBeginDateDesc(lastFromSub.getDev(), date);
 
           if (lastBeforeFromSub == null && lastBeforeFromDev == null) {
             subDevRepository.save(new SubDev(sub, null, date));
@@ -93,17 +93,17 @@ public class SubDevService {
       }
     }
     if (dev != null) {
-      if (date.isEqual(lastFromSub.getConnect())) {
-        if (equals(lastFromSub.getDev(), dev)) {
+      if (date.isEqual(lastFromSub.getBeginDate())) {
+        if (Device.isSameByIdOrBothNull(lastFromSub.getDev(), dev)) {
           // nothing
         } else if (lastFromSub.getDev() == null) {
           closeDevice(dev, date);
-          SubDev lastBeforeFromSub = subDevRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date);
+          SubDev lastBeforeFromSub = subDevRepository.findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(sub, date);
           if (lastBeforeFromSub == null) {
             lastFromSub.setDev(dev);
             subDevRepository.save(lastFromSub);
           } else {
-            if (equals(dev, lastBeforeFromSub.getDev())) {
+            if (Device.isSameByIdOrBothNull(dev, lastBeforeFromSub.getDev())) {
               System.out.println("IDE " + lastFromSub.getId());
               subDevRepository.delete(lastFromSub.getId());
             } else {
@@ -113,8 +113,8 @@ public class SubDevService {
           }
         } else {
           closeDevice(dev, date);
-          SubDev lastBeforeFromSub = subDevRepository.findFirstBySubAndConnectBeforeOrderByConnectDesc(sub, date);
-          SubDev lastBeforeFromDev = subDevRepository.findFirstByDevAndConnectBeforeOrderByConnectDesc(lastFromSub.getDev(), date);
+          SubDev lastBeforeFromSub = subDevRepository.findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(sub, date);
+          SubDev lastBeforeFromDev = subDevRepository.findFirstByDevAndBeginDateBeforeOrderByBeginDateDesc(lastFromSub.getDev(), date);
 
           if (lastBeforeFromSub == null && lastBeforeFromDev == null) {
             subDevRepository.save(new SubDev(sub, dev, date));
@@ -129,7 +129,7 @@ public class SubDevService {
             subDevRepository.save(lastFromSub);
           }
           if (lastBeforeFromSub != null && lastBeforeFromDev == null) {
-            if (!equals(dev, lastBeforeFromSub.getDev())) {
+            if (!Device.isSameByIdOrBothNull(dev, lastBeforeFromSub.getDev())) {
               subDevRepository.save(new SubDev(sub, dev, date));
             }
             lastFromSub.setSub(null);
@@ -139,7 +139,7 @@ public class SubDevService {
             if (lastBeforeFromDev.getSub() != null) {
               subDevRepository.save(new SubDev(null, lastFromSub.getDev(), date));
             }
-            if (equals(lastBeforeFromSub.getDev(), dev)) {
+            if (Device.isSameByIdOrBothNull(lastBeforeFromSub.getDev(), dev)) {
               subDevRepository.delete(lastFromSub.getId());
             } else {
               lastFromSub.setDev(dev);
@@ -156,13 +156,13 @@ public class SubDevService {
       return;
     }
 
-    SubDev last = subDevRepository.findFirstByDevOrderByConnectDesc(dev);
+    SubDev last = subDevRepository.findFirstByDevOrderByBeginDateDesc(dev);
 
-    if (date.isAfter(last.getConnect())) {
+    if (date.isAfter(last.getBeginDate())) {
       if (last.getSub() != null) {
         subDevRepository.save(new SubDev(last.getSub(), null, date));
       }
-    } else if (date.isEqual(last.getConnect())) {
+    } else if (date.isEqual(last.getBeginDate())) {
       if (last.getSub() == null) {
         subDevRepository.delete(last);
       } else {
@@ -172,17 +172,8 @@ public class SubDevService {
     }
   }
 
-  private boolean equals(Device d1, Device d2) {
-    if (d1 == null && d2 == null) {
-      return true;
-    } else if (d1 == null || d2 == null) {
-      return false;
-    }
-    return d1.getId().equals(d2.getId());
-  }
-
   public Subscription findLastSub(Device device) {
-    return subDevRepository.findFirstByDevOrderByConnectDesc(device).getSub();
+    return subDevRepository.findFirstByDevOrderByBeginDateDesc(device).getSub();
   }
 
 }

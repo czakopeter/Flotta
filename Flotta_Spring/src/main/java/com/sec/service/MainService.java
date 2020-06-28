@@ -14,9 +14,11 @@ import com.sec.billing.Bill;
 import com.sec.billing.BillPartitionTemplate;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
+import com.sec.billing.PayDivision;
 import com.sec.billing.exception.FileUploadException;
+import com.sec.billing.service.BillService;
 import com.sec.billing.service.BillingService;
-import com.sec.billing.service.PayDevisionService;
+import com.sec.billing.service.PayDivisionService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;
@@ -61,7 +63,7 @@ public class MainService {
 	
 	private BillingService billingService;
 	
-	private PayDevisionService payDevisionService;
+	private PayDivisionService payDevisionService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -113,7 +115,7 @@ public class MainService {
   }
 	
 	@Autowired
-	public void setPayDevisionService(PayDevisionService payDevisionService) {
+	public void setPayDevisionService(PayDivisionService payDevisionService) {
     this.payDevisionService = payDevisionService;
   }
 	
@@ -195,8 +197,8 @@ public class MainService {
 		return userService.findByEmail(email);
 	}
 	
-	public boolean changePassword(String newPsw, String confirmNewPsw) {
-    return userService.changePassword(newPsw, confirmNewPsw);
+	public boolean changePassword(String oldPsw, String newPsw, String confirmPsw) {
+    return userService.changePassword(oldPsw, newPsw, confirmPsw);
  }
 
  public String getUserError() {
@@ -211,8 +213,8 @@ public class MainService {
    return userService.registrationAvailable();
  }
  
- public boolean varification(String key) {
-   return userService.varification(key);
+ public boolean activation(String key) {
+   return userService.activation(key);
  }
  
 //-------- SIM SERVICE --------
@@ -396,8 +398,8 @@ public class MainService {
     return billingService.findAllCategory();
   }
 
-  public void addCategory(String outCat) {
-    billingService.addCategory(outCat);
+  public boolean addCategory(String category) {
+    return billingService.addCategory(category);
   }
 
   public List<String> getUnknownFeeDescToTemplate(long templateId) {
@@ -449,7 +451,14 @@ public class MainService {
   }
 
   public boolean addSubscription(SubscriptionToView stv) {
-    return subscriptionService.add(stv);
+    Sim sim = simService.findByImei(stv.getImei());
+    if(sim != null && subscriptionService.add(stv)) {
+      Subscription s = subscriptionService.findByNumber(stv.getNumber());
+      s.addSim(sim, null, stv.getDate());
+      subscriptionService.save(s);
+      return true;
+    }
+    return false;
   }
 
   public List<User> findAllUserByStatus(int status) {
@@ -460,8 +469,40 @@ public class MainService {
     return userService.findById(id);
   }
 
-  public boolean updateUser(long id, boolean[] roles, List<String> rolesName) {
-    return userService.update(id, roles, rolesName);
+  public boolean updateUser(long id, Map<String, Boolean> roles) {
+    return userService.modifyRoles(id, roles);
+  }
+
+  public boolean passwordReset(String email) {
+    return userService.passwordReset(email);
+  }
+
+  public BillPartitionTemplate findBillPartitionTemplateById(long id) {
+    return billingService.findBillPartitionTemplateById(id);
+  }
+
+  public List<String> findAllFeeDescription() {
+    return billingService.findAllBillDescription();
+  }
+
+  public boolean addPayDivision(PayDivision payDevision, List<Long> categories, List<Integer> scales) {
+    return billingService.addPayDivision(payDevision, categories, scales);
+  }
+
+  public List<PayDivision> findAllPayDivision() {
+    return billingService.findAllPayDivision();
+  }
+
+  public PayDivision findPayDivisionById(long id) {
+    return billingService.findPayDivisionById(id);
+  }
+
+  public boolean editPayDivision(long id, List<Long> categories, List<Integer> scales) {
+    return billingService.editPayDivision(id, categories, scales);
+  }
+
+  public List<Category> getUnusedCategoryOfPayDivision(long id) {
+    return billingService.getUnusedCategoryOfPayDivision(id);
   }
 
 }

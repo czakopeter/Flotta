@@ -12,8 +12,8 @@ public interface SubNoteRepository extends CrudRepository<SubNote, Long>{
 
   List<SubNote> findAllBySub(Subscription sub);
 
-  SubNote findFirstBySubOrderByDateDesc(Subscription sub);
+  SubNote findFirstBySubOrderByBeginDateDesc(Subscription sub);
 
-  SubNote findFirstBySubAndDateBeforeOrderByDateDesc(Subscription sub, LocalDate date);
+  SubNote findFirstBySubAndBeginDateBeforeOrderByBeginDateDesc(Subscription sub, LocalDate date);
 
 }
