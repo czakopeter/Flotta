@@ -26,6 +26,7 @@ import com.sec.entity.switchTable.SubDev;
 import com.sec.entity.switchTable.SubSim;
 import com.sec.entity.switchTable.UserSub;
 import com.sec.entity.viewEntity.SubscriptionToView;
+import com.sec.enums.SimStatusEnum;
 import com.sec.status.SubscriptionStatus;
 
 @Entity
@@ -205,10 +206,12 @@ public class Subscription extends BasicEntity {
       LocalDate lastSimModDate = getLatestDate(subSim);
       SubSim last = subSim.get(lastSimModDate);
       if(last.getSim() == null) {
+        sim.setStatus(SimStatusEnum.ACTIVE);
         last.setSim(sim);
       } else if (date.isAfter(lastSimModDate)) {
         if (!Sim.isSameByIdOrBothNull(sim, last.getSim())) {
           subSim.put(date, new SubSim(this, sim, date));
+          last.getSim().setStatus(SimStatusEnum.CHANGED);
           last.getSim().setReason(reason);
           firstAvailableDate = date;
         }
@@ -243,20 +246,6 @@ public class Subscription extends BasicEntity {
     }
   }
   
-//  private void add(Map<LocalDate, ? extends BasicSwitchTable> map, BasicEntity entity, LocalDate date) {
-//    boolean addSuccess = false;
-//    boolean isLastAMarker = areTwoLastAreSame(map);
-//    if(notValidForAdd(map, entity, date)) {
-//      return;
-//    } else {
-//      LocalDate lastModDate = getLatestDate(map);
-//      
-//    }
-//    if(addSuccess) {
-//      firstAvailableDate = date;
-//    }
-//  }
-  
   private boolean notValidForAdd(Map<LocalDate, ? extends BasicSwitchTable> map, BasicEntity entity, LocalDate date) {
     if(map == null || map.isEmpty() || date == null) {
       return false;
@@ -281,6 +270,10 @@ public class Subscription extends BasicEntity {
         }
       }
     }
+  }
+  
+  public User getActualUser() {
+    return subUsers.get(getLatestDate(subUsers)).getUser();
   }
   
 }

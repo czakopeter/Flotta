@@ -123,14 +123,10 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
   }
 
   public boolean registrationAvailable() {
-    for(User user : findAll()) {
-      if(user.hasRole("ADMIN")) {
-        return false;
-      }
-    }
-    return true;
+     return userRepository.findAllByEnabled(true).isEmpty();
   }
   
+
   public boolean firstUserRegistration(User user) {
     if(userRepository.findAll().isEmpty()) {
       

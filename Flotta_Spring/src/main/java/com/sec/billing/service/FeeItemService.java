@@ -1,5 +1,6 @@
 package com.sec.billing.service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.sec.billing.FeeItem;
 import com.sec.billing.repository.FeeItemRepository;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
+import com.sec.entity.viewEntity.SummaryInvoiceOfNumberForUser;
 
 @Service
 public class FeeItemService {
@@ -60,5 +62,30 @@ public class FeeItemService {
   public void save(List<FeeItem> fees) {
     feeItemRepository.save(fees);
     
+  }
+
+  public List<SummaryInvoiceOfNumberForUser> getActualFinanceSummary() {
+    List<SummaryInvoiceOfNumberForUser> result = new LinkedList<>();
+    SummaryInvoiceOfNumberForUser s = new SummaryInvoiceOfNumberForUser("201234567");
+    
+    FeeItem row = new FeeItem();
+    row.setBegin(LocalDate.of(2020, 1, 10));
+    row.setEnd(LocalDate.of(2020, 1, 20));
+    row.setSubscription("201234567");
+    row.setUserGross(2000);
+    s.addFeeItem(row);
+    result.add(s);
+    
+    s = new SummaryInvoiceOfNumberForUser("207654321");
+    
+    row = new FeeItem();
+    row.setBegin(LocalDate.of(2020, 1, 13));
+    row.setEnd(LocalDate.of(2020, 1, 31));
+    row.setSubscription("207654321");
+    row.setUserGross(1500);
+    s.addFeeItem(row);
+    result.add(s);
+    
+    return result;
   }
 }

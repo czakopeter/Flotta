@@ -9,10 +9,11 @@
 <title>Flotta</title>
 
 <link rel="stylesheet" href="/css/my.css" th:href="@{/css/my.css}" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-  crossorigin="anonymous"
-/>
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" -->
+<!--   integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" -->
+<!--   crossorigin="anonymous" -->
+<!-- /> -->
+<link rel="stylesheet" href="/css/bootstrap.min.css"/>
 
 <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
 <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />
@@ -55,7 +56,7 @@
           <div class="dropdown-menu">
             <a class="dropdown-item" href="/finance/category/all">Categories</a>
             <a class="dropdown-item" href="/finance/billPartitionTemplate/all">Partition templates</a>
-            <a class="dropdown-item" href="/finance/chargeRatio/all">Pay divisions</a>
+            <a class="dropdown-item" href="/finance/chargeRatio/all">Charge ratios</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">Separated link</a>
           </div>
@@ -64,15 +65,21 @@
     </div>
     <div class="ml-auto mr-3">
       <div sec:authorize="isAuthenticated()" class="form-inline">
-        <label class="mr-1" th:text="#{main.greeting}">Wellcome</label> <a class="mr-2"
-          href="/profile" th:text="${#authentication.getPrincipal().getFullName()}"
-        >Somebody</a>
-        <form id="frmlogout" th:action="@{/logout}" method="post" class="form-inline">
-          <a href="javascript:{}"
-            onclick="document.getElementById('frmlogout').submit(); return false;"
-            class="form-inline"
-          ><label th:text="#{main.logout}"></label></a>
-        </form>
+        <label class="mr-1" th:text="#{main.greeting}">Wellcome</label>
+        <label class="mr-1" th:text="${#authentication.getPrincipal().getFullName()}">Somebody</label>
+        <div class="dropdown">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownProfileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <img alt="settings" src="/img/settings.png" style="height: 25px"/>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownProfileMenuButton" style="position: absolute; left: -100px;">
+            <a class="dropdown-item" href="/profile/finance">Invoice</a>
+<!--             <a class="dropdown-item" href="/profile/finance/history">Invoice history</a> -->
+            <a class="dropdown-item" href="/profile/items">Items</a>
+            <a class="dropdown-item" href="/profile/changePassword">Change password</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" th:href="@{/logout}" th:text="#{main.logout}"></a>
+          </div>
+        </div>
       </div>
     </div>
     <div class="navbar-nav mr-3">

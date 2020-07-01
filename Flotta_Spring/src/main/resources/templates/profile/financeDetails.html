@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorator="layouts/main">
+<head>
+<title>Flotta</title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <h2>Finances</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <td>
+              <input id="select-all" type="checkbox" placeholder="Select all" />
+            </td>
+            <th>
+              <label>Number</label>
+            </th>
+            <th>
+              <label>Period</label>
+            </th>
+            <th>
+              <label>Gross amount</label>
+            </th>
+            <th id="action-col">
+              <label>Actions</label>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="invoicePerNumber, i : ${invoicePerNumbers}">
+            <td>
+              <input id="${i.count}" type="checkbox" />
+            </td>
+            <td>Monthly</td>
+            <td>Monthly 2020.01.01-2020.01.31</td>
+            <td>2990 Ft</td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-light"><a href="#">Accept</a></button>
+                <button class="btn btn-error"><a href="#">Details</a></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+  </div>
+
+
+</body>
+</html>

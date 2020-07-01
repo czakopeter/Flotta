@@ -40,6 +40,10 @@ function addCategory() {
 	lastId++;
 	let table = document.querySelector('tbody');
 	
+	if(table.children.length == 0) {
+		document.querySelector('#confirmSelect').disabled = null;
+	}
+	
 	let row = document.createElement('tr');
 	row.className = 'table-warning';
 	table.appendChild(row);

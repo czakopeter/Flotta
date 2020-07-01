@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sec.billing.BillPartitionTemplate;
+import com.sec.billing.DescriptionCategoryCoupler;
 import com.sec.billing.Category;
-import com.sec.billing.PayDivision;
+import com.sec.billing.ChargeRatioByCategory;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.service.MainService;
 
@@ -95,20 +95,20 @@ public class CategoryController {
   
   @GetMapping("finance/chargeRatio/all")
   public String listChargeRatio(Model model) {
-    model.addAttribute("chargeRatios", service.findAllPayDivision());
+    model.addAttribute("chargeRatios", service.findAllChargeRatio());
     return "/finance_templates/chargeRatioByCategoryAll";
   }
   
   @GetMapping("/finance/chargeRatio/new")
   public String prepareAddingChargeRatio(Model model) {
     model.addAttribute("unusedCategories", service.findAllCategory());
-    model.addAttribute("chargeRatio", new PayDivision());
+    model.addAttribute("chargeRatio", new ChargeRatioByCategory());
     return "finance_templates/chargeRatioByCategoryNew";
   }
   
   @PostMapping("/finance/chargeRatio/new")
-  public String addPayDivision(Model model, @ModelAttribute("chargeRatio") PayDivision chargeRatio, @RequestParam("category") List<Long> categories, @RequestParam("ratio") List<Integer> ratio) {
-    if(service.addPayDivision(chargeRatio, categories, ratio)) {
+  public String addChargeRatio(Model model, @ModelAttribute("chargeRatio") ChargeRatioByCategory chargeRatio, @RequestParam("category") List<Long> categories, @RequestParam("ratio") List<Integer> ratios) {
+    if(service.addChargeRatio(chargeRatio, categories, ratios)) {
       return "redirect:/finance/chargeRation/all";
     }
     model.addAttribute("unusedCategories", service.findAllCategory());
@@ -118,16 +118,16 @@ public class CategoryController {
   @GetMapping("/finance/chargeRation/{id}")
   public String prepareEditingChargeRatio(Model model, @PathVariable("id") long id) {
     model.addAttribute("categories", service.findAllCategory());
-    model.addAttribute("chargeRatio", service.findPayDivisionById(id));
-    model.addAttribute("unusedCategories", service.getUnusedCategoryOfPayDivision(id));
+    model.addAttribute("chargeRatio", service.findChargeRatioById(id));
+    model.addAttribute("unusedCategories", service.getUnusedCategoryOfChargeRatio(id));
     return "finance_templates/chargeRatioByCategoryEdit";
   }
   
   @PostMapping("/finance/chargeRatio/{id}")
   public String editChargeRatio(Model model, @PathVariable("id") long id, @RequestParam("category") List<Long> categories, @RequestParam("ratio") List<Integer> ratios) {
-    if(service.editPayDivision(id, categories, ratios)) {
+    if(service.editChargeRatio(id, categories, ratios)) {
     }
-    model.addAttribute("chargeRatio", service.findPayDivisionById(id));
+    model.addAttribute("chargeRatio", service.findChargeRatioById(id));
     model.addAttribute("categories", service.findAllCategory());
     return "finance_templates/chargeRatioByCategoryEdit";
   }

@@ -7,18 +7,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sec.billing.Bill;
-import com.sec.billing.BillPartitionTemplate;
+import com.sec.billing.DescriptionCategoryCoupler;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
-import com.sec.billing.PayDivision;
+import com.sec.billing.ChargeRatioByCategory;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.service.BillService;
 import com.sec.billing.service.BillingService;
-import com.sec.billing.service.PayDivisionService;
+import com.sec.billing.service.ChargeRatioService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Sim;
@@ -31,6 +33,7 @@ import com.sec.entity.switchTable.Service.UserSubService;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
 import com.sec.entity.viewEntity.SubscriptionToView;
+import com.sec.entity.viewEntity.SummaryInvoiceOfNumberForUser;
 import com.sec.entity.note.DevNote;
 import com.sec.entity.note.service.DevNoteService;
 import com.sec.entity.note.service.SubNoteService;
@@ -63,7 +66,7 @@ public class MainService {
 	
 	private BillingService billingService;
 	
-	private PayDivisionService payDevisionService;
+	private ChargeRatioService chargeRatioService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -115,8 +118,8 @@ public class MainService {
   }
 	
 	@Autowired
-	public void setPayDevisionService(PayDivisionService payDevisionService) {
-    this.payDevisionService = payDevisionService;
+	public void setChargeRatioService(ChargeRatioService chargeRatioService) {
+    this.chargeRatioService = chargeRatioService;
   }
 	
 	public Map<User, List<FeeItem>> splitting = new HashMap<>();
@@ -223,9 +226,9 @@ public class MainService {
     return simService.findAllFree();
   }
 
-  public void saveSim(Sim sim, LocalDate date) {
-    simService.save(sim, date);
-  }
+//  public void saveSim(Sim sim, LocalDate date) {
+//    simService.save(sim, date);
+//  }
 
   public Sim findSimById(int i) {
     return simService.findById(i);
@@ -358,7 +361,7 @@ public class MainService {
     return billingService.findBilldByInvoiceNumber(invoiceNumber);
   }
 
-  public List<BillPartitionTemplate> findAllBillPartitionTemplate() {
+  public List<DescriptionCategoryCoupler> findAllBillPartitionTemplate() {
     return billingService.findAllBillPartitionTemplate();
   }
   
@@ -414,28 +417,17 @@ public class MainService {
     User user = userService.findByEmail(email);
     return billingService.getFinanceByUserId(user.getId());
   }
-  
-  public void test() {
-    User user1 = userService.findById(1);
-    user1.addPayDevision(payDevisionService.get(1));
-    userService.modify(user1);
-    User user2 = userService.findById(2);
-    user2.addPayDevision(payDevisionService.get(1));
-    userService.modify(user2);
-    user1.setPayDevs(new LinkedList<>());
-    userService.modify(user1);
-  }
 
-  //TODO write get all actual user's subscription
-  public List<SubscriptionToView> findAllSubscriptionByUser(String email) {
-    User user = userService.findByEmail(email);
-    return new LinkedList<>();
+  public List<SubscriptionToView> findAllActualSubscriptionOfUser() {
+    Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    User user = userService.findByEmail(a.getName());
+    return subscriptionService.findAllActualByUser(user);
   }
   
-  //TODO write get all actual user's device
-  public List<DeviceToView> findAllDeviceByUser(String email) {
-    User user = userService.findByEmail(email);
-    return new LinkedList<>();
+  public List<DeviceToView> findAllActualDeviceOfUser() {
+    Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    User user = userService.findByEmail(a.getName());
+    return deviceService.findAllActualByUser(user);
   }
 
   public boolean addSim(Sim sim) {
@@ -477,7 +469,7 @@ public class MainService {
     return userService.passwordReset(email);
   }
 
-  public BillPartitionTemplate findBillPartitionTemplateById(long id) {
+  public DescriptionCategoryCoupler findBillPartitionTemplateById(long id) {
     return billingService.findBillPartitionTemplateById(id);
   }
 
@@ -485,24 +477,28 @@ public class MainService {
     return billingService.findAllBillDescription();
   }
 
-  public boolean addPayDivision(PayDivision payDevision, List<Long> categories, List<Integer> scales) {
-    return billingService.addPayDivision(payDevision, categories, scales);
+  public boolean addChargeRatio(ChargeRatioByCategory payDevision, List<Long> categories, List<Integer> ratios) {
+    return billingService.addPayDivision(payDevision, categories, ratios);
   }
 
-  public List<PayDivision> findAllPayDivision() {
-    return billingService.findAllPayDivision();
+  public List<ChargeRatioByCategory> findAllChargeRatio() {
+    return billingService.findAllChargeRatio();
   }
 
-  public PayDivision findPayDivisionById(long id) {
-    return billingService.findPayDivisionById(id);
+  public ChargeRatioByCategory findChargeRatioById(long id) {
+    return billingService.findChargeRatioById(id);
   }
 
-  public boolean editPayDivision(long id, List<Long> categories, List<Integer> scales) {
-    return billingService.editPayDivision(id, categories, scales);
+  public boolean editChargeRatio(long id, List<Long> categories, List<Integer> ratios) {
+    return billingService.editChargeRatio(id, categories, ratios);
   }
 
-  public List<Category> getUnusedCategoryOfPayDivision(long id) {
-    return billingService.getUnusedCategoryOfPayDivision(id);
+  public List<Category> getUnusedCategoryOfChargeRatio(long id) {
+    return billingService.getUnusedCategoryOfChargeRatio(id);
+  }
+
+  public List<SummaryInvoiceOfNumberForUser> getActualFinanceSummary() {
+    return billingService.getActualFinanceSummary();
   }
 
 }

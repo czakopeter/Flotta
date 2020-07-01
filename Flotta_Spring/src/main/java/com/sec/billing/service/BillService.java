@@ -28,6 +28,7 @@ import com.sec.billing.exception.FileUploadException;
 import com.sec.billing.repository.BillRepository;
 import com.sec.entity.User;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
+import com.sec.entity.viewEntity.SummaryInvoiceOfNumberForUser;
 
 @Service
 public class BillService {
@@ -162,6 +163,9 @@ public class BillService {
   public void save(List<FeeItem> fees) {
     feeItemService.save(fees);
   }
-
+  
+  public List<SummaryInvoiceOfNumberForUser> getActualFinanceSummary() {
+    return feeItemService.getActualFinanceSummary();
+  }
 
 }

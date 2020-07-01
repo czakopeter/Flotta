@@ -47,9 +47,9 @@ public class FeeItem {
   
   private long userId;
   
-  private boolean validByUser;
+  private boolean acceptedByUser;
   
-  private boolean validByCompany;
+  private boolean acceptedByCompany;
 
   public FeeItem() {
   }
@@ -184,19 +184,19 @@ public class FeeItem {
   }
 
   public boolean isValidByUser() {
-    return validByUser;
+    return acceptedByUser;
   }
 
   public void setValidByUser(boolean validByUser) {
-    this.validByUser = validByUser;
+    this.acceptedByUser = validByUser;
   }
 
   public boolean isValidByCompany() {
-    return validByCompany;
+    return acceptedByCompany;
   }
 
   public void setValidByCompany(boolean validByCompany) {
-    this.validByCompany = validByCompany;
+    this.acceptedByCompany = validByCompany;
   }
 
   @Override

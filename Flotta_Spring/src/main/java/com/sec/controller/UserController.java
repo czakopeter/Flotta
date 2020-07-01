@@ -31,7 +31,6 @@ public class UserController {
 
   @ModelAttribute
   public void title(Model model) {
-    System.out.println(LocaleContextHolder.getLocale());
     model.addAttribute("title", "User");
   }
   
@@ -71,21 +70,6 @@ public class UserController {
     }
     model.addAttribute("user", service.findUserById(id));
     return "user_templates/userEdit";
-  }
-  
-  @GetMapping("/profile")
-  public String passwordChange(Model model) {
-    return "profile_templates/profile";
-  }
-  
-  @PostMapping("/profile/changePassword")
-  public String passwordChange(Model model, @RequestParam Map<String, String> params) {
-    if(service.changePassword(params.get("old-password"), params.get("new-password"), params.get("confirm-new-password"))) {
-      model.addAttribute("success", "Change password was success");
-    } else {
-      model.addAttribute("error", service.getUserError());
-    }
-    return "profile_templates/profile";
   }
   
   @GetMapping("/registration")

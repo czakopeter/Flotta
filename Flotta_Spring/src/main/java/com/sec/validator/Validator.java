@@ -15,7 +15,7 @@ public class Validator {
   }
   
   //Luhn algorithm
-  public static boolean imieCheckWithLuhnAlg(String imei) {
+  public static boolean isValidImieWithLuhnAlg(String imei) {
     int i = 1;
     int count = 0;
     int checkDigit = Character.getNumericValue(imei.charAt(imei.length() - 1));

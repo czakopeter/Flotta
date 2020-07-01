@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sec.billing.Bill;
-import com.sec.billing.BillPartitionTemplate;
+import com.sec.billing.DescriptionCategoryCoupler;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
-import com.sec.billing.PayDivision;
+import com.sec.billing.ChargeRatioByCategory;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.entity.User;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
+import com.sec.entity.viewEntity.SummaryInvoiceOfNumberForUser;
 
 @Service
 public class BillingService {
@@ -25,9 +26,9 @@ public class BillingService {
   
   private CategoryService categoryService;
   
-  private BillPartitionTemplateService billPartitionTemplateService;
+  private DescriptionCategoryCouplerService descriptionCategoryCouplerService;
   
-  private PayDivisionService payDivisionService;
+  private ChargeRatioService chargeRatioService;
 
   @Autowired
   public void setBillService(BillService billService) {
@@ -40,13 +41,13 @@ public class BillingService {
   }
 
   @Autowired
-  public void setBillPartitionTemplateService(BillPartitionTemplateService billPartitionTemplateService) {
-    this.billPartitionTemplateService = billPartitionTemplateService;
+  public void setBillPartitionTemplateService(DescriptionCategoryCouplerService descriptionCategoryCouplerService) {
+    this.descriptionCategoryCouplerService = descriptionCategoryCouplerService;
   }
   
   @Autowired
-  public void setPayDivisionService(PayDivisionService payDivisionService ) {
-    this.payDivisionService = payDivisionService;
+  public void setChargeRatioService(ChargeRatioService chargeRatioService ) {
+    this.chargeRatioService = chargeRatioService;
   }
   
   // beolvassa a számlát
@@ -85,8 +86,8 @@ public class BillingService {
     return categoryService.save(category);
   }
 
-  public List<BillPartitionTemplate> findAllBillPartitionTemplate() {
-    return  billPartitionTemplateService.findAll();
+  public List<DescriptionCategoryCoupler> findAllBillPartitionTemplate() {
+    return  descriptionCategoryCouplerService.findAll();
   }
   
   public List<FeeItem> findAllFeeItemByBillId(long id) {
@@ -101,7 +102,7 @@ public class BillingService {
     //TODO missing bill or template problem throw exception
     Bill bill = billService.findById(billId);
     if(bill != null) {
-      Map<Category, List<FeeItem> >  result =  billPartitionTemplateService.partition(bill, templateId);
+      Map<Category, List<FeeItem> >  result =  descriptionCategoryCouplerService.partition(bill, templateId);
       billService.save(bill);
       return result == null ?  false : true;
     }
@@ -109,11 +110,11 @@ public class BillingService {
   }
   
   public List<String> getUnknownFeeDescToTemplate(long templateId) {
-    return billPartitionTemplateService.getTemplateMissingFeeItemDescription(templateId);
+    return descriptionCategoryCouplerService.getMissingFeeItemDescription(templateId);
   }
 
   public void upgradeBillPartitionTemplate(long templateId, List<String> descriptions, List<Long> categories) {
-    billPartitionTemplateService.upgradeBillPartitionTemplate(templateId, descriptions, idListToCategoryList(categories));
+    descriptionCategoryCouplerService.upgradeBillPartitionTemplate(templateId, descriptions, idListToCategoryList(categories));
   }
   
   private List<Category> idListToCategoryList(List<Long> catIds) {
@@ -136,35 +137,39 @@ public class BillingService {
     billService.save(fees);
   }
 
-  public BillPartitionTemplate findBillPartitionTemplateById(long id) {
-    return billPartitionTemplateService.findById(id);
+  public DescriptionCategoryCoupler findBillPartitionTemplateById(long id) {
+    return descriptionCategoryCouplerService.findById(id);
   }
 
   public List<String> findAllBillDescription() {
-    return billPartitionTemplateService.findAllBillDescription();
+    return descriptionCategoryCouplerService.findAllBillDescription();
   }
 
-  public boolean addPayDivision(PayDivision payDevision, List<Long> categories, List<Integer> scales) {
-    return payDivisionService.addPayDivision(payDevision, idListToCategoryList(categories), scales);
+  public boolean addPayDivision(ChargeRatioByCategory payDevision, List<Long> categories, List<Integer> ratios) {
+    return chargeRatioService.addChargeRatio(payDevision, idListToCategoryList(categories), ratios);
   }
 
-  public List<PayDivision> findAllPayDivision() {
-    return payDivisionService.findAll();
+  public List<ChargeRatioByCategory> findAllChargeRatio() {
+    return chargeRatioService.findAll();
   }
 
-  public PayDivision findPayDivisionById(long id) {
-    return payDivisionService.findPayDivisionById(id);
+  public ChargeRatioByCategory findChargeRatioById(long id) {
+    return chargeRatioService.findChargeRatioById(id);
   }
 
-  public boolean editPayDivision(long id, List<Long> categories, List<Integer> scales) {
-    return payDivisionService.editPayDivision(id, idListToCategoryList(categories), scales);
+  public boolean editChargeRatio(long id, List<Long> categories, List<Integer> ratios) {
+    return chargeRatioService.editChargeRatio(id, idListToCategoryList(categories), ratios);
   }
 
-  public List<Category> getUnusedCategoryOfPayDivision(long id) {
+  public List<Category> getUnusedCategoryOfChargeRatio(long id) {
     List<Category> result = new LinkedList<>(categoryService.findAll());
-    PayDivision pd = payDivisionService.findPayDivisionById(id);
-    result.removeAll(pd.getCategoryScale().keySet());
+    ChargeRatioByCategory crbc = chargeRatioService.findChargeRatioById(id);
+    result.removeAll(crbc.getCategoryRatioMap().keySet());
     return result;
+  }
+
+  public List<SummaryInvoiceOfNumberForUser> getActualFinanceSummary() {
+    return billService.getActualFinanceSummary();
   }
   
 }

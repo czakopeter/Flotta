@@ -30,17 +30,14 @@ public class HomeController {
   
   @ModelAttribute
   public void title(Model model) {
-    System.out.println(sr.getAllPrincipals());
-    System.out.println(LocaleContextHolder.getLocale());
-//    System.out.println(LocaleContextHolder);
     model.addAttribute("title", "Homepage");
   }
   
   @RequestMapping("/")
   public String home(Model model, Authentication a) {
 //    model.addAttribute("user", service.findUserByEmail(a.getName()));
-    model.addAttribute("subscriptions", service.findAllSubscriptionByUser(a.getName()));
-    model.addAttribute("devices", service.findAllDeviceByUser(a.getName()));
+//    model.addAttribute("subscriptions", service.findAllActualSubscriptionByUser());
+//    model.addAttribute("devices", service.findAllDeviceByUser(a.getName()));
     return "index";
   }
   

@@ -14,5 +14,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
   User findByPasswordRenewerKey(String key);
 
   List<User> findAllByStatus(int status);
+
+  List<User> findAllByEnabled(boolean enabled);
 	
 }

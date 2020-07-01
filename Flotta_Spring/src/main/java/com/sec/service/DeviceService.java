@@ -2,6 +2,7 @@ package com.sec.service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,9 @@ import com.sec.status.service.DeviceStatusService;
 import com.sec.entity.Device;
 import com.sec.entity.DeviceType;
 import com.sec.entity.Subscription;
+import com.sec.entity.User;
 import com.sec.entity.viewEntity.DeviceToView;
+import com.sec.entity.viewEntity.SubscriptionToView;
 import com.sec.enums.DeviceStatusEnum;
 
 @Service
@@ -114,4 +117,17 @@ public class DeviceService extends ServiceWithMsg{
   public void deleteLastSatus(Device dev) {
     deviceStatusService.deleteLastStatus(dev);
   }
+
+  public List<DeviceToView> findAllActualByUser(User user) {
+    List<DeviceToView> result = new LinkedList<DeviceToView>();
+    List<Device> all = deviceRepository.findAll();
+    for(Device s : all) {
+      if(User.isSameByIdOrBothNull(user, s.getActualUser())) {
+        result.add(s.toView());
+      }
+    }
+    return result;
+  }
+  
+  
 }

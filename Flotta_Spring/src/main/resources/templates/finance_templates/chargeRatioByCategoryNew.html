@@ -10,7 +10,7 @@
     <h2>New charge ratio</h2>
 
     <form action="/finance/chargeRatio/new" method="post" th:object="${chargeRatio}">
-      <div class="row mb-3">
+      <div class="row mb-5">
         <div class="col-2">
           <label>Name</label>
         </div>
@@ -19,9 +19,7 @@
         </div>
       </div>
       
-      <br />
-
-      <table id="table" class="table table-sm table-hover" style="width: 50%">
+      <table id="table" class="table table-sm table-hover" style="width: 500px">
         <thead>
           <tr>
             <th>Category</th>
@@ -47,11 +45,11 @@
       
       <div class="form-check">
         <input id="confirmSelect" type="checkbox" class="form-check-input"
-          onclick="clickOnConfirmButton()" checked="checked"
+          onclick="clickOnConfirmButton()" disabled="disabled"
         /> <label for="confirmSelect">Confirm categories settings!</label>
       </div>
       
-      <button type="submit" id="saveButton" class="btn btn-primary" th:text="#{button.save}">Save</button>
+      <button type="submit" id="saveButton" class="btn btn-primary" th:text="#{button.save}" disabled="disabled">Save</button>
       <a href="/finance/chargeRatio/all" class="btn btn-primary" th:text="#{button.back}">Back</a>
     </form>
 

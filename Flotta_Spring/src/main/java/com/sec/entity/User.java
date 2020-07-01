@@ -15,7 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.sec.billing.PayDivision;
+import com.sec.billing.ChargeRatioByCategory;
 import com.sec.entity.switchTable.GenSW;
 import com.sec.entity.switchTable.UserDev;
 import com.sec.entity.switchTable.UserSub;
@@ -53,20 +53,10 @@ public class User extends BasicEntity {
 	)
 	private Set<Role> roles = new HashSet<Role>();
 	
-//	private int status;
-//	
-//	public static String[] STATUS_STRING = {"WAITING FOR VALIDATION", "REQUIRED PASSWORD CHANGE", "ENABLED", "DISABLED"};
-//	
-//	public static int WAITING_FOR_ACTIVATION = 0;
-//	public static int REQUIRED_PASSWORD_CHANGE = 1;
-//	public static int ENABLED = 2;
-//	public static int DISABLED = 3;
-	
 	private UserStatusEnum status;
-	
 
 	@ManyToMany
-	private List<PayDivision> payDevs = new LinkedList<>();
+	private List<ChargeRatioByCategory> payDevs = new LinkedList<>();
 
   public User() {}
 
@@ -156,15 +146,15 @@ public class User extends BasicEntity {
 		return email.equals(u.getEmail());
 	}
 	
-	public List<PayDivision> getPayDevs() {
+	public List<ChargeRatioByCategory> getPayDevs() {
     return payDevs;
   }
 
-  public void setPayDevs(List<PayDivision> payDevs) {
+  public void setPayDevs(List<ChargeRatioByCategory> payDevs) {
     this.payDevs = payDevs;
   }
   
-  public void addPayDevision(PayDivision payDevision) {
+  public void addPayDevision(ChargeRatioByCategory payDevision) {
     this.payDevs.add(payDevision);
   }
 

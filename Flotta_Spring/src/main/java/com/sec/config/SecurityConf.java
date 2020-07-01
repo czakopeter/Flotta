@@ -43,7 +43,6 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
         .antMatchers("/device/**", "/deviceType/**").hasAnyAuthority("DEVICE_MNGR", "ADMIN")
         .antMatchers("/user/**").hasAnyAuthority("USER_MNGR","ADMIN")
         .antMatchers("/profile/**", "/").hasAnyAuthority("BASIC", "PASSWORD")
-        
         .anyRequest().authenticated()
 				.and()
 			.formLogin()

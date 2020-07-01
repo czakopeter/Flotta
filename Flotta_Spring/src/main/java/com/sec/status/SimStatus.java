@@ -26,7 +26,7 @@ public class SimStatus {
   
   private SimStatusEnum status;
   
-  private LocalDate connect;
+  private LocalDate date;
   
   public SimStatus() {
   }
@@ -34,7 +34,7 @@ public class SimStatus {
   public SimStatus(SimStatusEnum status, Sim sim, LocalDate date) {
     this.status = status;
     this.sim = sim;
-    this.connect = date;
+    this.date = date;
   }
 
   public long getId() {
@@ -61,12 +61,12 @@ public class SimStatus {
     this.status = status;
   }
 
-  public LocalDate getConnect() {
-    return connect;
+  public LocalDate getDate() {
+    return date;
   }
 
-  public void setConnect(LocalDate connect) {
-    this.connect = connect;
+  public void setDate(LocalDate date) {
+    this.date = date;
   }
 
   public boolean isFree() {

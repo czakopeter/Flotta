@@ -275,11 +275,6 @@ public class Device extends BasicEntity {
     devSubs.put(date, new SubDev(sub, this, date));
   }
 
-//  public UserDev getLastUserDev() {
-//    return devUsers.get(getLastUserModificationDate());
-//  }
-
-  
   public static boolean isSameByIdOrBothNull(Device d1, Device d2) {
     if(d1 == null && d2 == null) {
       return true;
@@ -288,5 +283,9 @@ public class Device extends BasicEntity {
       return false;
     }
     return d1.equals(d2);
+  }
+  
+  public User getActualUser() {
+    return devUsers.get(getLatestDate(devUsers)).getUser();
   }
 }

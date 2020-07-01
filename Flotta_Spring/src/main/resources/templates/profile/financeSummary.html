@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorator="layouts/main">
+<head>
+<title>Flotta</title>
+</head>
+<body>
+
+  <div layout:fragment="loginContent">
+
+    <h2>Finances</h2>
+      <form action="/profile/finance/accept" method="get">
+      <table class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <td>
+              <input id="select-all" type="checkbox" title="Select all" onclick="selectAll()" />
+            </td>
+            <th>
+              <label>Number</label>
+            </th>
+            <th>
+              <label>Period</label>
+            </th>
+            <th>
+              <label>Gross amount</label>
+            </th>
+            <th id="action-col">
+              <label>Actions</label>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="invoicePerNumber, i : ${invoicePerNumbers}">
+            <td>
+              <input th:id="'cb' + ${i.count}" th:name="${invoicePerNumber.number}" type="checkbox" th:onclick="'selectSingleCheckbox(' + ${i.count} + ')'"/>
+<!--               <input th:id="${i}" th:name="${invoicePerNumber.number}" type="checkbox"  onclick="selectSingleCheckbox()" /> -->
+            </td>
+            <td th:text="${invoicePerNumber.number}"></td>
+            <td th:text="${invoicePerNumber.getPeriod()}"></td>
+            <td th:text="${invoicePerNumber.grossAmount}"></td>
+            <td>
+              <div class="btn-group">
+                <a class="btn btn-success" th:href="'profile/finance/' + ${invoicePerNumber.number} + '/accept'" style="color: black;">Accept</a>
+                <a class="btn btn-info" th:href="'profile/finance/' + ${invoicePerNumber.number} + 'details'" style="color: black;">Details</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button id="accept-all-selected" type="submit" class="btn btn-primary" style="visibility: hidden;">Accept all selected</button>
+      </form>
+
+    <script src="/js/financeSummary.js"></script>
+
+  </div>
+
+
+</body>
+</html>

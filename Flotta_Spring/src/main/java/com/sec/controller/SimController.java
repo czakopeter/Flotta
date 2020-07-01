@@ -30,11 +30,8 @@ public class SimController {
   
   @GetMapping("/sim/all")
   public String listSims(Model model) {
-    System.out.println("-----------");
     model.addAttribute("sims", service.findAllSim());
-//    return "sim_templates/simAll";
-//    return "redirect:/sim/all";
-    return "redirect:/simAll";
+    return "sim_templates/simAll";
   }
   
   @RequestMapping("sim/new")

@@ -2,6 +2,7 @@ package com.sec.service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,18 @@ public class SubscriptionService extends ServiceWithMsg {
 
   public void save(Subscription sub) {
     subscriptionRepository.save(sub);
+  }
+
+  public List<SubscriptionToView> findAllActualByUser(User user) {
+    List<SubscriptionToView> result = new LinkedList<SubscriptionToView>();
+    List<Subscription> all = subscriptionRepository.findAll();
+    for(Subscription s : all) {
+      if(User.isSameByIdOrBothNull(user, s.getActualUser())) {
+        result.add(s.toView());
+      }
+    }
+    
+    return result;
   }
 
 }

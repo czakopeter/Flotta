@@ -10,9 +10,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 
 @Entity
-public class PayDivision {
+public class ChargeRatioByCategory {
   
   @Id
   @GeneratedValue
@@ -23,9 +24,10 @@ public class PayDivision {
   private boolean available;
   
   @ElementCollection
-  private Map<Category, Integer> categoryScale = new HashMap<>();
+  @JoinTable(name = "category_ratio_map")
+  private Map<Category, Integer> categoryRatioMap = new HashMap<>();
   
-  public PayDivision() {
+  public ChargeRatioByCategory() {
   }
 
   public long getId() {
@@ -52,26 +54,26 @@ public class PayDivision {
     this.available = available;
   }
 
-  public void add(Category category, int scale) {
-    if(validScale(scale)) {
-      categoryScale.put(category, scale);
+  public void add(Category category, int ratio) {
+    if(validRatio(ratio)) {
+      categoryRatioMap.put(category, ratio);
     }
   }
 
-  public Map<Category, Integer> getCategoryScale() {
-    return categoryScale;
+  public Map<Category, Integer> getCategoryRatioMap() {
+    return categoryRatioMap;
   }
 
-  public void setCategoryScale(Map<Category, Integer> categoryScale) {
-    this.categoryScale = categoryScale;
+  public void setCategoryRatioMap(Map<Category, Integer> categoryRatioMap) {
+    this.categoryRatioMap = categoryRatioMap;
   }
 
-  private boolean validScale(int ratio) {
+  private boolean validRatio(int ratio) {
     return ratio >= 0 && ratio <= 100 && ratio % 5 == 0;
   }
   
   public List<Category> getOrderedCategories() {
-    List<Category> result = new LinkedList<Category>(categoryScale.keySet());
+    List<Category> result = new LinkedList<Category>(categoryRatioMap.keySet());
     Collections.sort(result);
     return result;
   }

@@ -11,6 +11,6 @@ public interface SimStatusRepository extends CrudRepository<SimStatus, Long> {
 
   List<SimStatus> findAllBySim(Sim sim);
 
-  SimStatus findFirstBySimOrderByConnectDesc(Sim sim);
+  SimStatus findFirstBySimOrderByDateDesc(Sim sim);
 
 }

@@ -10,7 +10,7 @@ INSERT INTO Users (email, password, full_name, PASSWORD_RENEWER_KEY, enabled, st
 INSERT INTO Users_roles (user_id, role_id) VALUES (1, 1)
 INSERT INTO Users_roles (user_id, role_id) VALUES (1, 2)
 
-INSERT INTO Sims (imei, pin, puk) VALUES ('8936300123456789101', '0123', '0123456789')
+INSERT INTO Sims (imei, pin, puk, status) VALUES ('8936300123456789101', '0123', '0123456789', 0)
 
 INSERT INTO Device_types (brand, model, name, sim_number, microsd, visible) VALUES ('Samsung', 'S10', 'Samsung S10', 2, true, true)
 INSERT INTO Device_types (brand, model, name, sim_number, microsd, visible) VALUES ('Motorola', 'C380', 'Motorola C380', 1, false, false)
@@ -19,11 +19,11 @@ INSERT INTO Categories (name) VALUES ('Monthly')
 INSERT INTO Categories (name) VALUES ('Call')
 INSERT INTO Categories (name) VALUES ('Internet')
 
-INSERT INTO Bill_partition_template(name, available) VALUES ('default', true)
+INSERT INTO description_category_coupler(name, available) VALUES ('default', true)
 
-INSERT INTO Bill_PARTITION_TEMPLATE_CONNECTION (bill_partition_template_id, connection_id, connection_key) VALUES (1, 1, 'Mobil telefon szolgaltatas')
-INSERT INTO Bill_PARTITION_TEMPLATE_CONNECTION (bill_partition_template_id, connection_id, connection_key) VALUES (1, 2, 'Telekom mobilhalozaton belul')
-INSERT INTO Bill_PARTITION_TEMPLATE_CONNECTION (bill_partition_template_id, connection_id, connection_key) VALUES (1, 2, 'Belfoldi mas mobilhalozat / Telenor')
-INSERT INTO Bill_PARTITION_TEMPLATE_CONNECTION (bill_partition_template_id, connection_id, connection_key) VALUES (1, 2, 'Belfoldi mas mobilhalozat / Vodafone')
-INSERT INTO Bill_PARTITION_TEMPLATE_CONNECTION (bill_partition_template_id, connection_id, connection_key) VALUES (1, 3, 'Mobil net 1GB')
+INSERT INTO description_category_map (description_category_coupler_id, description_category_map_id, description_category_map_key) VALUES (1, 1, 'Mobil telefon szolgaltatas')
+INSERT INTO description_category_map (description_category_coupler_id, description_category_map_id, description_category_map_key) VALUES (1, 2, 'Telekom mobilhalozaton belul')
+INSERT INTO description_category_map (description_category_coupler_id, description_category_map_id, description_category_map_key) VALUES (1, 2, 'Belfoldi mas mobilhalozat / Telenor')
+INSERT INTO description_category_map (description_category_coupler_id, description_category_map_id, description_category_map_key) VALUES (1, 2, 'Belfoldi mas mobilhalozat / Vodafone')
+INSERT INTO description_category_map (description_category_coupler_id, description_category_map_id, description_category_map_key) VALUES (1, 3, 'Mobil net 1GB')
 

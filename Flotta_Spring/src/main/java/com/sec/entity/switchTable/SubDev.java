@@ -25,9 +25,6 @@ public class SubDev extends BasicSwitchTable {
 	@JoinColumn( name = "dev_id")
 	private Device dev;
 	
-	@DateTimeFormat (pattern="yyyy-MM-dd")
-	private LocalDate disconnect;
-
 	public SubDev() {
 	}
 	
@@ -51,14 +48,6 @@ public class SubDev extends BasicSwitchTable {
 
   public void setDev(Device dev) {
     this.dev = dev;
-  }
-
-  public LocalDate getDisconnect() {
-    return disconnect;
-  }
-
-  public void setDisconnect(LocalDate disconnect) {
-    this.disconnect = disconnect;
   }
 
   @Override

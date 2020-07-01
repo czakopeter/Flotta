@@ -10,6 +10,7 @@ import com.sec.entity.Sim;
 import com.sec.enums.SimStatusEnum;
 import com.sec.repo.SimRepository;
 import com.sec.status.service.SimStatusService;
+import com.sec.validator.Validator;
 
 @Service
 public class SimService extends ServiceWithMsg {
@@ -47,36 +48,41 @@ public class SimService extends ServiceWithMsg {
     return simRepository.findByImei(imei);
 	}
 
-  public void save(Sim sim, LocalDate date) {
-    Sim check = simRepository.findByImei(sim.getImei());
-    if(check == null) {
-      sim.addStatus(SimStatusEnum.FREE, date);
-      simRepository.save(sim);
-    }
-  }
+//  public void save(Sim sim, LocalDate date) {
+//    Sim check = simRepository.findByImei(sim.getImei());
+//    if(check == null) {
+//      sim.addStatus(SimStatusEnum.FREE, date);
+//      simRepository.save(sim);
+//    }
+//  }
+//
+//  public void removeLastStatusModification(long id) {
+//    Sim sim = simRepository.findOne(id);
+//    if(sim != null) {
+//     simStatusService.deleteLastStatus(sim);
+//    }
+//  }
 
-  public void removeLastStatusModification(long id) {
-    Sim sim = simRepository.findOne(id);
-    if(sim != null) {
-     simStatusService.deleteLastStatus(sim);
-    }
-  }
-
-  public void modifySimLastStatus(long simId, String imeiChangeReason) {
-    Sim sim = simRepository.findOne(simId);
-    if(sim != null && !sim.isFree()) {
-      simStatusService.modifyLastStatus(sim, imeiChangeReason);
-    }
-  }
+//  public void modifySimLastStatus(long simId, String imeiChangeReason) {
+//    Sim sim = simRepository.findOne(simId);
+//    if(sim != null && !sim.isFree()) {
+//      simStatusService.modifyLastStatus(sim, imeiChangeReason);
+//    }
+//  }
 
   //TODO check imei, pin, puk format
   public boolean add(Sim sim) {
+//    if(Validator.isValidImieWithLuhnAlg(sim.getImei())) {
+//      appendMsg("Imei " + sim.getImei() + " is not valid!");
+//      return false;
+//    }
     Sim check = simRepository.findByImei(sim.getImei());
     if(check == null) {
+      sim.setStatus(SimStatusEnum.FREE);
       simRepository.save(sim);
       return true;
     } else {
-      appendMsg("Imei " + sim.getImei() + " already exists");
+      appendMsg("Imei " + sim.getImei() + " already exists!");
       return false;
     }
   }

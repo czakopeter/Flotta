@@ -12,12 +12,18 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 import com.sec.billing.exception.UnknonwFeeItemDescriptionException;
 
+/**
+ * @author CzP
+ *
+ */
 @Entity
-public class BillPartitionTemplate {
+public class DescriptionCategoryCoupler {
 
   @Id
   @GeneratedValue
@@ -27,10 +33,11 @@ public class BillPartitionTemplate {
 
   private boolean available;
 
+  @JoinTable(name = "description_category_map")
   @ManyToMany(cascade = CascadeType.ALL)
-  private Map<String, Category> connection = new HashMap<String, Category>();
+  private Map<String, Category> descriptionCategoryMap = new HashMap<String, Category>();
 
-  public BillPartitionTemplate() {
+  public DescriptionCategoryCoupler() {
   }
 
   public long getId() {
@@ -57,18 +64,23 @@ public class BillPartitionTemplate {
     this.available = available;
   }
 
-  public Map<String, Category> getConnection() {
-    return connection;
+  public Map<String, Category> getDescriptionCategoryMap() {
+    return descriptionCategoryMap;
   }
 
-  public void setConnection(Map<String, Category> connection) {
-    this.connection = connection;
+  public void setDescriptionCategoryMap(Map<String, Category> descriptionCategoryMap) {
+    this.descriptionCategoryMap = descriptionCategoryMap;
   }
 
-  public void addToConnection(String desc, Category category) {
-    Category cat = connection.get(desc);
+  /**
+   * 
+   * @param description
+   * @param category
+   */
+  public void addToDescriptionCategoryMap(String description, Category category) {
+    Category cat = descriptionCategoryMap.get(description);
     if (cat == null) {
-      connection.put(desc, category);
+      descriptionCategoryMap.put(description, category);
     }
   }
 
@@ -77,7 +89,7 @@ public class BillPartitionTemplate {
     Set<String> unknownFreeItemDesc = new HashSet<>();
 
     for (FeeItem fi : bill.getFeeItems()) {
-      Category category = connection.get(fi.getDescription());
+      Category category = descriptionCategoryMap.get(fi.getDescription());
       if (category == null) {
         unknownFreeItemDesc.add(fi.getDescription());
       } else {
@@ -99,9 +111,9 @@ public class BillPartitionTemplate {
   }
   
   public List<String> getSortedDescriptions() {
-    List<String> descriptions = new LinkedList<>(connection.keySet());
+    List<String> descriptions = new LinkedList<>(descriptionCategoryMap.keySet());
     Collections.sort(descriptions);
     return descriptions;
   }
-  
+
 }
