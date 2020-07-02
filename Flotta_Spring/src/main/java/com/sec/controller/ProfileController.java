@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,8 +70,13 @@ public class ProfileController {
     return "profile/financeSummary";
   }
   
-  @GetMapping("/profile/finance/accept")
-  public String acceptOrAskForRevision(Model model, @RequestParam Map<String, String> accept) {
+  @PostMapping("/profile/finance/{number}/accept")
+  public String acceptUserAmountOfOneNumber(Model model, @PathVariable("number") String number) {
+    return "redirect:/profile/finance";
+  }
+  
+  @PostMapping("/profile/finance/accept")
+  public String acceptUserAmountOfMoreNumber(Model model, @RequestParam Map<String, String> accept) {
     if(accept != null) {
       for(String k : accept.keySet()) {
         System.out.println(k);
@@ -79,11 +85,11 @@ public class ProfileController {
     }
     return "redirect:/profile/finance";
   }
-//  
-//  @RequestMapping("/loginError")
-//  public String loginError(Model model) {
-//    model.addAttribute("error", "Incorrect email or password!");
-//    return "auth/login";
-//  }
+
+  //TODO ellenőrizni h number és user kapcsolatban van e
+  @PostMapping("/profile/finance/{number}/details")
+  public String loginError(Model model, @PathVariable ("number") String number) {
+    return "profile/financeDetails";
+  }
   
 }

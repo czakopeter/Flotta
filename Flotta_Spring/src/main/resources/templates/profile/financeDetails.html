@@ -7,46 +7,73 @@
 
   <div layout:fragment="loginContent">
 
-    <h2>Finances</h2>
-
-      <table>
+    <h2>Finance details</h2>
+      
+      <form action="">
+      <div class="container">
+        <div class="row">
+          <div class="col-2">Number</div>
+          <div class="col-2">201234567</div>
+        </div>
+        <div class="row">
+          <div class="col-2">Begin</div>
+          <div class="col-2">2020.01.10</div>
+        </div>
+        <div class="row">
+          <div class="col-2">End</div>
+          <div class="col-2">2020.01.31</div>
+        </div>
+      </div>
+      <table class="table table-sm table-hover">
         <thead>
           <tr>
-            <td>
-              <input id="select-all" type="checkbox" placeholder="Select all" />
-            </td>
             <th>
-              <label>Number</label>
+              <label>Category</label>
             </th>
             <th>
-              <label>Period</label>
+              <label>Description</label>
             </th>
             <th>
               <label>Gross amount</label>
             </th>
-            <th id="action-col">
-              <label>Actions</label>
+            <th>
+              <label>Note for problem</label>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr th:each="invoicePerNumber, i : ${invoicePerNumbers}">
-            <td>
-              <input id="${i.count}" type="checkbox" />
-            </td>
+<!--           <tr th:each="fee, i : ${fees}"> -->
+<!--             <td th:text="fee.category"></td> -->
+<!--             <td th:text="fee.description"></td> -->
+<!--             <td th:text="fee.userGross"></td> -->
+<!--             <td> -->
+<!--               <input type="text" class="form-control" placeholder="Enter your problem for this line" /> -->
+<!--             </td> -->
+<!--           <tr> -->
             <td>Monthly</td>
-            <td>Monthly 2020.01.01-2020.01.31</td>
-            <td>2990 Ft</td>
+            <td>Monthly amount, 2020.01.01 - 2020.01.31</td>
+            <td>2990</td>
             <td>
-              <div class="btn-group">
-                <button class="btn btn-light"><a href="#">Accept</a></button>
-                <button class="btn btn-error"><a href="#">Details</a></button>
-              </div>
+              <input type="text" class="form-control" placeholder="Enter your problem for this line" />
+            </td>
+          </tr>
+          <tr>
+            <td>Internet</td>
+            <td>5 GB</td>
+            <td>1490</td>
+            <td>
+              <input type="text" class="form-control" placeholder="Enter your problem for this line" />
             </td>
           </tr>
         </tbody>
       </table>
-
+      <textarea class="form-control mb-2" placeholder="Enter your problem for entiry invoice"></textarea>
+      
+      <div class="btn-group">
+        <button type="submit" class="btn btn-success">Accept all</button>
+        <button type="submit" class="btn btn-warning">Ask for revision</button>
+      </div>
+      </form>
 
   </div>
 

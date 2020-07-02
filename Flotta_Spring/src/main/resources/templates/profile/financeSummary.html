@@ -8,7 +8,7 @@
   <div layout:fragment="loginContent">
 
     <h2>Finances</h2>
-      <form action="/profile/finance/accept" method="get">
+      <form method="post">
       <table class="table table-sm table-hover">
         <thead>
           <tr>
@@ -40,16 +40,15 @@
             <td th:text="${invoicePerNumber.grossAmount}"></td>
             <td>
               <div class="btn-group">
-                <a class="btn btn-success" th:href="'profile/finance/' + ${invoicePerNumber.number} + '/accept'" style="color: black;">Accept</a>
-                <a class="btn btn-info" th:href="'profile/finance/' + ${invoicePerNumber.number} + 'details'" style="color: black;">Details</a>
+                <a class="btn btn-success" th:href="'/profile/finance/' + ${invoicePerNumber.number} + '/accept'" style="color: black;">Accept</a>
+                <button type="submit" th:formaction="'/profile/finance/' + ${invoicePerNumber.number} + '/details'" class="btn btn-info"  style="color: black;">Details</button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <button id="accept-all-selected" type="submit" class="btn btn-primary" style="visibility: hidden;">Accept all selected</button>
+      <button id="accept-all-selected" type="submit" formaction="/profile/finance/accept" class="btn btn-primary" style="visibility: hidden;">Accept all selected</button>
       </form>
-
     <script src="/js/financeSummary.js"></script>
 
   </div>
