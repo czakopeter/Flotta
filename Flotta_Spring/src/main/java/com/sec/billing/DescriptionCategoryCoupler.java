@@ -84,16 +84,16 @@ public class DescriptionCategoryCoupler {
     }
   }
 
-  public Map<Category, List<FeeItem> > partition(Bill bill) throws UnknonwFeeItemDescriptionException {
+  public Map<Category, List<FeeItem> > partition(Invoice invoice) throws UnknonwFeeItemDescriptionException {
     Map<Category, List<FeeItem>> result = new HashMap<>();
     Set<String> unknownFreeItemDesc = new HashSet<>();
 
-    for (FeeItem fi : bill.getFeeItems()) {
+    for (FeeItem fi : invoice.getFeeItems()) {
       Category category = descriptionCategoryMap.get(fi.getDescription());
       if (category == null) {
         unknownFreeItemDesc.add(fi.getDescription());
       } else {
-        fi.setCatergory(category.getName());
+        fi.setCategory(category.getName());
       }
       if (unknownFreeItemDesc.size() != 0) {
         List<FeeItem> value = result.get(category);

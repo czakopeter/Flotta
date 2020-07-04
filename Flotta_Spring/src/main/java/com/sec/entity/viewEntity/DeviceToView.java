@@ -4,6 +4,9 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.sec.entity.Subscription;
+import com.sec.entity.User;
+
 public class DeviceToView {
   private long id;
   
@@ -112,6 +115,15 @@ public class DeviceToView {
   @Override
   public String toString() {
     return "DeviceToView [serialNumber=" + serialNumber + ", typeName=" + typeName + ", date=" + date + ", min=" + min + ", editable=" + editable + "]";
+  }
+
+  public void setUser(User user) {
+    this.userId = user != null ? user.getId() : 0;
+    this.userName = user != null ? user.getFullName() : "";
+  }
+
+  public void setSubscription(Subscription sub) {
+    this.number = sub != null ? sub.getNumber() : "";
   }
 
 }

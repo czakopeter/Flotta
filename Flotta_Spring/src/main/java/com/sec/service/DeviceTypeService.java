@@ -37,29 +37,22 @@ public class DeviceTypeService {
   }
   
   private boolean deviceIsSaveable(DeviceType deviceType) {
-    DeviceType name = deviceTypeRepository.findByName(deviceType.getName());
-    DeviceType brandAndModel = deviceTypeRepository.findByBrandAndModel(deviceType.getBrand(), deviceType.getModel());
+    DeviceType name = deviceTypeRepository.findByNameIgnoreCase(deviceType.getName());
+    DeviceType brandAndModel = deviceTypeRepository.findByBrandAndModelIgnoreCase(deviceType.getBrand(), deviceType.getModel());
     if(deviceType.getId() == null) {
-      return name == null || brandAndModel == null;
+      return name == null && brandAndModel == null;
     } else {
-      DeviceType id = deviceTypeRepository.findOne(deviceType.getId());
-      if(id.getDevices() != null && id.getDevices().size() > 0 && (id.getSimNumber() > deviceType.getSimNumber() || (id.isMicrosd() && !deviceType.isMicrosd()))) {
+      DeviceType saved = deviceTypeRepository.findOne(deviceType.getId());
+      if((saved.getDevices() != null && saved.getDevices().size() > 0) ||
+         (name != null && name.getId() != saved.getId()) || 
+         (brandAndModel != null && brandAndModel.getId() != saved.getId())) {
         return false;
-      } else {
-        if((name != null && name.getId() != id.getId()) && (brandAndModel != null && brandAndModel.getId() != id.getId())) {
-          return false;
-        }
-        return true;
       }
+      return true;
     }
   }
   
-  public boolean deviceTypesEquals(DeviceType dt1, DeviceType dt2) {
-
-    return true;
-  }
-
   public DeviceType findByName(String name) {
-    return deviceTypeRepository.findByName(name);
+    return deviceTypeRepository.findByNameIgnoreCase(name);
   }
 }

@@ -22,26 +22,26 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.sec.billing.Bill;
+import com.sec.billing.Invoice;
 import com.sec.billing.FeeItem;
 import com.sec.billing.exception.FileUploadException;
-import com.sec.billing.repository.BillRepository;
+import com.sec.billing.repository.InvoiceRepository;
 import com.sec.entity.User;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
-import com.sec.entity.viewEntity.SummaryInvoiceOfNumberForUser;
+import com.sec.entity.viewEntity.InvoiceOfOneNumberOfUser;
 
 @Service
-public class BillService {
+public class InvoiceService {
 
-  private BillRepository billRepository;
+  private InvoiceRepository invoiceRepository;
 
   private BillTemplateService billTemplateService;
   
   private FeeItemService feeItemService;
 
   @Autowired
-  public void setBillRepository(BillRepository billRepository) {
-    this.billRepository = billRepository;
+  public void setInvoiceRepository(InvoiceRepository invoiceRepository) {
+    this.invoiceRepository = invoiceRepository;
   }
 
   @Autowired
@@ -55,17 +55,17 @@ public class BillService {
     this.feeItemService = feeItemService;
   }
 
-  public Bill uploadBill(MultipartFile file) throws FileUploadException {
+  public Invoice uploadBill(MultipartFile file) throws FileUploadException {
     String xmlString = getXMLString(file);
     Element root = getTreeFromXMLString(xmlString);
     boolean valid = billTemplateService.validateBill(root);
 
     if (valid) {
-      if (billRepository.findByInvoiceNumber(getFirstTagValue(root, "InvNb")) != null) {
+      if (invoiceRepository.findByInvoiceNumber(getFirstTagValue(root, "InvNb")) != null) {
         throw new FileUploadException("Already exists");
       }
       
-      Bill bill = new Bill(xmlString,
+      Invoice invoice = new Invoice(xmlString,
           LocalDate.parse(getFirstTagValue(root, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
           LocalDate.parse(getFirstTagValue(root, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
           getFirstTagValue(root, "InvNb"), Double.valueOf(getFirstTagValue(root, "InvTotalNetA").replace(',', '.')),
@@ -76,8 +76,8 @@ public class BillService {
       NodeList nodes = root.getElementsByTagName("FeeItem");
       for (int i = 0; i < nodes.getLength(); i++) {
         Element feeItem = (Element) nodes.item(i);
-        bill.addFee(new FeeItem(
-            bill, 
+        invoice.addFee(new FeeItem(
+            invoice, 
             getFirstTagValue(feeItem, "ItemNr"),
             getFirstTagValue(feeItem, "Desc"),
             LocalDate.parse(getFirstTagValue(feeItem, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
@@ -87,8 +87,8 @@ public class BillService {
             Double.valueOf(getFirstTagValue(feeItem, "TaxP").replace(',', '.').replace("%", "")),
             Double.valueOf(getFirstTagValue(feeItem, "GrossA").replace(',', '.'))));
       }
-      billRepository.save(bill);
-      return bill;
+      invoiceRepository.save(invoice);
+      return invoice;
     } else {
       throw new FileUploadException("Invalid structure");
     }
@@ -136,24 +136,24 @@ public class BillService {
     }
   }
 
-  public List<Bill> findAll() {
-    return billRepository.findAll();
+  public List<Invoice> findAll() {
+    return invoiceRepository.findAll();
   }
 
-  public Bill findByInvoiceNumber(String invoiceNumber) {
-    return billRepository.findByInvoiceNumber(invoiceNumber);
+  public Invoice findByInvoiceNumber(String invoiceNumber) {
+    return invoiceRepository.findByInvoiceNumber(invoiceNumber);
   }
 
-  public Bill findById(long id) {
-    return billRepository.findOne(id);
+  public Invoice findById(long id) {
+    return invoiceRepository.findOne(id);
   }
 
   public List<FeeItem> findAllFeeItemByBillId(long id) {
     return feeItemService.findAllByBillId(id);
   }
 
-  public void save(Bill bill) {
-    billRepository.save(bill);
+  public void save(Invoice invoice) {
+    invoiceRepository.save(invoice);
   }
 
   public List<OneCategoryOfUserFinance> getFinanceByUserId(long id) {
@@ -164,8 +164,12 @@ public class BillService {
     feeItemService.save(fees);
   }
   
-  public List<SummaryInvoiceOfNumberForUser> getActualFinanceSummary() {
+  public List<InvoiceOfOneNumberOfUser> getActualFinanceSummary() {
     return feeItemService.getActualFinanceSummary();
+  }
+
+  public InvoiceOfOneNumberOfUser getUnacceptedInvoiceOfOneNumberOfUser(String number) {
+    return feeItemService.getUnacceptedInvoiceOfOneNumberOfUser(number);
   }
 
 }

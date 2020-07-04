@@ -16,8 +16,8 @@ import javax.validation.constraints.Size;
 import org.w3c.dom.Element;
 
 @Entity
-@Table(name = "bills")
-public class Bill {
+@Table(name = "invoices")
+public class Invoice {
 
   @Id
   @GeneratedValue
@@ -38,12 +38,14 @@ public class Bill {
   
   private double invoiceGrossAmount;
   
-  @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
+  private boolean closed;
+  
+  @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
   List<FeeItem> feeItems = new LinkedList<>();
   
-  public Bill() {}
+  public Invoice() {}
   
-  public Bill(String xmlString, LocalDate fromDate, LocalDate endDate, String invoiceNumber, Double invoiceNetAmount, Double invoiceTaxAmount, double invoiceGrossAmount) {
+  public Invoice(String xmlString, LocalDate fromDate, LocalDate endDate, String invoiceNumber, Double invoiceNetAmount, Double invoiceTaxAmount, double invoiceGrossAmount) {
     this.xmlString = xmlString;
     this.fromDate = fromDate;
     this.endDate = endDate;
@@ -120,6 +122,21 @@ public class Bill {
   public void addFee(FeeItem feeItem) {
     this.feeItems.add(feeItem);
   }
-  
+
+  public double getInvoiceGrossAmount() {
+    return invoiceGrossAmount;
+  }
+
+  public void setInvoiceGrossAmount(double invoiceGrossAmount) {
+    this.invoiceGrossAmount = invoiceGrossAmount;
+  }
+
+  public boolean isClosed() {
+    return closed;
+  }
+
+  public void setClosed(boolean closed) {
+    this.closed = closed;
+  }
   
 }

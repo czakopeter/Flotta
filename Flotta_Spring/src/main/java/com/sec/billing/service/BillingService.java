@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sec.billing.Bill;
+import com.sec.billing.Invoice;
 import com.sec.billing.DescriptionCategoryCoupler;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
@@ -17,12 +17,12 @@ import com.sec.billing.ChargeRatioByCategory;
 import com.sec.billing.exception.FileUploadException;
 import com.sec.entity.User;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
-import com.sec.entity.viewEntity.SummaryInvoiceOfNumberForUser;
+import com.sec.entity.viewEntity.InvoiceOfOneNumberOfUser;
 
 @Service
 public class BillingService {
 
-  private BillService billService;
+  private InvoiceService invoiceService;
   
   private CategoryService categoryService;
   
@@ -31,8 +31,8 @@ public class BillingService {
   private ChargeRatioService chargeRatioService;
 
   @Autowired
-  public void setBillService(BillService billService) {
-    this.billService = billService;
+  public void setInvoiceService(InvoiceService invoiceService) {
+    this.invoiceService = invoiceService;
   }
   
   @Autowired
@@ -54,7 +54,7 @@ public class BillingService {
   // valid akkor konvertál validFeeItem-re
   // newm valid új template készítése
   public boolean uploadBill(MultipartFile file) throws FileUploadException {
-    billService.uploadBill(file);
+    invoiceService.uploadBill(file);
     return true;
   }
 
@@ -70,12 +70,12 @@ public class BillingService {
 
   }
 
-  public List<Bill> findAllBill() {
-    return billService.findAll();
+  public List<Invoice> findAllBill() {
+    return invoiceService.findAll();
   }
 
-  public Bill findBilldByInvoiceNumber(String invoiceNumber) {
-    return billService.findByInvoiceNumber(invoiceNumber);
+  public Invoice findBilldByInvoiceNumber(String invoiceNumber) {
+    return invoiceService.findByInvoiceNumber(invoiceNumber);
   }
 
   public List<Category> findAllCategory() {
@@ -91,19 +91,19 @@ public class BillingService {
   }
   
   public List<FeeItem> findAllFeeItemByBillId(long id) {
-    return billService.findAllFeeItemByBillId(id);
+    return invoiceService.findAllFeeItemByBillId(id);
   }
   
-  public Bill findBillById(long id) {
-    return billService.findById(id);
+  public Invoice findBillById(long id) {
+    return invoiceService.findById(id);
   }
 
   public boolean billPartitionByTemplateId(long billId, long templateId) {
     //TODO missing bill or template problem throw exception
-    Bill bill = billService.findById(billId);
-    if(bill != null) {
-      Map<Category, List<FeeItem> >  result =  descriptionCategoryCouplerService.partition(bill, templateId);
-      billService.save(bill);
+    Invoice invoice = invoiceService.findById(billId);
+    if(invoice != null) {
+      Map<Category, List<FeeItem> >  result =  descriptionCategoryCouplerService.partition(invoice, templateId);
+      invoiceService.save(invoice);
       return result == null ?  false : true;
     }
     return false;
@@ -125,16 +125,16 @@ public class BillingService {
     return result;
   }
 
-  public void save(Bill bill) {
-    billService.save(bill);
+  public void save(Invoice invoice) {
+    invoiceService.save(invoice);
   }
 
   public List<OneCategoryOfUserFinance> getFinanceByUserId(long id) {
-    return billService.getFinanceByUserId(id);
+    return invoiceService.getFinanceByUserId(id);
   }
 
   public void save(List<FeeItem> fees) {
-    billService.save(fees);
+    invoiceService.save(fees);
   }
 
   public DescriptionCategoryCoupler findBillPartitionTemplateById(long id) {
@@ -168,8 +168,12 @@ public class BillingService {
     return result;
   }
 
-  public List<SummaryInvoiceOfNumberForUser> getActualFinanceSummary() {
-    return billService.getActualFinanceSummary();
+  public List<InvoiceOfOneNumberOfUser> getActualFinanceSummary() {
+    return invoiceService.getActualFinanceSummary();
+  }
+
+  public InvoiceOfOneNumberOfUser getUnacceptedInvoiceOfOneNumberOfUser(String number) {
+    return invoiceService.getUnacceptedInvoiceOfOneNumberOfUser(number);
   }
   
 }

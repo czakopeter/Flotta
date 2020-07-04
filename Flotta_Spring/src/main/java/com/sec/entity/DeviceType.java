@@ -33,9 +33,7 @@ public class DeviceType {
 
   //TODO description or attributes; sim type, battery, size ...
   
-  public DeviceType() {
-    visible = true;
-  }
+  public DeviceType() {}
 
   public Long getId() {
     return id;

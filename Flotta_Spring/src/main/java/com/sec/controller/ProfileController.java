@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sec.service.MainService;
 
@@ -55,9 +56,10 @@ public class ProfileController {
   }
   
   @PostMapping("/profile/changePassword")
-  public String passwordChange(Model model, @RequestParam Map<String, String> params) {
+  public String passwordChange(Model model, @RequestParam Map<String, String> params, RedirectAttributes ra) {
     if(service.changePassword(params.get("old-password"), params.get("new-password"), params.get("confirm-new-password"))) {
-      model.addAttribute("success", "Change password was success");
+      ra.addFlashAttribute("success", "Change password was success");
+      return "redirect:/logout";
     } else {
       model.addAttribute("error", service.getUserError());
     }
@@ -88,7 +90,8 @@ public class ProfileController {
 
   //TODO ellenőrizni h number és user kapcsolatban van e
   @PostMapping("/profile/finance/{number}/details")
-  public String loginError(Model model, @PathVariable ("number") String number) {
+  public String details(Model model, @PathVariable ("number") String number) {
+    model.addAttribute("invoicePart", service.findUnacceptedInvoiceOfOneNumberOfUser(number));
     return "profile/financeDetails";
   }
   

@@ -19,6 +19,8 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.sec.entity.note.DevNote;
 import com.sec.entity.switchTable.SubDev;
 import com.sec.entity.switchTable.UserDev;
@@ -64,11 +66,10 @@ public class Device extends BasicEntity {
     this.serialNumber = serialNumber;
   }
 
-  public Device(String serialNumber, DeviceType deviceType, LocalDate date) {
+  public Device(String serialNumber, LocalDate date) {
     this.serialNumber = serialNumber;
-    this.deviceType = deviceType;
     this.createDate = date;
-//    this.firstAvailableDate = date;
+    this.deviceType = null;
     devUsers.put(date, new UserDev(null, this, date));
     devSubs.put(date, new SubDev(null, this, date));
     notes.put(date, new DevNote(this, "", date));
@@ -123,30 +124,19 @@ public class Device extends BasicEntity {
   }
 
   public DeviceToView toView() {
-    DeviceToView d = new DeviceToView();
-    d.setId(id);
-    d.setSerialNumber(serialNumber);
-    d.setTypeName(deviceType.getName());
-    d.setEditable(true);
+    DeviceToView dtv = new DeviceToView();
+    dtv.setId(id);
+    dtv.setSerialNumber(serialNumber);
+    dtv.setTypeName(deviceType.getName());
+    dtv.setEditable(true);
+    
+    dtv.setUser(devUsers.get(getLatestDate(devUsers)).getUser());
+    
+    dtv.setSubscription(devSubs.get(getLatestDate(devSubs)).getSub());
+    
+    dtv.setNote(notes.get(getLatestDate(notes)).getNote());
 
-    LocalDate lastUserMod = getLastUserModificationDate();
-
-    UserDev ud = devUsers.get(lastUserMod);
-    d.setUserId(ud != null ? ud.getUser() != null ? ud.getUser().getId() : 0 : 0);
-    d.setUserName(ud != null ? ud.getUser() != null ? ud.getUser().getFullName() : "" : "");
-
-    LocalDate lastDevMod = getLastDeviceModificationDate();
-    SubDev sd = devSubs.get(lastDevMod);
-    d.setNumber(sd != null ? sd.getSub() != null ? sd.getSub().getNumber() : "" : "");
-
-    LocalDate last = lastUserMod;
-
-    d.setDate(last);
-    d.setMin(last.toString());
-
-    LocalDate dn = getLastNoteModificationDate();
-    d.setNote(dn == null ? "" : notes.get(dn).getNote());
-    return d;
+    return dtv;
   }
 
   public DeviceToView toView(LocalDate date) {
@@ -156,123 +146,61 @@ public class Device extends BasicEntity {
     dtv.setTypeName(deviceType.getName());
     dtv.setDate(date);
     dtv.setEditable(!date.isBefore(getAllModificationDateDesc().get(0)));
-    dtv.setMin(date.toString());
 
-    LocalDate userModDate = floorDate(new LinkedList<>(devUsers.keySet()), date);
-    UserDev ud = devUsers.get(userModDate);
-    dtv.setUserId(ud.getUser() != null ? ud.getUser().getId() : 0);
-    dtv.setUserName(ud.getUser() != null ? ud.getUser().getFullName() : "");
-
-    LocalDate noteModDate = floorDate(new LinkedList<>(notes.keySet()), date);
-    DevNote dn = notes.get(noteModDate);
-    dtv.setNote(dn != null ? dn.getNote() : "");
-
+    dtv.setUser(devUsers.get(floorDate(devUsers, date)).getUser());
+    
+    dtv.setSubscription(devSubs.get(floorDate(devSubs, date)).getSub());
+    
+    dtv.setNote(notes.get(floorDate(notes, date)).getNote());
+    
     return dtv;
   }
 
-//  public void userModification(User user, LocalDate date) {
-//    if (devUsers == null) {
-//      devUsers = new HashMap<>();
-//      devUsers.put(date, new UserDev(user, this, date));
-//    } else {
-//      UserDev us = devUsers.get(date);
-//      if (us == null) {
-//        LocalDate last = getLastUserModificationDate();
-//        if (!usersEquals(devUsers.get(last).getUser(), user)) {
-//          us = devUsers.get(last);
-//          us.setDisconnect(date);
-//          devUsers.put(last, us);
-//          devUsers.put(date, new UserDev(user, this, date));
-//        }
-//
-//      } else {
-//        if (devUsers.size() == 1 || !usersEquals(devUsers.get(getUserModficationDateListDest().get(1)).getUser(), user)) {
-//          us.setUser(user);
-//          devUsers.put(date, us);
-//        }
-//      }
-//    }
-//  }
-
-//  private boolean usersEquals(User u1, User u2) {
-//    return u1 != null ? u1.equals(u2) : (u2 == null ? true : false);
-//  }
-
-  private LocalDate getLastUserModificationDate() {
-    try {
-      return getUserModficationDateListDest().get(0);
-    } catch (IndexOutOfBoundsException e) {
-      return null;
+  public void addUser(User user, LocalDate date) {
+    LocalDate lastUserModDate = getLatestDate(devUsers);
+    if(lastUserModDate == null) {
+      
+    } else if(date.isAfter(lastUserModDate)) {
+      UserDev last = devUsers.get(lastUserModDate);
+      if(!User.isSameByIdOrBothNull(user, last.getUser())) {
+        devUsers.put(date, new UserDev(user, this, date));
+      }
+    } else if(date.isEqual(lastUserModDate)) {
+      
     }
   }
-
-  private List<LocalDate> getUserModficationDateListDest() {
-    List<LocalDate> dList = new LinkedList<>(devUsers.keySet());
-    Collections.sort(dList, Collections.reverseOrder());
-    return dList;
-  }
-
-  private LocalDate getLastDeviceModificationDate() {
-    try {
-      return getDeviceModficationDateListDest().get(0);
-    } catch (IndexOutOfBoundsException e) {
-      return null;
+  
+  public void addSubscription(Subscription sub, LocalDate date) {
+    LocalDate lastUserModDate = getLatestDate(devUsers);
+    if(lastUserModDate == null) {
+      
+    } else if(date.isAfter(lastUserModDate)) {
+      SubDev last = devSubs.get(lastUserModDate);
+      if(!Subscription.isSameByIdOrBothNull(sub, last.getSub())) {
+        devSubs.put(date, new SubDev(sub, this, date));
+      }
+    } else if(date.isEqual(lastUserModDate)) {
+      
     }
-
   }
-
-  private List<LocalDate> getDeviceModficationDateListDest() {
-    List<LocalDate> dList = new LinkedList<>(devSubs.keySet());
-    Collections.sort(dList, Collections.reverseOrder());
-    return dList;
+  
+  public void addNote(String note, LocalDate date) {
+    LocalDate lastUserModDate = getLatestDate(notes);
+    if(lastUserModDate == null) {
+      
+    } else if(date.isAfter(lastUserModDate)) {
+      DevNote last = notes.get(lastUserModDate);
+      if(!note.equals(last.getNote())) {
+        notes.put(date, new DevNote(this, note, date));
+      }
+    } else if(date.isEqual(lastUserModDate)) {
+      
+    }
   }
 
   @Override
   public String toString() {
     return "Device [id=" + id + ", serialNumber=" + serialNumber + ", deviceType=" + deviceType + "]";
-  }
-
-  private LocalDate getLastNoteModificationDate() {
-    if (notes.isEmpty()) {
-      return null;
-    } else {
-      List<LocalDate> dates = new LinkedList<>(notes.keySet());
-      Collections.sort(dates, Collections.reverseOrder());
-      return dates.get(0);
-    }
-  }
-
-  public List<LocalDate> getAllModificationDateDesc() {
-    Set<LocalDate> dates = new HashSet<>();
-    dates.addAll(devUsers.keySet());
-    dates.addAll(notes.keySet());
-
-    List<LocalDate> result = new LinkedList<>(dates);
-    Collections.sort(result, Collections.reverseOrder());
-    return result;
-  }
-
-  private LocalDate floorDate(List<LocalDate> dates, LocalDate date) {
-    if (dates == null || dates.isEmpty()) {
-      return null;
-    }
-    if (dates.contains(date)) {
-      return date;
-    }
-    Collections.sort(dates);
-    LocalDate r = null;
-    for (LocalDate a : dates) {
-      if (date.isBefore(a)) {
-        break;
-      }
-      r = a;
-    }
-    return r;
-  }
-
-  public void subModification(Subscription sub, LocalDate date) {
-    devSubs = new HashMap<>();
-    devSubs.put(date, new SubDev(sub, this, date));
   }
 
   public static boolean isSameByIdOrBothNull(Device d1, Device d2) {
@@ -287,5 +215,16 @@ public class Device extends BasicEntity {
   
   public User getActualUser() {
     return devUsers.get(getLatestDate(devUsers)).getUser();
+  }
+  
+  public List<LocalDate> getAllModificationDateDesc() {
+    Set<LocalDate> dates = new HashSet<>();
+    dates.addAll(devUsers.keySet());
+    dates.addAll(devSubs.keySet());
+    dates.addAll(notes.keySet());
+
+    List<LocalDate> result = new LinkedList<>(dates);
+    Collections.sort(result, Collections.reverseOrder());
+    return result;
   }
 }

@@ -108,12 +108,12 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
   public boolean changePassword(String oldPsw, String newPsw, String confirmPsw) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     User user = userRepository.findByEmail(auth.getName());
-    if(user.getPassword().equals(oldPsw) && newPsw != null && newPsw.contentEquals(confirmPsw)) {
+    if(user.getPassword().equals(oldPsw) && Validator.validPassword(newPsw) && newPsw.contentEquals(confirmPsw)) {
       user.setPassword(newPsw);
       user.setPasswordRenewerKey(null);
       userRepository.save(user);
-      emailService.sendEmailAboutPasswordChange(true);
-      refreshAuthorization(new UserDetailsImpl(user));
+//      emailService.sendEmailAboutPasswordChange(true);
+//      refreshAuthorization(new UserDetailsImpl(user));
       return true;
     } else {
       appendMsg("Probleb with the added data!");

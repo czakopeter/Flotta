@@ -9,9 +9,9 @@ import com.sec.entity.User;
 
 public interface FeeItemRepository extends CrudRepository<FeeItem, Long> {
 
-  List<FeeItem> findAllByBill(long id);
+  List<FeeItem> findAllByInvoice(long id);
 
   List<FeeItem> findAllByUserId(long userId);
 
-  List<FeeItem> findAllByBillId(long id);
+  List<FeeItem> findAllByInvoiceId(long id);
 }

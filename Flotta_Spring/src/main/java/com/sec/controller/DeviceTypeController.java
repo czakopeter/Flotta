@@ -35,6 +35,7 @@ public class DeviceTypeController {
     return "device_templates/deviceTypes";
   }
   
+  //TODO jegyezze meg a megjelenítés típusát (cookie?)
   @PostMapping("/deviceTypes")
   public String addDeviceType(Model model, @ModelAttribute DeviceType deviceType) {
     service.saveDeviceType(deviceType);

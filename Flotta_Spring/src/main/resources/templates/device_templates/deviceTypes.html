@@ -9,37 +9,50 @@
 
     <h2>Device Types</h2>
 
+    <div class="row">
+      <div class="col">
+        <button type="submit" class="btn btn-primary" data-target="#edit" data-backdrop="static"
+          data-toggle="modal" onclick="reset_modal()"
+          >New</button>
+      </div>
+      <div class="col-2">
+        <select class="form-control" onchange="changeVisibilityFormSelect(this)">
+          <option value="all" th:text="#{deviceType.filer.all}">All</option>
+          <option value="active" selected="selected" th:text="#{deviceType.filer.active}">Active</option>
+          <option value="archived" th:text="#{deviceType.filer.archived}">Archived</option>
+        </select>
+      </div>
+    </div>
+    
 
-    <button type="submit" class="btn btn-primary" data-target="#edit" data-backdrop="static"
-      data-toggle="modal" onclick="reset_modal()"
-    >New</button>
+    
 
-    <select class="form-control" onchange="changeVisibilityFormSelect(this)">
-      <option value="all" th:text="#{deviceType.filer.all}">All</option>
-      <option value="active" selected="selected" th:text="#{deviceType.filer.active}">Active</option>
-      <option value="archived" th:text="#{deviceType.filer.archived}">Archived</option>
-    </select>
-
-    <table class="table table-sm" id="table">
-      <tr>
-        <th>Brand</th>
-        <th>Model</th>
-        <th>Name</th>
-        <th>SIM number</th>
-        <th>Has MicroSD slot</th>
-      </tr>
-      <tr th:each="deviceType, i : ${deviceTypes}" th:id="${i.count}">
-        <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;"></td>
-        <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
-        <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
-        <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
-        <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
-        <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
-        <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
-        <td><button type="button" class="btn btn-primary" th:onclick="|set_modal(${i.count})|"
-            data-target="#edit" data-backdrop="static" data-toggle="modal"
-          >Edit</button></td>
-      </tr>
+    <table class="table table-sm table-hover mt-3" id="table">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Name</th>
+          <th>SIM number</th>
+          <th>Has MicroSD slot</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="deviceType, i : ${deviceTypes}" th:id="${i.count}">
+          <td th:id="visible + ${i.count}" th:text="${deviceType.visible}" style="display: none;"></td>
+          <td th:id="id + ${i.count}" th:text="${deviceType.id}" style="display: none;"></td>
+          <td th:id="brand + ${i.count}" th:text="${deviceType.brand}"></td>
+          <td th:id="model + ${i.count}" th:text="${deviceType.model}"></td>
+          <td th:id="name + ${i.count}" th:text="${deviceType.name}"></td>
+          <td th:id="simNumber + ${i.count}" th:text="${deviceType.simNumber}"></td>
+          <td th:id="microsd + ${i.count}" th:text="${deviceType.microsd}"></td>
+          <td><button type="button" class="btn btn-primary" th:onclick="|set_modal(${i.count})|"
+              data-target="#edit" data-backdrop="static" data-toggle="modal"
+            >Edit</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
 
 

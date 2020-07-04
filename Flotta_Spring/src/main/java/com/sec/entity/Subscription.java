@@ -230,18 +230,13 @@ public class Subscription extends BasicEntity {
       LocalDate lastUserModDate = getLatestDate(subUsers);
       if (lastUserModDate == null) {
         System.out.println("Subscription: last user modification date can't be null");
-      } 
-      
-      
-      else if (date.isAfter(lastUserModDate)) {
+      } else if (date.isAfter(lastUserModDate)) {
         UserSub last = subUsers.get(lastUserModDate);
         if (!User.isSameByIdOrBothNull(user, last.getUser())) {
           subUsers.put(date, new UserSub(user, this, date));
           firstAvailableDate = date;
         }
       } else if (date.isEqual(lastUserModDate)) {
-        UserSub last = subUsers.get(lastUserModDate);
-        last.setUser(user);
       }
     }
   }
@@ -268,12 +263,27 @@ public class Subscription extends BasicEntity {
           subDev.put(date, new SubDev(this, device, date));
           firstAvailableDate = date;
         }
+      } else if(date.isEqual(lastDeviceModDate)) {
       }
     }
   }
   
   public User getActualUser() {
     return subUsers.get(getLatestDate(subUsers)).getUser();
+  }
+
+  public void addNote(String note, LocalDate date) {
+    LocalDate lastNoteModDate = getLatestDate(notes);
+    if(lastNoteModDate == null) {
+      
+    } else if(date.isAfter(lastNoteModDate)) {
+      SubNote last = notes.get(lastNoteModDate);
+      if(!note.equals(last.getNote())) {
+        notes.put(date, new SubNote(this, note, date));
+        firstAvailableDate = date;
+      }
+    } else if(date.isEqual(lastNoteModDate)) {
+    }
   }
   
 }

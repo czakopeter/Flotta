@@ -23,7 +23,7 @@ public class FeeItem {
   long id;
 
   @ManyToOne
-  private Bill bill;
+  private Invoice invoice;
 
   private String subscription;
 
@@ -43,7 +43,7 @@ public class FeeItem {
   
   private double compGross;
   
-  private String catergory;
+  private String category;
   
   private long userId;
   
@@ -54,8 +54,8 @@ public class FeeItem {
   public FeeItem() {
   }
 
-  public FeeItem(Bill bill, String subscription, String description, LocalDate begin, LocalDate end, double netAmount, double taxAmount, double taxPercentage, double userGross) {
-    this.bill = bill;
+  public FeeItem(Invoice invoice, String subscription, String description, LocalDate begin, LocalDate end, double netAmount, double taxAmount, double taxPercentage, double userGross) {
+    this.invoice = invoice;
     this.subscription = subscription;
     this.description = description;
     this.begin = begin;
@@ -67,7 +67,7 @@ public class FeeItem {
   }
 
   public FeeItem(FeeItem feeItem) {
-    this.bill = feeItem.bill;
+    this.invoice = feeItem.invoice;
     this.subscription = feeItem.subscription;
     this.description = feeItem.description;
     this.begin = feeItem.begin;
@@ -87,12 +87,12 @@ public class FeeItem {
     this.id = id;
   }
 
-  public Bill getBill() {
-    return bill;
+  public Invoice getInvoice() {
+    return invoice;
   }
 
-  public void setBill(Bill bill) {
-    this.bill = bill;
+  public void setInvoice(Invoice invoice) {
+    this.invoice = invoice;
   }
 
   public String getSubscription() {
@@ -167,12 +167,12 @@ public class FeeItem {
     this.compGross = compGross;
   }
 
-  public String getCatergory() {
-    return catergory;
+  public String getCategory() {
+    return category;
   }
 
-  public void setCatergory(String catergory) {
-    this.catergory = catergory;
+  public void setCategory(String category) {
+    this.category = category;
   }
 
   public long getUserId() {

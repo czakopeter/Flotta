@@ -86,9 +86,9 @@ public class UserController {
   @PostMapping("/registration")
   public String firstUserRegistration(Model model, @ModelAttribute User user, RedirectAttributes redirectAttributes) {
     if(service.firstUserRegistration(user)) {
-      redirectAttributes.addFlashAttribute("success", "Successful registration! Activation email has been sent to "
+      redirectAttributes.addFlashAttribute("success", "Successful registration! Activation link and initial password have been sent to "
           + user.getEmail() + 
-          " address! You must activate it!");
+          " address!");
       return "redirect:/login";
     } else {
       model.addAttribute("user", user);

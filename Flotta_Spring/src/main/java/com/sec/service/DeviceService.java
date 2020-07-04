@@ -53,58 +53,20 @@ public class DeviceService extends ServiceWithMsg{
     return deviceRepository.findAll();
   }
 
-//  public boolean save(DeviceToView device, DeviceType deviceType, User user, LocalDate date) {
-//    Device check = deviceRepository.findBySerialNumber(device.getSerialNumber());
-//    if (check == null) {
-//      Device dev = new Device(device.getSerialNumber(), deviceType);
-//      dev.userModification(user, date);
-//      dev.subModification(null, date);
-//      deviceRepository.save(dev);
-//      deviceStatusService.save(dev, DeviceStatusEnum.FREE, date);
-//      return true;
-//    }
-//    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//    msg.put(
-//        auth.getName(), "Serial number (" + device.getSerialNumber() + ") already exists!");
-//    return false;
-//  }
-
-//  public void update(long id, User user, LocalDate date) {
-//    Device d = deviceRepository.findOne(id);
-//    if(d != null) {
-//      d.userModification(user, date);
-//      deviceRepository.save(d);
-//    }
-//  }
-
-  public boolean add(DeviceToView dtv, DeviceType deviceType) {
-    if(deviceRepository.findBySerialNumber(dtv.getNumber()) == null) {
-      Device entity = new Device(dtv.getNumber(), deviceType, dtv.getDate());
+  public boolean add(DeviceToView dtv) {
+    if(deviceRepository.findBySerialNumber(dtv.getSerialNumber()) == null) {
+      Device entity = new Device(dtv.getSerialNumber(), dtv.getDate());
       deviceRepository.save(entity);
       return true;
     } else {
-      appendMsg("Number already exists");
-      return false;
-    }
-  }
-  
-  public Device save(String serialNumber, DeviceType deviceType, LocalDate date) {
-    Device check = deviceRepository.findBySerialNumber(serialNumber);
-    if(check == null) {
-      Device d = new Device(serialNumber);
-      d.setDeviceType(deviceType);
-      return deviceRepository.save(d);
-    } else {
       appendMsg("Serial number already exists");
-      return null;
+      return false;
     }
   }
   
   public String getError() {
     return removeMsg();
   }
-  
-  
 
   public void userHasConnected(Device dev, LocalDate date) {
     deviceStatusService.setStatus(dev, DeviceStatusEnum.ACTIVE, date);
@@ -128,6 +90,9 @@ public class DeviceService extends ServiceWithMsg{
     }
     return result;
   }
-  
-  
+
+  //TODO DeviceService save
+  public void save(Device device) {
+    deviceRepository.save(device);
+  }
 }

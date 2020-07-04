@@ -13,15 +13,15 @@
       <div class="container">
         <div class="row">
           <div class="col-2">Number</div>
-          <div class="col-2">201234567</div>
+          <div class="col-2" th:text="${invoicePart.number}">201234567</div>
         </div>
         <div class="row">
           <div class="col-2">Begin</div>
-          <div class="col-2">2020.01.10</div>
+          <div class="col-2" th:text="${invoicePart.begin}">2020.01.10</div>
         </div>
         <div class="row">
           <div class="col-2">End</div>
-          <div class="col-2">2020.01.31</div>
+          <div class="col-2" th:text="${invoicePart.end}">2020.01.31</div>
         </div>
       </div>
       <table class="table table-sm table-hover">
@@ -37,41 +37,42 @@
               <label>Gross amount</label>
             </th>
             <th>
-              <label>Note for problem</label>
+              <label>Revision note</label>
             </th>
           </tr>
         </thead>
         <tbody>
-<!--           <tr th:each="fee, i : ${fees}"> -->
-<!--             <td th:text="fee.category"></td> -->
-<!--             <td th:text="fee.description"></td> -->
-<!--             <td th:text="fee.userGross"></td> -->
-<!--             <td> -->
-<!--               <input type="text" class="form-control" placeholder="Enter your problem for this line" /> -->
-<!--             </td> -->
+          <tr th:each="fee, i : ${invoicePart.fees}">
+            <td th:text="${fee.category}"></td>
+            <td th:text="${fee.description}"></td>
+            <td th:text="${fee.userGross}"></td>
+            <td>
+              <input type="text" class="form-control" placeholder="Enter your note" />
+            </td>
+          </tr>
 <!--           <tr> -->
-            <td>Monthly</td>
-            <td>Monthly amount, 2020.01.01 - 2020.01.31</td>
-            <td>2990</td>
-            <td>
-              <input type="text" class="form-control" placeholder="Enter your problem for this line" />
-            </td>
-          </tr>
-          <tr>
-            <td>Internet</td>
-            <td>5 GB</td>
-            <td>1490</td>
-            <td>
-              <input type="text" class="form-control" placeholder="Enter your problem for this line" />
-            </td>
-          </tr>
+<!--             <td>Monthly</td> -->
+<!--             <td>Monthly amount, 2020.01.01 - 2020.01.31</td> -->
+<!--             <td>2990</td> -->
+<!--             <td> -->
+<!--               <input type="text" class="form-control" placeholder="Enter your note" /> -->
+<!--             </td> -->
+<!--           </tr> -->
+<!--           <tr> -->
+<!--             <td>Internet</td> -->
+<!--             <td>5 GB</td> -->
+<!--             <td>1490</td> -->
+<!--             <td> -->
+<!--               <input type="text" class="form-control" placeholder="Enter your note" /> -->
+<!--             </td> -->
+<!--           </tr> -->
         </tbody>
       </table>
-      <textarea class="form-control mb-2" placeholder="Enter your problem for entiry invoice"></textarea>
+      <textarea class="form-control mb-2" placeholder="Enter your note for entiry invoice"></textarea>
       
       <div class="btn-group">
-        <button type="submit" class="btn btn-success">Accept all</button>
-        <button type="submit" class="btn btn-warning">Ask for revision</button>
+        <button type="submit" th:formaction="'/profile/finance/' + ${invoicePart.number} + 'accept'" class="btn btn-success">Accept all</button>
+        <button type="submit" th:formaction="'/profile/finance/' + ${invoicePart.number} + 'revisionNote'" class="btn btn-warning">Ask for revision</button>
       </div>
       </form>
 

@@ -12,13 +12,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sec.billing.Bill;
+import com.sec.billing.Invoice;
 import com.sec.billing.DescriptionCategoryCoupler;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
 import com.sec.billing.ChargeRatioByCategory;
 import com.sec.billing.exception.FileUploadException;
-import com.sec.billing.service.BillService;
+import com.sec.billing.service.InvoiceService;
 import com.sec.billing.service.BillingService;
 import com.sec.billing.service.ChargeRatioService;
 import com.sec.entity.Device;
@@ -33,7 +33,7 @@ import com.sec.entity.switchTable.Service.UserSubService;
 import com.sec.entity.viewEntity.DeviceToView;
 import com.sec.entity.viewEntity.OneCategoryOfUserFinance;
 import com.sec.entity.viewEntity.SubscriptionToView;
-import com.sec.entity.viewEntity.SummaryInvoiceOfNumberForUser;
+import com.sec.entity.viewEntity.InvoiceOfOneNumberOfUser;
 import com.sec.entity.note.DevNote;
 import com.sec.entity.note.service.DevNoteService;
 import com.sec.entity.note.service.SubNoteService;
@@ -128,8 +128,6 @@ public class MainService {
 	//------- SUBSCRIPTION SERVICE --------
 
 
-  
-
   public List<SubscriptionToView> findAllSubscription() {
 		List<SubscriptionToView> list = new LinkedList<>();
 		for(Subscription s : subscriptionService.findAll()) {
@@ -137,6 +135,14 @@ public class MainService {
 		}
 		return list;
 	}
+  
+  public SubscriptionToView findSubscriptionById(long id) {
+    return subscriptionService.findById(id).toView();
+  }
+  
+  public SubscriptionToView findSubscriptionByIdAndDate(long id, String date) {
+    return subscriptionService.findById(id).toView(LocalDate.parse(date));
+  }
 	
 	public SubscriptionToView findSubscriptionByNumber(String number) {
 		return subscriptionService.findByNumber(number).toView();
@@ -150,6 +156,17 @@ public class MainService {
 	  return subscriptionService.findById(id).getAllModificationDateDesc();
 	}
 	
+	public boolean addSubscription(SubscriptionToView stv) {
+    Sim sim = simService.findByImei(stv.getImei());
+    if(sim != null && subscriptionService.add(stv)) {
+      Subscription saved = subscriptionService.findByNumber(stv.getNumber());
+      saved.addSim(sim, null, stv.getDate());
+      subscriptionService.save(saved);
+      return true;
+    }
+    return false;
+  }
+	
 	public boolean updateSubscription(long id, SubscriptionToView stv) {
 	  Subscription sub = subscriptionService.findById(id);
 	  Sim sim = simService.findByImei(stv.getImei());
@@ -159,28 +176,13 @@ public class MainService {
     sub.addSim(sim, stv.getSimChangeReason(), stv.getDate());
     sub.addUser(user, stv.getDate());
     sub.addDevice(dev, stv.getDate());
+    sub.addNote(stv.getNote(), stv.getDate());
     subscriptionService.save(sub);
-    
-//    Modification through switch table
-//    subSimService.update(sub, sim, stv.getDate(), stv.getSimChangeReason());
-//    userSubService.update(sub, user, stv.getDate());
-//    subDevService.updateFromSubscription(sub, dev, stv.getDate());
-//    subNoteService.update(sub, stv.getNote(), stv.getDate());
-//    sub.setLastMod(sub.getAllModificationDateDesc().get(0));
-    
     return true;
   }
 	
 	public String getSubscriptionServiceError() {
     return subscriptionService.removeMsg();
-  }
-	
-	public SubscriptionToView findSubscriptionById(long id) {
-    return subscriptionService.findById(id).toView();
-  }
-	
-	public SubscriptionToView findSubscriptionByIdAndDate(long id, String date) {
-    return subscriptionService.findById(id).toView(LocalDate.parse(date));
   }
 	
 	//TODO put UserServiceImp function here
@@ -226,10 +228,10 @@ public class MainService {
     return simService.findAllFree();
   }
 
-//  public void saveSim(Sim sim, LocalDate date) {
-//    simService.save(sim, date);
-//  }
-
+  public List<Sim> findAllSim() {
+    return simService.findAll();
+  }
+  
   public Sim findSimById(int i) {
     return simService.findById(i);
   }
@@ -238,8 +240,8 @@ public class MainService {
     return simService.getAllChagneReason();
   }
   
-  public List<Sim> findAllSim() {
-    return simService.findAll();
+  public boolean addSim(Sim sim) {
+    return simService.add(sim);
   }
   
 //-------- DEVICE TYPE SERVICE --------
@@ -258,44 +260,44 @@ public class MainService {
 
 //-------- DEVICE SERVICE --------
   
-  private DeviceToView toView(Device device) {
-    DeviceToView dtv = new DeviceToView();
-    dtv.setId(device.getId());
-    dtv.setSerialNumber(device.getSerialNumber());
-    dtv.setTypeName(device.getDeviceType().getName());
-    dtv.setEditable(true);
-    
-    User user = userDevService.findLastUser(device);
-    if(user != null) {
-      dtv.setUserId(user.getId());
-      dtv.setUserName(user.getFullName());
-    } else {
-      dtv.setUserId(0);
-      dtv.setUserName("");
-    }
-    
-    Subscription sub = subDevService.findLastSub(device);
-    if(sub != null) {
-      dtv.setNumber(sub.getNumber());
-    } else {
-      dtv.setNumber("");
-    }
-    
-    DevNote note = devNoteService.findLastNote(device);
-    
-    if(note != null) {
-      dtv.setNote(note.getNote());
-    } else {
-      dtv.setNote("");
-    }
-    
-    return dtv;
-  }
+//  private DeviceToView toView(Device device) {
+//    DeviceToView dtv = new DeviceToView();
+//    dtv.setId(device.getId());
+//    dtv.setSerialNumber(device.getSerialNumber());
+//    dtv.setTypeName(device.getDeviceType().getName());
+//    dtv.setEditable(true);
+//    
+//    User user = userDevService.findLastUser(device);
+//    if(user != null) {
+//      dtv.setUserId(user.getId());
+//      dtv.setUserName(user.getFullName());
+//    } else {
+//      dtv.setUserId(0);
+//      dtv.setUserName("");
+//    }
+//    
+//    Subscription sub = subDevService.findLastSub(device);
+//    if(sub != null) {
+//      dtv.setNumber(sub.getNumber());
+//    } else {
+//      dtv.setNumber("");
+//    }
+//    
+//    DevNote note = devNoteService.findLastNote(device);
+//    
+//    if(note != null) {
+//      dtv.setNote(note.getNote());
+//    } else {
+//      dtv.setNote("");
+//    }
+//    
+//    return dtv;
+//  }
   
   public List<DeviceToView> findAllDevices() {
     List<DeviceToView> list = new LinkedList<>();
     deviceService.findAll().forEach(
-        d -> list.add(toView(d)));
+        d -> list.add(d.toView()));
     return list;
   }
   
@@ -308,27 +310,25 @@ public class MainService {
     return result ;
   }
 
-  public boolean saveDevice(DeviceToView device) {
-    DeviceType deviceType = deviceTypeService.findByName(device.getTypeName());
-    Device saved = deviceService.save(device.getSerialNumber(), deviceType, device.getDate());
-    if(saved != null) {
-      User user = userService.findById(device.getUserId());
-      
-      userDevService.save(saved, user, device.getDate());
-      subDevService.save(null, saved, device.getDate());
-      devNoteService.save(saved, device.getNote(), device.getDate());
-      
+  public boolean saveDevice(DeviceToView dtv) {
+    DeviceType deviceType = deviceTypeService.findByName(dtv.getTypeName());
+    if(deviceType != null && deviceService.add(dtv)) {
+      Device saved = deviceService.findBySerialNumber(dtv.getSerialNumber());
+      saved.setDeviceType(deviceType);
+      deviceService.save(saved);
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
   
   public void updateDevice(long id, DeviceToView dtv) {
     Device device = deviceService.findById(id);
     User user = userService.findById(dtv.getUserId());
-    userDevService.update(device, user, dtv.getDate());
-    devNoteService.update(device, dtv.getNote(), dtv.getDate());
+    
+    device.addUser(user, dtv.getDate());
+    device.addNote(dtv.getNote(), dtv.getDate());
+    
+    deviceService.save(device);
   }
 
   public DeviceToView findDeviceById(long id) {
@@ -353,11 +353,11 @@ public class MainService {
     return billingService.uploadBill(file);
   }
 
-  public List<Bill> findAllBill() {
+  public List<Invoice> findAllBill() {
     return billingService.findAllBill();
   }
 
-  public Bill findBillByInvoiceNumber(String invoiceNumber) {
+  public Invoice findBillByInvoiceNumber(String invoiceNumber) {
     return billingService.findBilldByInvoiceNumber(invoiceNumber);
   }
 
@@ -430,27 +430,12 @@ public class MainService {
     return deviceService.findAllActualByUser(user);
   }
 
-  public boolean addSim(Sim sim) {
-    return simService.add(sim);
-  }
-
   public String getSimError() {
     return simService.removeMsg();
   }
 
   public boolean canCreateSubscription() {
     return !simService.findAllFree().isEmpty();
-  }
-
-  public boolean addSubscription(SubscriptionToView stv) {
-    Sim sim = simService.findByImei(stv.getImei());
-    if(sim != null && subscriptionService.add(stv)) {
-      Subscription s = subscriptionService.findByNumber(stv.getNumber());
-      s.addSim(sim, null, stv.getDate());
-      subscriptionService.save(s);
-      return true;
-    }
-    return false;
   }
 
   public List<User> findAllUserByStatus(int status) {
@@ -497,8 +482,12 @@ public class MainService {
     return billingService.getUnusedCategoryOfChargeRatio(id);
   }
 
-  public List<SummaryInvoiceOfNumberForUser> getActualFinanceSummary() {
+  public List<InvoiceOfOneNumberOfUser> getActualFinanceSummary() {
     return billingService.getActualFinanceSummary();
+  }
+
+  public InvoiceOfOneNumberOfUser findUnacceptedInvoiceOfOneNumberOfUser(String number) {
+    return billingService.getUnacceptedInvoiceOfOneNumberOfUser(number);
   }
 
 }

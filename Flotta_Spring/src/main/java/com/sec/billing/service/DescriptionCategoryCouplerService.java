@@ -11,7 +11,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sec.billing.Bill;
+import com.sec.billing.Invoice;
 import com.sec.billing.DescriptionCategoryCoupler;
 import com.sec.billing.Category;
 import com.sec.billing.FeeItem;
@@ -41,10 +41,10 @@ public class DescriptionCategoryCouplerService {
     return descriptionCategoryCouplerRepository.findOne(id);
   }
 
-  public Map<Category, List<FeeItem> > partition(Bill bill, long templateId) {
+  public Map<Category, List<FeeItem> > partition(Invoice invoice, long templateId) {
     DescriptionCategoryCoupler bpt = descriptionCategoryCouplerRepository.findOne(templateId);
     try {
-      return bpt.partition(bill);
+      return bpt.partition(invoice);
     } catch (UnknonwFeeItemDescriptionException e) {
       missingFeeItemDescriptions.put(templateId, e.getUnknownDescriptions());
     }

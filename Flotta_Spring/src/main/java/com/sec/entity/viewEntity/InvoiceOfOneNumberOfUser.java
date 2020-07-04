@@ -3,11 +3,15 @@ package com.sec.entity.viewEntity;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.sec.billing.FeeItem;
 
-public class SummaryInvoiceOfNumberForUser {
+public class InvoiceOfOneNumberOfUser {
   private String number;
+  
+  private String invoiceNumber;
   
   private LocalDate begin;
   
@@ -15,14 +19,19 @@ public class SummaryInvoiceOfNumberForUser {
   
   private double grossAmount;
   
-  public SummaryInvoiceOfNumberForUser() {}
+  private List<FeeItem> fees = new LinkedList<>();
   
-  public SummaryInvoiceOfNumberForUser(String number) {
+  public InvoiceOfOneNumberOfUser() {}
+  
+  public InvoiceOfOneNumberOfUser(String number, String invoiceNumber) {
     this.number = number;
+    this.invoiceNumber = invoiceNumber;
   }
   
   public void addFeeItem(FeeItem item) {
-    if(item.getSubscription().equals(this.number)) {
+    if(item.getSubscription().equals(this.number)
+//        && item.getInvoice().getInvoiceNumber().equals(this.invoiceNumber)
+        ) {
       if(begin == null) {
         begin = item.getBegin();
         end = item.getEnd();
@@ -35,6 +44,7 @@ public class SummaryInvoiceOfNumberForUser {
         }
       }
       grossAmount += item.getUserGross();
+      fees.add(item);
     }
   }
   
@@ -52,5 +62,17 @@ public class SummaryInvoiceOfNumberForUser {
   
   public double getGrossAmount() {
     return this.grossAmount;
+  }
+  
+  public List<FeeItem> getFees() {
+    return fees;
+  }
+  
+  public LocalDate getBegin() {
+    return begin;
+  }
+  
+  public LocalDate getEnd() {
+    return end;
   }
 }

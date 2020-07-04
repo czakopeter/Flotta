@@ -13,8 +13,8 @@ public interface DeviceTypeRepository extends CrudRepository<DeviceType, Long> {
 	@Query("select distinct d.brand from DeviceType d")
   List<String> findAllBrandOfDevicesType();
 
-  DeviceType findByName(String name);
+  DeviceType findByNameIgnoreCase(String name);
 
-  DeviceType findByBrandAndModel(String brand, String model);
+  DeviceType findByBrandAndModelIgnoreCase(String brand, String model);
 
 }
