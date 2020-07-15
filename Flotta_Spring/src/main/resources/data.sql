@@ -27,3 +27,4 @@ INSERT INTO description_category_map (description_category_coupler_id, descripti
 INSERT INTO description_category_map (description_category_coupler_id, description_category_map_id, description_category_map_key) VALUES (1, 2, 'Belfoldi mas mobilhalozat / Vodafone')
 INSERT INTO description_category_map (description_category_coupler_id, description_category_map_id, description_category_map_key) VALUES (1, 3, 'Mobil net 1GB')
 
+

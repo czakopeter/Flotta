@@ -48,7 +48,7 @@
             <td class="align-middle">
               <input type="range" class="form-control-range"
                 th:id="ratio + ${i.count}" name="ratio" min="0" max="100" step="5"
-                th:value="${chargeRatio.categoryratio.get(category)}"
+                th:value="${chargeRatio.categoryRatioMap.get(category)}"
                 th:oninput="|setRangeInput(${i.count})|"
             /></td>
             <td class="align-middle text-center">

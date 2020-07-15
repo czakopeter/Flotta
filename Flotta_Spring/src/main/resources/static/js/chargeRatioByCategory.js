@@ -3,7 +3,7 @@ let lastId = document.querySelector('tbody').children.length;
 refreshAllView();
 
 function refreshAllView() {
-	for(var i = 1; i < lastId; i++) {
+	for(let i = 1; i <= lastId; i++) {
 		refreshView(i);
 	}
 }

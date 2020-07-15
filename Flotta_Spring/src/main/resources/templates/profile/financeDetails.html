@@ -9,7 +9,7 @@
 
     <h2>Finance details</h2>
       
-      <form action="">
+      <form method="post">
       <div class="container">
         <div class="row">
           <div class="col-2">Number</div>
@@ -47,32 +47,17 @@
             <td th:text="${fee.description}"></td>
             <td th:text="${fee.userGross}"></td>
             <td>
-              <input type="text" class="form-control" placeholder="Enter your note" />
+              <input type="text" class="form-control" th:name="${fee.id}" placeholder="Enter your note" />
             </td>
           </tr>
-<!--           <tr> -->
-<!--             <td>Monthly</td> -->
-<!--             <td>Monthly amount, 2020.01.01 - 2020.01.31</td> -->
-<!--             <td>2990</td> -->
-<!--             <td> -->
-<!--               <input type="text" class="form-control" placeholder="Enter your note" /> -->
-<!--             </td> -->
-<!--           </tr> -->
-<!--           <tr> -->
-<!--             <td>Internet</td> -->
-<!--             <td>5 GB</td> -->
-<!--             <td>1490</td> -->
-<!--             <td> -->
-<!--               <input type="text" class="form-control" placeholder="Enter your note" /> -->
-<!--             </td> -->
-<!--           </tr> -->
         </tbody>
       </table>
-      <textarea class="form-control mb-2" placeholder="Enter your note for entiry invoice"></textarea>
+      <textarea class="form-control mb-2" name="textarea" placeholder="Enter your note for entiry invoice"></textarea>
       
       <div class="btn-group">
-        <button type="submit" th:formaction="'/profile/finance/' + ${invoicePart.number} + 'accept'" class="btn btn-success">Accept all</button>
-        <button type="submit" th:formaction="'/profile/finance/' + ${invoicePart.number} + 'revisionNote'" class="btn btn-warning">Ask for revision</button>
+        <button type="submit" th:formaction="'/profile/finance/' + ${invoicePart.number} + '/accept'" class="btn btn-success">Accept all</button>
+        <button type="submit" th:formaction="'/profile/finance/' + ${invoicePart.number} + '/revision'" class="btn btn-warning">Ask for revision</button>
+        <a class="btn btn-primary" href="/profile/finance" th:text="#{button.back}"></a>
       </div>
       </form>
 

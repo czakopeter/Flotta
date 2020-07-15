@@ -14,8 +14,8 @@ function selectAll() {
 	selectedNumber = result ? selectors.length : 0;
 }
 
-function selectSingleCheckbox(id) {
-	if(document.querySelector('#cb' + id).checked) {
+function selectSingleCheckbox(cb) {
+	if(cb.checked) {
 		selectedNumber++;
 		if(selectedNumber == 1) {
 			setToMultiMode();

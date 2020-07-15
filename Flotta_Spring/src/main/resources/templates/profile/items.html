@@ -10,11 +10,11 @@
     <h2>Items</h2>
 
     <div class="container my-border">
-      <div th:if="#{lists.isEmpty(subscriptions)}" class="text-center">
+      <div th:if="${#lists.isEmpty(subscriptions)}" class="text-center">
         <b>You don't have any subscriptions</b>
       </div>
       
-      <table th:unless="#{lists.isEmpty(subscriptions)}" id="subscriptions-table" class="table table-sm table-hover">
+      <table th:unless="${#lists.isEmpty(subscriptions)}" id="subscriptions-table" class="table table-sm table-hover">
         <thead>
           <tr>
             <th th:text="#{subscription.phoneNumber}">Number</th>
@@ -35,10 +35,10 @@
     <br />
 
     <div class="container my-border">
-      <div th:if="#{lists.isEmpty(devices)}" class="text-center">
+      <div th:if="${#lists.isEmpty(devices)}" class="text-center">
         <b>You don't have any devices</b>
       </div>
-      <table th:unless="#{lists.isEmpty(devices)}" id="devices-table" class="table table-sm table-hover">
+      <table th:unless="${#lists.isEmpty(devices)}" id="devices-table" class="table table-sm table-hover">
         <thead>
           <tr>
             <th th:text="#{device.serialNumber}">Serial number</th>
