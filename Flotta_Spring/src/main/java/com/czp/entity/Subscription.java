@@ -167,8 +167,6 @@ public class Subscription extends BasicEntityWithCreateDate {
     stv.setId(id);
     stv.setNumber(number);
     stv.setDate(date);
-    stv.setMin("");
-    stv.setEditable(!date.isBefore(firstAvailableDate));
 
     stv.setSim(subSim.get(Utility.floorDate(subSim, date)).getSim());
 

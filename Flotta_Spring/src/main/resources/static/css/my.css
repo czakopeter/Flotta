@@ -7,13 +7,14 @@
 	background-color: #f2f8ff;
 }
 
-.my-border.container {
+.my-border {
 	border-width: 1px;
 	border-style: solid;
 	border-color: #b3ccff;
 	border-radius: 5px;
-	padding-top: 5px;
-	padding-bottom: 5px
+	padding: 10px;
+	margin-bottom: 10px;
+	margin-top: 10px
 }
 
 body h2 {
@@ -22,11 +23,16 @@ body h2 {
 }
 
 .center {
-	width: -moz-fit-content;
+	width: 40%;
+	max-width: 400px;
 	margin-left: auto;
 	margin-right: auto;
 }
 
 .tabcontent {
 	display: none;
+}
+
+a img, button img {
+	height: 20px;
 }

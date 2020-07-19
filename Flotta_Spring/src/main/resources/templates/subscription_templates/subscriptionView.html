@@ -10,14 +10,22 @@
     <h2>View subscription</h2>
 
     <div class="container">
-      <select th:if="${dates} != null" onchange="changeDate(this)" class="my-3">
+      <select th:if="${dates} != null" onchange="dateChange(this)" class="my-3">
         <option th:each="date : ${dates}" th:value="${date}" th:text="${date}"
           th:selected="${date} == ${subscription.date}"
         ></option>
       </select>
     </div>
-
+    
+<!--     <form method="get"> -->
+<!--       <div class="btn-group"> -->
+<!--         <button class="btn btn-primary" th:formaction="'/subscription/' + ${subscription.id} + '/edit'">Edit</button> -->
+<!--         <button class="btn btn-default disabled" th:formaction="'/subscription/' + ${subscription.id} + '/view'">View</button> -->
+<!--       </div> -->
+<!--     </form> -->
+    
     <form th:object="${subscription}" method="post" id="form">
+      <input type="hidden" id="id" name="id" th:value="*{id}"/>
       <input type="hidden" id="order" name="order" />
       <div class="container">
         <div class="row my-2">
@@ -84,20 +92,11 @@
       </div>
     </form>
 
+    <script src="/js/subscription.js"></script>
 
 
-    <script th:inline="javascript">
-					//<![CDATA[		
-					function changeDate(d) {
-						document.getElementById('order').value = 'dateSliceCh ' + d.value;
-						document.getElementById('form').submit();
-					}
-					//]]>
-				</script>
 
   </div>
-
-
 
 </body>
 </html>

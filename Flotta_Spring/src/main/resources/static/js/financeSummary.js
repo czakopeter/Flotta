@@ -43,3 +43,30 @@ function setToSingleMode() {
 	}
 	document.querySelector("#accept-all-selected").style.visibility = 'hidden';
 }
+
+function acceptOneInvoice(btn) {
+	let number = btn.parentElement.parentElement.parentElement.querySelector("[name=number]");
+	sendData("POST", "/profile/finance/accept", "numbers=" + number.value, afterAccept);
+}
+
+function acceptAllSelected() {
+	let numbers = "";
+	for(let checkbox in document.querySelectorAll("[name=numberCheckBox]")) {
+		if(checkbox.checked) {
+			if(numbers != "") {
+				numbers += "," +
+			}
+			numbers += checkbox.parentElement.querySelector("[name=number]").value;
+		}
+	}
+	sendData("POST", "/profile/finance/accept", "numbers=" + numbers, afterAccept);
+}
+
+function afterAccept() {
+	let table = document.querySelector("table");
+	for(let checkbox in document.querySelectorAll("[name=numberCheckBox]")) {
+		if(checkbox.checked) {
+			table.deleteRow(checkbox.parentElement.parentElement.rowIndex);
+		}
+	}
+}

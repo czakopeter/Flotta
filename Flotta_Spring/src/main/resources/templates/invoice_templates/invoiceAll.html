@@ -14,7 +14,7 @@
 
       <div class="container">
         <form action="/invoice/all" method="post" enctype="multipart/form-data">
-          <label for="file">Select a invoice: </label> <input type="file" id="file" name="file"
+          <label for="file">Select an invoice: </label> <input type="file" id="file" name="file"
             accept=".xml"
           /> <input type="submit" th:value="#{button.add}" />
         </form>
@@ -56,10 +56,14 @@
           </form>
           <td>
             <div class="btn-group">
-              <button type="submit" class="btn btn-warning" th:formaction="'/invoice/continueProcessing/' + ${invoice.invoiceNumber}"><img alt="refresh" src="/img/refresh.png" style="height: 25px" /></button>
-              <button type="submit" class="btn btn-danger" th:formaction="'/invoice/delete/' + ${invoice.invoiceNumber}"><img alt="delete" src="/img/trash.png" style="height: 25px" /></button>
+              <button type="submit" class="btn btn-warning" th:formaction="'/invoice/continueProcessing/' + ${invoice.invoiceNumber}">
+                <img alt="refresh" src="/img/refresh.png"/>
+              </button>
+              <button type="submit" class="btn btn-danger" th:formaction="'/invoice/delete/' + ${invoice.invoiceNumber}">
+                <img alt="delete" src="/img/trash.png" />
+              </button>
             </div>
-            <img th:if="${invoice.hasProblem()}" alt="problem" src="/img/problem.png" style="height: 25px" th:title="${invoice.getProblem()}"/>
+            <img th:if="${invoice.hasProblem()}" alt="problem" src="/img/problem.png" th:title="${invoice.getProblem()}" style="height: 20px;"/>
           </td>
         </tr>
       </table>

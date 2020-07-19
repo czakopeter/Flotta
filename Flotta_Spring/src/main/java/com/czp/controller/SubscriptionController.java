@@ -1,17 +1,22 @@
 package com.czp.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.czp.entity.viewEntity.DeviceToView;
 import com.czp.entity.viewEntity.SubscriptionToView;
 import com.czp.service.MainService;
 
@@ -38,7 +43,7 @@ public class SubscriptionController {
   }
 
   @GetMapping("/subscription/new")
-  public String addSubscription(Model model) {
+  public String prepareAddingSubscription(Model model) {
     if(service.canCreateSubscription()) {
       model.addAttribute("subscription", new SubscriptionToView());
       model.addAttribute("freeSims", service.findAllFreeSim());
@@ -60,55 +65,50 @@ public class SubscriptionController {
       }
   }
 
-  @GetMapping("/subscription/{id}")
-  public String subscription(Model model, @PathVariable("id") long id) {
+  @GetMapping("/subscription/{id}/edit")
+  public String prepareEditingSubscription(Model model, @PathVariable("id") long id) {
     SubscriptionToView stv = service.findSubscriptionById(id);
     model.addAttribute("subscription", stv);
     model.addAttribute("freeSims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
-    model.addAttribute("dates", service.findSubscriptionDatesById(id));
     return "subscription_templates/subscriptionEdit";
   }
 
-  @PostMapping("/subscription/{id}")
-  public String subscription(Model model, @PathVariable("id") long id, @RequestParam(name = "order", defaultValue = "save") String order, @ModelAttribute() SubscriptionToView stv) {
-    String[] orderPart = order.split(" ");
-    switch (orderPart[0]) {
-    case "save":
-      service.updateSubscription(id, stv);
-      stv = service.findSubscriptionById(id);
-      break;
-    case "userCh":
-      stv.setEditable(true);
-      break;
-    case "deviceCh":
-      stv.setEditable(true);
-      if(stv.getDeviceId() != 0) {
-        //TODO min dátum állítása ha a kijelölt eszköz elérhetőségének dátuma később van
-//        DeviceToView selectedDevice = service.findDeviceById(stv.getDeviceId());
-//        if(selectedDevice.getDate().isAfter(LocalDate.parse(stv.getMin()))) {
-//          stv.setMin(selectedDevice.getDate().toString());
-//        }
-      }
-      break;
-    case "dateSliceCh":
-      stv = service.findSubscriptionByIdAndDate(id, orderPart[1]);
-      break;
-    default:
-      break;
+  @PostMapping("/subscription/update")
+  public String updateSubscription(Model model, @ModelAttribute() SubscriptionToView stv) {
+    if(!service.updateSubscription(stv)) {
+      model.addAttribute("error", service.getSubscriptionServiceError());
     }
     model.addAttribute("freeSims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
-    model.addAttribute("dates", service.findSubscriptionDatesById(id));
     model.addAttribute("subscription", stv);
-    model.addAttribute("simChangeReasons", service.getSimChangeReasons());
-    return stv.isEditable() ? "subscription_templates/subscriptionEdit" : "subscription_templates/subscriptionView";
+    return "subscription_templates/subscriptionEdit";
   }
   
-  @GetMapping("/subscription/{id}/view/{date}")
-  public String viewSubscription(Model model, @PathVariable("id") long id, @PathVariable("date") LocalDate date) {
+  @GetMapping("/subscription/{id}/view")
+  public String viewSubscription(Model model, @PathVariable("id") long id) {
+    model.addAttribute("subscription", service.findSubscriptionById(id));
     return "subscription_templates/subscriptionView";
   }
+  
+  @PostMapping("/subscription/{id}/view")
+  @ResponseBody
+  public SubscriptionToView viewChangeDate(@PathVariable("id") long id, @RequestParam("date")@DateTimeFormat(pattern = "yyyy-MM-dd")  LocalDate date) {
+    return service.findSubscriptionByIdAndDate(id, date);
+  }
+  
+  @PostMapping("/subscription/getDevicesByUser")
+  @ResponseBody
+  public List<DeviceToView> getDevicesByUser(@RequestParam ("userId") long userId) {
+    return service.findAllDevicesByUser(userId);
+  }
+  
+  @PostMapping("/subscription/getDeviceById")
+  @ResponseBody
+  public DeviceToView getDeviceById(Model model, @RequestParam ("id") long id) {
+    return service.findDeviceById(id);
+  }
+  
 }

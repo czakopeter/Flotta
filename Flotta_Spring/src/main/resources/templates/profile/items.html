@@ -9,7 +9,8 @@
 
     <h2>Items</h2>
 
-    <div class="container my-border">
+    <div class="container">
+      <h4>Subscriptions</h4>
       <div th:if="${#lists.isEmpty(subscriptions)}" class="text-center">
         <b>You don't have any subscriptions</b>
       </div>
@@ -34,7 +35,8 @@
 
     <br />
 
-    <div class="container my-border">
+    <div class="container">
+    <h4>Devices</h4>
       <div th:if="${#lists.isEmpty(devices)}" class="text-center">
         <b>You don't have any devices</b>
       </div>

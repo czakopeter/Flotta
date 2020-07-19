@@ -58,6 +58,8 @@ public class Device extends BasicEntityWithCreateDate {
   @MapKey(name = "date")
   private Map<LocalDate, DeviceStatus> statuses = new HashMap<LocalDate, DeviceStatus>();
   
+  private LocalDate firstAvailableDate;
+  
   public Device() {
   }
 
@@ -68,6 +70,7 @@ public class Device extends BasicEntityWithCreateDate {
   public Device(String serialNumber, LocalDate date) {
     this.serialNumber = serialNumber;
     this.createDate = date;
+    this.firstAvailableDate = date;
     this.deviceType = null;
     devUsers.put(date, new UserDev(null, this, date));
     devSubs.put(date, new SubDev(null, this, date));
@@ -127,7 +130,7 @@ public class Device extends BasicEntityWithCreateDate {
     dtv.setId(id);
     dtv.setSerialNumber(serialNumber);
     dtv.setTypeName(deviceType.getName());
-    dtv.setEditable(true);
+    dtv.setDate(getAllModificationDateDesc().get(0));
     
     dtv.setUser(devUsers.get(Utility.getLatestDate(devUsers)).getUser());
     

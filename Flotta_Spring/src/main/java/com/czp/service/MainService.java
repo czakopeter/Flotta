@@ -140,8 +140,8 @@ public class MainService {
     return subscriptionService.findById(id).toView();
   }
   
-  public SubscriptionToView findSubscriptionByIdAndDate(long id, String date) {
-    return subscriptionService.findById(id).toView(LocalDate.parse(date));
+  public SubscriptionToView findSubscriptionByIdAndDate(long id, LocalDate date) {
+    return subscriptionService.findById(id).toView(date);
   }
 	
 	public SubscriptionToView findSubscriptionByNumber(String number) {
@@ -167,8 +167,8 @@ public class MainService {
     return false;
   }
 	
-	public boolean updateSubscription(long id, SubscriptionToView stv) {
-	  Subscription sub = subscriptionService.findById(id);
+	public boolean updateSubscription(SubscriptionToView stv) {
+	  Subscription sub = subscriptionService.findById(stv.getId());
 	  Sim sim = simService.findByImei(stv.getImei());
     User user = userService.findById(stv.getUserId());
     Device dev = deviceService.findById(stv.getDeviceId());
@@ -332,7 +332,8 @@ public class MainService {
   }
 
   public DeviceToView findDeviceById(long id) {
-    return deviceService.findById(id).toView();
+    Device device = deviceService.findById(id);
+    return device != null ? device.toView() : null;
   }
   
   public DeviceToView findDeviceByIdAndDate(long id, String date) {

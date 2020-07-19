@@ -37,22 +37,24 @@
         <tbody>
           <tr th:each="invoicePerNumber, i : ${invoicePerNumbers}">
             <td>
-              <input th:name="${invoicePerNumber.number}" type="checkbox" onclick="selectSingleCheckbox(this)"/>
+              <input name="number" type="hidden" th:value="${invoicePerNumber.number}" />
+              <input name="numberCheckBox" type="checkbox" onclick="selectSingleCheckbox(this)"/>
             </td>
             <td th:text="${invoicePerNumber.number}"></td>
             <td th:text="${invoicePerNumber.getPeriod()}"></td>
             <td th:text="${invoicePerNumber.grossAmount}"></td>
             <td>
               <div class="btn-group">
-                <button type="submit" th:formaction="'/profile/finance/' + ${invoicePerNumber.number} + '/accept'" class="btn btn-success" style="color: black;">Accept</button>
-                <button type="submit" th:formaction="'/profile/finance/' + ${invoicePerNumber.number} + '/details'" class="btn btn-info"  style="color: black;">Details</button>
+                <button type="button" onclick="acceptOneInvoice(this)" class="btn btn-success" style="color: black;">Accept</button>
+                <button type="submit" th:formaction="'/profile/finance/' + ${invoicePerNumber.number}'" class="btn btn-info"  style="color: black;">Details</button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <button id="accept-all-selected" type="submit" formaction="/profile/finance/accept" class="btn btn-primary" style="visibility: hidden;">Accept all selected</button>
+      <button id="accept-all-selected" type="button" onclick="acceptAllSelected()" class="btn btn-primary" style="visibility: hidden;">Accept all selected</button>
       </form>
+      
     <script src="/js/financeSummary.js"></script>
 
   </div>

@@ -111,6 +111,7 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
     if(user.getPassword().equals(oldPsw) && Validator.validPassword(newPsw) && newPsw.contentEquals(confirmPsw)) {
       user.setPassword(newPsw);
       user.setPasswordRenewerKey(null);
+      user.setStatus(UserStatusEnum.ENABLED);
       userRepository.save(user);
 //      emailService.sendEmailAboutPasswordChange(true);
 //      refreshAuthorization(new UserDetailsImpl(user));

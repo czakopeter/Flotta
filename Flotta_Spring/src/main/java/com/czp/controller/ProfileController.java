@@ -34,17 +34,12 @@ public class ProfileController {
     this.service = service;
   }
 
-  @ModelAttribute
-  public void title(Model model) {
+//  @ModelAttribute
+//  public void title(Model model) {
 //    model.addAttribute("title", "Profile");
-  }
+//  }
   
-  @GetMapping("/profile")
-  public String passwordChange(Model model) {
-    return "profile_templates/profile";
-  }
-  
-  @RequestMapping("/profile/items")
+  @GetMapping("/profile/items")
   public String listItems(Model model) {
     model.addAttribute("devices", service.findAllCurrentDeviceOfUser());
     model.addAttribute("subscriptions", service.findAllCurrentSubscriptionOfUser());
@@ -52,29 +47,29 @@ public class ProfileController {
   }
   
   @GetMapping("/profile/changePassword")
-  public String preparePasswordChanging(Model model) {
+  public String preparePasswordChanging() {
     return "profile/passwordChange";
   }
   
   @PostMapping("/profile/changePassword")
-  public String passwordChange(Model model, @RequestParam Map<String, String> params, RedirectAttributes ra) {
+  public String passwordChange(Model model, RedirectAttributes ra, @RequestParam Map<String, String> params) {
     if(service.changePassword(params.get("old-password"), params.get("new-password"), params.get("confirm-new-password"))) {
       ra.addFlashAttribute("success", "Change password was success");
       return "redirect:/logout";
     } else {
       model.addAttribute("error", service.getUserError());
+      return "profile/passwordChange";
     }
-    return "profile/passwordChange";
   }
   
   @GetMapping("/profile/finance")
-  public String showActualInvoiceStatus(Model model) {
+  public String showActualUserPendingInvoices(Model model) {
     model.addAttribute("invoicePerNumbers", service.getPendingInvoicesOfCurrentUser());
     return "profile/financeSummary";
   }
   
   @PostMapping("/profile/finance/{number}/accept")
-  public String acceptUserAmountOfOneNumber(Model model, @PathVariable("number") String number) {
+  public String acceptInvoiceOfCurrentUserByNumber(@PathVariable("number") String number) {
     if(service.acceptInvoiceOfCurrentUserByNumber(number)) {
       System.out.println("Accepted");
     } else {
@@ -84,7 +79,7 @@ public class ProfileController {
   }
   
   @PostMapping("/profile/finance/accept")
-  public String acceptUserAmountOfMoreNumber(Model model, @RequestParam Map<String, String> accept) {
+  public String acceptInvoicesOfUserByNumbers(@RequestParam Map<String, String> accept) {
     if(accept != null) {
       if(service.acceptInvoicesOfCurrentUserByNumbers(new LinkedList<>(accept.keySet()))) {
         
@@ -95,7 +90,7 @@ public class ProfileController {
   }
 
   //TODO ellenőrizni h number és user kapcsolatban van e
-  @PostMapping("/profile/finance/{number}/details")
+  @PostMapping("/profile/finance/{number}")
   public String details(Model model, @PathVariable ("number") String number) {
     model.addAttribute("invoicePart", service.getPendingInvoiceOfCurrentUserByNumber(number));
     return "profile/financeDetails";

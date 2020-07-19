@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.czp.entity.Device;
 import com.czp.entity.Sim;
 import com.czp.entity.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class SubscriptionToView {
   private long id;
@@ -35,8 +36,6 @@ public class SubscriptionToView {
 	private String min;
 	
 	private boolean editable;
-	
-	
 	
 	public SubscriptionToView() {
 	}

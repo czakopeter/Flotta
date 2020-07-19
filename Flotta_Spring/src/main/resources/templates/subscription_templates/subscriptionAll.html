@@ -26,9 +26,17 @@
         <td th:text="${subscription.imei}"></td>
         <td th:text="${subscription.userName}"></td>
         <td th:text="${subscription.deviceName}"></td>
-        <td><a th:href="'/subscription/' + ${subscription.id}" class="btn btn-primary"
-          th:text="#{button.edit}"
-        >Edit</a></td>
+        <td>
+          <div class="btn-group">
+<!--             <a th:href="'/subscription/' + ${subscription.id}" class="btn btn-primary disabled" th:text="#{button.edit}">Edit</a> -->
+            <a th:href="'/subscription/' + ${subscription.id} + '/edit'" class="btn btn-primary" th:title="#{button.edit}">
+              <img alt="edit" src="/img/edit.png" />
+            </a>
+            <a th:href="'/subscription/' + ${subscription.id} + '/view'" class="btn btn-primary" title="view">
+              <img alt="view" src="/img/visible.png" />
+            </a>
+          </div>
+        </td>
       </tr>
     </table>
 
