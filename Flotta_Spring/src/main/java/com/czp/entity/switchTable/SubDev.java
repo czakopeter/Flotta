@@ -8,8 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.czp.entity.Device;
 import com.czp.entity.Subscription;
 import com.czp.utility.Utility;

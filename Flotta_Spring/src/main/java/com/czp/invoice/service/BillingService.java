@@ -53,8 +53,8 @@ public class BillingService {
   // beolvassa a számlát
   // valid akkor konvertál validFeeItem-re
   // newm valid új template készítése
-  public boolean uploadBill(MultipartFile file) throws FileUploadException {
-    invoiceService.uploadBill(file);
+  public boolean uploadInvoiceAndProcess(MultipartFile file) throws FileUploadException {
+    invoiceService.uploadInvoice(file);
     return true;
   }
 

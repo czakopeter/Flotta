@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.security.auth.login.CredentialExpiredException;
-
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.czp.entity.Role;

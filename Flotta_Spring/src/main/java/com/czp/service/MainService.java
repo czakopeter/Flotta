@@ -17,11 +17,6 @@ import com.czp.entity.DeviceType;
 import com.czp.entity.Sim;
 import com.czp.entity.Subscription;
 import com.czp.entity.User;
-import com.czp.entity.note.DevNote;
-import com.czp.entity.note.service.DevNoteService;
-import com.czp.entity.note.service.SubNoteService;
-import com.czp.entity.switchTable.Service.SubDevService;
-import com.czp.entity.switchTable.Service.SubSimService;
 import com.czp.entity.switchTable.Service.UserDevService;
 import com.czp.entity.switchTable.Service.UserSubService;
 import com.czp.entity.viewEntity.DeviceToView;
@@ -35,8 +30,7 @@ import com.czp.invoice.FeeItem;
 import com.czp.invoice.Invoice;
 import com.czp.invoice.exception.FileUploadException;
 import com.czp.invoice.service.BillingService;
-import com.czp.invoice.service.ChargeRatioService;
-import com.czp.invoice.service.InvoiceService;
+//import com.czp.invoice.service.ChargeRatioService;
 
 
 @Service
@@ -66,7 +60,7 @@ public class MainService {
 	
 	private BillingService billingService;
 	
-	private ChargeRatioService chargeRatioService;
+//	private ChargeRatioService chargeRatioService;
 
 	@Autowired
 	public MainService(SubscriptionService subscriptionService, UserService userService, SimService simService, DeviceTypeService deviceTypeService, DeviceService deviceService) {
@@ -117,10 +111,10 @@ public class MainService {
     this.billingService = billingService;
   }
 	
-	@Autowired
-	public void setChargeRatioService(ChargeRatioService chargeRatioService) {
-    this.chargeRatioService = chargeRatioService;
-  }
+//	@Autowired
+//	public void setChargeRatioService(ChargeRatioService chargeRatioService) {
+//    this.chargeRatioService = chargeRatioService;
+//  }
 	
 	public Map<User, List<FeeItem>> splitting = new HashMap<>();
 	
@@ -321,14 +315,15 @@ public class MainService {
     return false;
   }
   
-  public void updateDevice(long id, DeviceToView dtv) {
-    Device device = deviceService.findById(id);
+  public boolean updateDevice(DeviceToView dtv) {
+    Device device = deviceService.findById(dtv.getId());
     User user = userService.findById(dtv.getUserId());
     
     device.addUser(user, dtv.getDate());
     device.addNote(dtv.getNote(), dtv.getDate());
     
     deviceService.save(device);
+    return true;
   }
 
   public DeviceToView findDeviceById(long id) {
@@ -336,8 +331,8 @@ public class MainService {
     return device != null ? device.toView() : null;
   }
   
-  public DeviceToView findDeviceByIdAndDate(long id, String date) {
-    return deviceService.findById(id).toView(LocalDate.parse(date));
+  public DeviceToView findDeviceByIdAndDate(long id, LocalDate date) {
+    return deviceService.findById(id).toView(date);
   }
   
   public List<LocalDate> findDeviceDatesById(long id) {
@@ -351,7 +346,7 @@ public class MainService {
   //-------- BILLING SERVICE --------
   
   public boolean fileUpload(MultipartFile file) throws FileUploadException {
-    return billingService.uploadBill(file);
+    return billingService.uploadInvoiceAndProcess(file);
   }
 
   public List<Invoice> findAllInvoice() {
@@ -444,7 +439,7 @@ public class MainService {
   }
 
   public boolean updateUser(long id, Map<String, Boolean> roles) {
-    return userService.modifyRoles(id, roles);
+    return userService.updateUser(id, roles);
   }
 
   public boolean passwordReset(String email) {
@@ -521,7 +516,7 @@ public class MainService {
     System.out.println(sb);
   }
 
-  public void resetInvoiceByInvoiceNumber(String invoiceNumber) {
+  public void restartPorcessingOfInvoice(String invoiceNumber) {
     billingService.resetInvoiceByInvoiceNumber(invoiceNumber);
   }
 

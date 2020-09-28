@@ -2,13 +2,11 @@ package com.czp.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -51,6 +49,11 @@ public class HomeController {
   @RequestMapping("/loginError")
   public String loginError(Model model) {
     model.addAttribute("error", "Incorrect email or password!");
+    return "auth/login";
+  }
+  
+  @GetMapping("/login")
+  public String login() {
     return "auth/login";
   }
   

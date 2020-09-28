@@ -10,7 +10,6 @@ import com.czp.entity.Sim;
 import com.czp.entity.Subscription;
 import com.czp.entity.switchTable.SubSim;
 import com.czp.entity.switchTable.repository.SubSimRepository;
-import com.czp.enums.SimStatusEnum;
 import com.czp.service.SimService;
 import com.czp.service.SubscriptionService;
 
@@ -19,15 +18,15 @@ public class SubSimService {
 
   private SubSimRepository subSimRepository;
   
-  private SubscriptionService subscriptionService;
+//  private SubscriptionService subscriptionService;
   
-  private SimService simService;
+//  private SimService simService;
 
   @Autowired
   SubSimService(SubSimRepository subSimRepository, SubscriptionService subscriptionService, SimService simService) {
     this.subSimRepository = subSimRepository;
-    this.subscriptionService = subscriptionService;
-    this.simService = simService;
+//    this.subscriptionService = subscriptionService;
+//    this.simService = simService;
   }
   
   public List<SubSim> findAllBySub(Subscription s) {

@@ -19,8 +19,6 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import com.czp.entity.note.DevNote;
 import com.czp.entity.switchTable.SubDev;
 import com.czp.entity.switchTable.UserDev;

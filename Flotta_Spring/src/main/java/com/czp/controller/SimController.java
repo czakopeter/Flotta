@@ -41,9 +41,9 @@ public class SimController {
   }
   
   @PostMapping("sim/new")
-  public String addSim(Model model, @ModelAttribute Sim sim, RedirectAttributes ra) {
+  public String addSim(Model model, RedirectAttributes ra, @ModelAttribute Sim sim) {
     if(service.addSim(sim)) {
-      ra.addFlashAttribute("success", "Creation was success");
+      ra.addFlashAttribute("success", "Creation was successful");
       return "redirect:/sim/all";
     } else {
       model.addAttribute("sim", sim);

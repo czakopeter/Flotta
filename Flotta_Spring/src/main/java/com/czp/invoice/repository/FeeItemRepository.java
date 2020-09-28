@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.czp.entity.User;
-import com.czp.entity.viewEntity.InvoiceOfUserByNumber;
 import com.czp.invoice.FeeItem;
 
 public interface FeeItemRepository extends CrudRepository<FeeItem, Long> {

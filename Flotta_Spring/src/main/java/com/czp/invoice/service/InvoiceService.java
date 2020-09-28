@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +40,9 @@ public class InvoiceService {
   private InvoiceRepository invoiceRepository;
 
   private BillTemplateService billTemplateService;
-  
+
   private FeeItemService feeItemService;
-  
+
   private SubscriptionServiceOnlyInfo subscriptionInfo;
 
   @Autowired
@@ -54,7 +55,7 @@ public class InvoiceService {
     this.billTemplateService = billTemplateService;
     billTemplateService.createBasicTemplate();
   }
-  
+
   @Autowired
   public void setFeeItemService(FeeItemService feeItemService) {
     this.feeItemService = feeItemService;
@@ -65,50 +66,61 @@ public class InvoiceService {
     this.subscriptionInfo = subscriptionInfo;
   }
 
-  public Invoice uploadBill(MultipartFile file) throws FileUploadException {
+  public Invoice uploadInvoice(MultipartFile file) throws FileUploadException {
     String xmlString = getXMLString(file);
-    
+
     Invoice invoice = processInvoiceXmlString(xmlString);
-    
-    if(invoiceRepository.findByInvoiceNumber(invoice.getInvoiceNumber()) == null) {
-      return invoiceRepository.save(invoice);
+
+    if (invoiceRepository.findByInvoiceNumber(invoice.getInvoiceNumber()) != null) {
+      throw new FileUploadException("Already exists!");
     }
-    throw new FileUploadException("Already exists!");
-    
+    if(!invoice.isConsistent()) {
+      throw new FileUploadException("Invoice is NOT consistant!");
+    }
+    return invoiceRepository.save(invoice);
   }
-  
+
   private Invoice processInvoiceXmlString(String xml) throws FileUploadException {
     Element root = getTreeFromXMLString(xml);
-    boolean valid = billTemplateService.invoiceTreeFormalCheck(root);
 
-    if (valid) {
-      
-      Invoice invoice = new Invoice(xml,
-          LocalDate.parse(getFirstTagValue(root, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
-          LocalDate.parse(getFirstTagValue(root, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
-          getFirstTagValue(root, "InvNb"), Double.valueOf(getFirstTagValue(root, "InvTotalNetA").replace(',', '.')),
-          Double.valueOf(getFirstTagValue(root, "InvTotalTaxA").replace(',', '.')),
-          Double.valueOf(getFirstTagValue(root, "InvTotalGrossA").replace(',', '.'))
-          );
+    if (billTemplateService.invoiceTreeFormalCheck(root)) {
+      Invoice invoice = parseToInvoice(root);
+      invoice.setXmlString(xml);
+      return invoice;
+
+    } else {
+      throw new FileUploadException("Invalid structure");
+    }
+  }
+
+  private Invoice parseToInvoice(Element root) throws FileUploadException {
+    try {
+      Invoice invoice = new Invoice();
+      invoice.setBeginDate(LocalDate.parse(getFirstTagValue(root, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")));
+      invoice.setEndDate(LocalDate.parse(getFirstTagValue(root, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")));
+      invoice.setInvoiceNumber(getFirstTagValue(root, "InvNb"));
+      invoice.setInvoiceNetAmount(Double.valueOf(getFirstTagValue(root, "InvTotalNetA").replace(',', '.')));
+      invoice.setInvoiceTaxAmount(Double.valueOf(getFirstTagValue(root, "InvTotalTaxA").replace(',', '.')));
+      invoice.setInvoiceGrossAmount(Double.valueOf(getFirstTagValue(root, "InvTotalGrossA").replace(',', '.')));
 
       NodeList nodes = root.getElementsByTagName("FeeItem");
       for (int i = 0; i < nodes.getLength(); i++) {
         Element feeItem = (Element) nodes.item(i);
         invoice.addFeeItem(
-            subscriptionInfo.findByNumber(getFirstTagValue(feeItem, "ItemNr")), 
+            subscriptionInfo.findByNumber(getFirstTagValue(feeItem, "ItemNr")),
             new FeeItem(
-                getFirstTagValue(feeItem, "ItemNr"),
-                getFirstTagValue(feeItem, "Desc"),
-                LocalDate.parse(getFirstTagValue(feeItem, "Begin"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
+                getFirstTagValue(feeItem, "ItemNr"), 
+                getFirstTagValue(feeItem, "Desc"), 
+                LocalDate.parse(getFirstTagValue(feeItem, "Begin"),DateTimeFormatter.ofPattern("uuuu.MM.dd.")), 
                 LocalDate.parse(getFirstTagValue(feeItem, "End"), DateTimeFormatter.ofPattern("uuuu.MM.dd.")),
-                Double.valueOf(getFirstTagValue(feeItem, "NetA").replace(',', '.')), 
-                Double.valueOf(getFirstTagValue(feeItem, "TaxA").replace(',', '.')),
+                Double.valueOf(getFirstTagValue(feeItem, "NetA").replace(',', '.')),
+                Double.valueOf(getFirstTagValue(feeItem, "TaxA").replace(',', '.')), 
                 Double.valueOf(getFirstTagValue(feeItem, "TaxP").replace(',', '.').replace("%", "")),
                 Double.valueOf(getFirstTagValue(feeItem, "GrossA").replace(',', '.'))));
       }
       return invoice;
-    } else {
-      throw new FileUploadException("Invalid structure");
+    } catch (DateTimeParseException | NumberFormatException e) {
+      throw new FileUploadException(e.toString());
     }
   }
 
@@ -130,7 +142,7 @@ public class InvoiceService {
     } catch (IOException e) {
       throw new FileUploadException("IOException");
     } catch (SAXException e) {
-      throw new FileUploadException("SAXException");
+      throw new FileUploadException("SAXException\n" + e);
     }
   }
 
@@ -152,6 +164,12 @@ public class InvoiceService {
       throw new FileUploadException("IOException");
     }
   }
+  
+//  private String cleanXMLString(StringBuilder sb) {
+//    int fromIndex = 0;
+//    sb.indexOf(">", fromIndex);
+//    return sb.toString();
+//  }
 
   public List<Invoice> findAll() {
     return invoiceRepository.findAll();
@@ -168,8 +186,8 @@ public class InvoiceService {
   public List<FeeItem> findAllFeeItemByInvoiceId(long id) {
     List<FeeItem> result = new LinkedList<>();
     Invoice invoice = invoiceRepository.findOne(id);
-    if(invoice != null) {
-      for(InvoiceByUserAndPhoneNumber part : invoice.getInvoicePart()) {
+    if (invoice != null) {
+      for (InvoiceByUserAndPhoneNumber part : invoice.getInvoicePart()) {
         result.addAll(part.getFees());
       }
     }
@@ -187,7 +205,7 @@ public class InvoiceService {
   public void save(List<FeeItem> fees) {
     feeItemService.save(fees);
   }
-  
+
   public List<InvoiceOfUserByNumber> getPendingInvoicesOfCurrentUser(User user) {
     return feeItemService.getPendingInvoicesOfCurrentUser(user);
   }
@@ -201,7 +219,7 @@ public class InvoiceService {
   }
 
   public boolean acceptInvoicesOfCurrentUserByNumbers(User user, List<String> numbers) {
-    for(String number : numbers) {
+    for (String number : numbers) {
       feeItemService.acceptInvoiceOfCurrentUserByNumber(user, number);
     }
     return true;
@@ -213,11 +231,11 @@ public class InvoiceService {
 
   public void resetInvoiceByInvoiceNumber(String invoiceNumber) {
     Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber);
-    
-    if(invoice != null) {
+
+    if (invoice != null) {
       try {
         Invoice reprocess = processInvoiceXmlString(invoice.getXmlString());
-        for(FeeItem item : reprocess.getFeeItems()) {
+        for (FeeItem item : reprocess.getFeeItems()) {
           System.out.println(item);
         }
         invoiceRepository.delete(invoice);
@@ -226,12 +244,12 @@ public class InvoiceService {
         System.err.println(e);
       }
     }
-    
+
   }
 
   public void deleteInvoiceByInvoiceNumber(String invoiceNumber) {
     Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber);
-    if(invoice.canDelete()) {
+    if (invoice.canDelete()) {
       invoiceRepository.delete(invoice);
     }
   }

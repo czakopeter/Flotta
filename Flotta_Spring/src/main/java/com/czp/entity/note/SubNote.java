@@ -4,15 +4,11 @@ import java.security.InvalidParameterException;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.czp.entity.Device;
 import com.czp.entity.Subscription;
 import com.czp.entity.switchTable.BasicSwitchTable;
-import com.czp.entity.switchTable.SubDev;
 import com.czp.utility.Utility;
 
 @Entity

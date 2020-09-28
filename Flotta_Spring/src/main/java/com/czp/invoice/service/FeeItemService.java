@@ -1,24 +1,18 @@
 package com.czp.invoice.service;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.czp.entity.User;
-import com.czp.entity.switchTable.UserDev;
 import com.czp.entity.viewEntity.InvoiceOfUserByNumber;
 import com.czp.entity.viewEntity.OneCategoryOfUserFinance;
 import com.czp.invoice.FeeItem;
-import com.czp.invoice.Invoice;
 import com.czp.invoice.repository.FeeItemRepository;
-import com.czp.service.UserDetailsImpl;
 
 @Service
 public class FeeItemService {

@@ -30,7 +30,6 @@ public class DeviceTypeService {
   }
 
   public void save(DeviceType deviceType) {
-    System.out.println(deviceType);
     if (deviceIsSaveable(deviceType)) {
         deviceTypeRepository.save(deviceType);
     }

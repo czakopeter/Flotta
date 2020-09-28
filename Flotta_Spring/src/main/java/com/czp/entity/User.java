@@ -15,7 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.czp.entity.switchTable.GenSW;
 import com.czp.entity.switchTable.UserDev;
 import com.czp.entity.switchTable.UserSub;
 import com.czp.enums.UserStatusEnum;

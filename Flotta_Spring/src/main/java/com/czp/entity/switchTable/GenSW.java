@@ -1,11 +1,5 @@
 package com.czp.entity.switchTable;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
-import org.hibernate.annotations.Type;
-
 import com.czp.entity.BasicEntity;
 
 public class GenSW <V1 extends BasicEntity, V2 extends BasicEntity> {

@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -65,8 +63,8 @@ public class SubscriptionController {
       }
   }
 
-  @GetMapping("/subscription/{id}/edit")
-  public String prepareEditingSubscription(Model model, @PathVariable("id") long id) {
+  @GetMapping("/subscription/{id}/update")
+  public String prepareUpdatingSubscription(Model model, @PathVariable("id") long id) {
     SubscriptionToView stv = service.findSubscriptionById(id);
     model.addAttribute("subscription", stv);
     model.addAttribute("freeSims", service.findAllFreeSim());
@@ -75,11 +73,12 @@ public class SubscriptionController {
     return "subscription_templates/subscriptionEdit";
   }
 
-  @PostMapping("/subscription/update")
+  @PostMapping("/subscription/{id}/update")
   public String updateSubscription(Model model, @ModelAttribute() SubscriptionToView stv) {
     if(!service.updateSubscription(stv)) {
       model.addAttribute("error", service.getSubscriptionServiceError());
     }
+    stv = service.findSubscriptionById(stv.getId());
     model.addAttribute("freeSims", service.findAllFreeSim());
     model.addAttribute("users", service.findAllUser());
     model.addAttribute("devices", service.findAllDevicesByUser(stv.getUserId()));
@@ -90,6 +89,7 @@ public class SubscriptionController {
   @GetMapping("/subscription/{id}/view")
   public String viewSubscription(Model model, @PathVariable("id") long id) {
     model.addAttribute("subscription", service.findSubscriptionById(id));
+    model.addAttribute("dates", service.findSubscriptionDatesById(id));
     return "subscription_templates/subscriptionView";
   }
   

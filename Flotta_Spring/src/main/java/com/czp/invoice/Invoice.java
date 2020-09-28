@@ -13,14 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
-import org.w3c.dom.Element;
 
 import com.czp.entity.Subscription;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 
 @Entity
 @Table(name = "invoices")
@@ -32,6 +26,8 @@ public class Invoice {
   
   @Lob
   private String xmlString;
+  
+  //TOTO createInvoiceHead 
   
   private LocalDate beginDate;
   
@@ -199,5 +195,10 @@ public class Invoice {
 
   public boolean canDelete() {
     return !closed;
+  }
+
+  //TODO konzisztenciát ellenőrző függvényt elkészíteni
+  public boolean isConsistent() {
+    return true;
   }
 }

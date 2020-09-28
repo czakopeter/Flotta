@@ -8,11 +8,7 @@
 
     <h2>Device edit</h2>
 
-    <hr />
-
-    <div th:replace="fragments/device :: dateSliceSelector"></div>
-
-    <form th:object="${device}" method="post" id="form">
+    <form th:action="'/device/' + ${device.id} + '/update'" method="post" th:object="${device}" id="form">
       <input type="hidden" id="order" name="order" />
       <div class="container">
         <div class="row my-2">
@@ -40,13 +36,9 @@
             <label th:text="#{device.user}">User</label>
           </div>
           <div class="col-4">
-            <select class="form-control" id="userId" name="userId" th:field="*{userId}"
-              onchange="userUpdate(this)"
-            >
+            <select class="form-control" id="userId" name="userId" th:field="*{userId}">
               <option value="0" title="Nobody"></option>
-              <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}"
-                th:title="${user.email}"
-              ></option>
+              <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}" th:title="${user.email}"></option>
             </select>
           </div>
         </div>
@@ -64,12 +56,11 @@
           </div>
           <div class="col-4">
             <input type="date" class="form-control" id="date" name="date" th:value="*{date}"
-              required="required"
+              required="required" th:min="*{min}"
             />
           </div>
         </div>
-        <button type="submit" class="btn btn-primary" th:formaction="'/device/' + ${device.id}"
-          formmethod="post" th:text="#{button.save}"
+        <button type="submit" class="btn btn-primary" th:text="#{button.save}"
         >Save</button>
         <a href="/device/all" class="btn btn-primary" th:text="#{button.back}">Back</a>
       </div>

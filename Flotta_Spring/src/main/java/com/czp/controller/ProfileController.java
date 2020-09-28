@@ -2,26 +2,17 @@ package com.czp.controller;
 
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.czp.entity.viewEntity.SubscriptionToView;
 import com.czp.service.MainService;
 
 @Controller
@@ -36,7 +27,6 @@ public class ProfileController {
 
 //  @ModelAttribute
 //  public void title(Model model) {
-//    model.addAttribute("title", "Profile");
 //  }
   
   @GetMapping("/profile/items")

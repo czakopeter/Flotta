@@ -2,9 +2,10 @@ package com.czp.controller;
 
 
 
-import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.czp.entity.DeviceType;
 import com.czp.entity.viewEntity.DeviceToView;
 import com.czp.service.MainService;
 
@@ -35,20 +35,20 @@ public class DeviceController {
   }
 
   @RequestMapping("/device/all")
-  public String devices(Model model) {
+  public String listDevices(Model model) {
     model.addAttribute("canCreateNew", !service.findAllBrandOfDevicesType().isEmpty());
     model.addAttribute("devices", service.findAllDevices());
     return "device_templates/deviceAll";
   }
   
-  @GetMapping("device/new")
+  @GetMapping("/device/new")
   public String prepareAddingDevice(Model model) {
     model.addAttribute("device", new DeviceToView());
     model.addAttribute("deviceTypes", service.findAllDeviceTypes());
     return "device_templates/deviceNew";
   }
   
-  @PostMapping("device/new")
+  @PostMapping("/device/new")
   public String addDevice(Model model, @ModelAttribute("device") DeviceToView dtv) {
     if(service.saveDevice(dtv)) {
       return "redirect:/device/all";
@@ -60,35 +60,34 @@ public class DeviceController {
     }
   }
   
-  @RequestMapping("device/{id}")
-  public String device(Model model, @PathVariable("id") long id) {
+  @GetMapping("/device/{id}/update")
+  public String prepareUpdatingDevice(Model model, @PathVariable("id") long id) {
     model.addAttribute("device", service.findDeviceById(id));
-    model.addAttribute("dates", service.findDeviceDatesById(id));
     model.addAttribute("users", service.findAllUser());
     return "device_templates/deviceEdit";
   }
   
-  @PostMapping("device/{id}")
-  public String device(Model model, @PathVariable("id") long id, @RequestParam(name = "order", defaultValue = "save") String order, @ModelAttribute() DeviceToView dtv) {
-    String[] orderPart = order.split(" ");
-    switch (orderPart[0]) {
-    case "save":
-      service.updateDevice(id, dtv);
-      dtv = service.findDeviceById(id);
-      break;
-    case "userCh":
-      dtv.setEditable(true);
-      break;
-    case "dateSliceCh":
-      dtv = service.findDeviceByIdAndDate(id, orderPart[1]);
-      break;
-    default:
-      break;
+  @PostMapping("/device/{id}/update")
+  public String updateDevice(Model model,  @ModelAttribute() DeviceToView dtv) {
+    if(service.updateDevice(dtv)) {
+      model.addAttribute("error", service.getDeviceServiceError());
     }
-    model.addAttribute("dates", service.findDeviceDatesById(id));
     model.addAttribute("users", service.findAllUser());
-    model.addAttribute("device", dtv);
-    return dtv.isEditable() ? "device_templates/deviceEdit" : "device_templates/deviceView";
+    model.addAttribute("device", service.findDeviceById(dtv.getId()));
+    return "device_templates/deviceEdit";
   }
   
+  @GetMapping("/device/{id}/view")
+  public String viewDevice(Model model, @PathVariable("id") long id) {
+    model.addAttribute("device", service.findDeviceById(id));
+    model.addAttribute("dates", service.findDeviceDatesById(id));
+    return "device_templates/deviceView";
+  }
+  
+  @PostMapping("/device/{id}/view")
+  @ResponseBody
+  public DeviceToView viewChangeDate(@PathVariable("id") long id, @RequestParam("date")@DateTimeFormat(pattern = "yyyy-MM-dd")  LocalDate date) {
+    System.out.println("post view");
+    return service.findDeviceByIdAndDate(id, date);
+  }
 }

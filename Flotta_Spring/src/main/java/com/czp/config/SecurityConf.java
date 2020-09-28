@@ -49,7 +49,7 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 				.loginPage("/login")
 				.failureUrl("/loginError")
 				//belépést követően a kezdőlapra irányítsa át
-				.defaultSuccessUrl("/", false)
+				.defaultSuccessUrl("/", true)
 				.permitAll()
 				.and()
 			.logout()

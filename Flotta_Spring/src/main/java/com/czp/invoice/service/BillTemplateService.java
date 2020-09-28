@@ -75,6 +75,7 @@ public class BillTemplateService {
     }
     
     for(MyNode template : templates) {
+      template.show();
       if(equals(root.getChildNodes(), template.getChild())) {
         return true;
       }
@@ -82,13 +83,21 @@ public class BillTemplateService {
 
     return false;
   }
-
+  
+  //kijavítani, nem működik jól
   private boolean equals(NodeList nodes, List<MyNode> subTemplates) {
+    System.out.println("\ntemplate size: " + subTemplates.size());
+    System.out.println("nodelist size: " + length(nodes));
+    if(subTemplates.size() != length(nodes)) {
+//      return false;
+    }
     for (int i = 0; i < nodes.getLength(); i++) {
       Node tempNode = nodes.item(i);
       if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
         boolean valid = false;
+        System.out.println("\nNode name: " + tempNode.getNodeName());
         for (MyNode subTemplate : subTemplates) {
+          System.out.println("mynode name: " + subTemplate.getName());
           if (tempNode.getNodeName().equalsIgnoreCase(subTemplate.getName())) {
             if (equals(tempNode.getChildNodes(), subTemplate.getChild())) {
               valid = true;
@@ -96,11 +105,23 @@ public class BillTemplateService {
             }
           }
         }
+        System.out.println("\n");
         if (!valid) {
           return false;
         }
       }
     }
-    return true;
+    return false;
+  }
+  
+  private int length(NodeList nodes) {
+    int count = 0;
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node tempNode = nodes.item(i);
+      if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+        count++;
+      }
+    }
+    return count;
   }
 }

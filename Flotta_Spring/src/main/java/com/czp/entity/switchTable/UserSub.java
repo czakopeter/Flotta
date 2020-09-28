@@ -2,7 +2,6 @@ package com.czp.entity.switchTable;
 
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.czp.entity.Device;
 import com.czp.entity.Subscription;
 import com.czp.entity.User;
 import com.czp.utility.Utility;

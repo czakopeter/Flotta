@@ -2,8 +2,6 @@ package com.czp.entity.switchTable;
 
 import java.time.LocalDate;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import com.czp.entity.BasicEntity;

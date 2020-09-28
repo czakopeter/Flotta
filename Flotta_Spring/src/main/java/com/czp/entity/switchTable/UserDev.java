@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,8 +12,6 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.czp.entity.Device;
-import com.czp.entity.Sim;
-import com.czp.entity.Subscription;
 import com.czp.entity.User;
 import com.czp.utility.Utility;
 

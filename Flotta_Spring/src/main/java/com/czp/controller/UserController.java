@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.czp.entity.User;
@@ -34,14 +35,14 @@ public class UserController {
     model.addAttribute("title", "User");
   }
   
-  @RequestMapping("/user/all")
-  public String listUsers(Model model, Authentication a) {
+  @GetMapping("/user/all")
+  public String listUsers(Model model) {
     model.addAttribute("users", service.findAllUser());
     return "user_templates/userAll";
   }
 
-  @RequestMapping("/user/new")
-  public String addUser(Model model) {
+  @GetMapping("/user/new")
+  public String prepareAddingUser(Model model) {
     model.addAttribute("user", new User());
     return "user_templates/userNew";
   }
@@ -56,15 +57,15 @@ public class UserController {
     return "user_templates/userNew";
   }
   
-  @RequestMapping("/user/{id}")
+  @GetMapping("/user/{id}")
   public String user(Model model, @PathVariable("id") long id) {
     model.addAttribute("user", service.findUserById(id));
     return "user_templates/userEdit";
   }
   
   @PostMapping("/user/{id}")
-  public String user(Model model, @PathVariable("id") long id, @RequestParam() Map<String, Boolean> roles) {
-      
+  @ResponseBody
+  public String editUser(Model model, @PathVariable("id") long id, @RequestParam  Map<String, Boolean> roles) {
     if(!service.updateUser(id, roles)) {
       model.addAttribute("error", service.getUserError());
     }
@@ -107,12 +108,12 @@ public class UserController {
     return "redirect:/login";
   }
   
-  @GetMapping("/passwordReset")
-  public String passwordReset() {
+  @GetMapping("/requestNewPassword")
+  public String prepareRequestingNewPassword() {
     return "/passwordReset";
   }
   
-  @PostMapping("/passwordReset")
+  @PostMapping("/requestNewPassword")
   public String passwordReset(RedirectAttributes redirectAttributes, @RequestParam("email") String email) {
     if(service.passwordReset(email)) {
       redirectAttributes.addFlashAttribute("waring", "The email has been sent to " + email + " address!");
@@ -120,9 +121,4 @@ public class UserController {
     return "redirect:/login";
   }
   
-  @GetMapping("/login")
-  public String login(Model model) {
-//    model.addAttribute("warning", ResourceBundle.getBundle("messages", LocaleContextHolder.getLocale()).getString("button.save"));
-    return "auth/login";
-  }
 }

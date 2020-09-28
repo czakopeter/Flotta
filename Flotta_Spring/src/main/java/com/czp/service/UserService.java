@@ -1,6 +1,7 @@
 package com.czp.service;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -8,16 +9,12 @@ import java.util.Set;
 
 //import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import com.czp.entity.Role;
 import com.czp.entity.User;
@@ -68,20 +65,24 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 		return userRepository.findAll();
 	}
 
-	public boolean registerUser(User userToRegister) {
-		User userCheck = userRepository.findByEmail(userToRegister.getEmail());
+	public boolean registerUser(User user) {
+		User userCheck = userRepository.findByEmail(user.getEmail());
 
 		if (userCheck != null) {
+		  appendMsg("Already exists!");
 			return false;
 		}
-		userToRegister.setEnabled(false);
-		userToRegister.setStatus(UserStatusEnum.WAITING_FOR_ACTIVATION);
-		userToRegister.addRoles(roleRepository.findByRole("BASIC"));
-		userToRegister.setPassword(generateKey(16));
-		userToRegister.setPasswordRenewerKey(generateKey(16));
-		if(emailService.sendMessage(userToRegister)) {
-		  userRepository.save(userToRegister);
+		user.setEnabled(false);
+		user.setStatus(UserStatusEnum.WAITING_FOR_ACTIVATION);
+		user.addRoles(roleRepository.findByRole("BASIC"));
+		user.setPassword(generateKey(16));
+		user.setPasswordRenewerKey(generateKey(16));
+		if(emailService.sendMessage(user.getEmail(),
+		    "Activation email",
+		    emailService.createMessageText(EmailService.FAILED_PASSWORD_CHANGE, new String[] {user.getFullName(), user.getPasswordRenewerKey(), user.getPassword()}))) {
+		  userRepository.save(user);
 		} else {
+		  appendMsg("Email send failed!");
 		  return false;
 		}
 		return true;
@@ -97,28 +98,30 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
   }
 
 	public User findById(long userId) {
-	  return userId == 0 ? null : userRepository.findOne(userId);
+	  return userId <= 0 ? null : userRepository.findOne(userId);
 	}
 
-  public void modify(User user) {
+  public void save(User user) {
     userRepository.save(user);
   }
   
-  //az kötelező jelszó csere után a menű nem jelenik a szerepkörök szerint
+  //TODO email küldést engedélyezni
   public boolean changePassword(String oldPsw, String newPsw, String confirmPsw) {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    User user = userRepository.findByEmail(auth.getName());
+    User user = getActualUser();
     if(user.getPassword().equals(oldPsw) && Validator.validPassword(newPsw) && newPsw.contentEquals(confirmPsw)) {
       user.setPassword(newPsw);
       user.setPasswordRenewerKey(null);
       user.setStatus(UserStatusEnum.ENABLED);
       userRepository.save(user);
-//      emailService.sendEmailAboutPasswordChange(true);
-//      refreshAuthorization(new UserDetailsImpl(user));
+      emailService.sendMessage(user.getEmail(),
+          "Password change",
+          emailService.createMessageText(EmailService.SUCCESS_PASSWORD_CHANGE, new String[] {user.getFullName()}));
       return true;
     } else {
       appendMsg("Probleb with the added data!");
-      emailService.sendEmailAboutPasswordChange(false);
+      emailService.sendMessage(user.getEmail(),
+          "Password change",
+          emailService.createMessageText(EmailService.FAILED_PASSWORD_CHANGE, new String[] {user.getFullName()}));
       return false;
     }
   }
@@ -130,15 +133,15 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
 
   public boolean firstUserRegistration(User user) {
     if(userRepository.findAll().isEmpty()) {
-      
       user.setEnabled(false);
       user.addRoles(roleRepository.findByRole("ADMIN"));
       user.setStatus(UserStatusEnum.WAITING_FOR_ACTIVATION);
       user.setPassword(generateKey(16));
       user.setPasswordRenewerKey(generateKey(16));
-      if(emailService.sendMessage(user)) {
+      if(emailService.sendMessage(user.getEmail(), "Activation email", EmailService.ACTIVATION_AND_INITIAL_PASSWORD)) {
         userRepository.save(user);
       } else {
+        appendMsg("Email send failed!");
         return false;
       }
     }
@@ -160,16 +163,12 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
     return userRepository.findAllByStatus(status);
   }
 
-  public boolean modifyRoles(long id, Map<String, Boolean> roles) {
+  public boolean updateUser(long id,  Map<String, Boolean> roles) {
     User user = userRepository.findOne(id);
     if(user != null) {
-      try {
-        user.setRoles(toRoleSet(roles));
-        userRepository.save(user);
-        return true;
-      } catch (IllegalArgumentException e) {
-        appendMsg(e.getMessage());
-      }
+      user.setRoles(toRoleSet(roles));
+      userRepository.save(user);
+      return true;
     } else {
       appendMsg("User doesn't exists!");
     }
@@ -178,7 +177,7 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
   
   private Set<Role> toRoleSet(Map<String, Boolean> roles) {
     Set<Role> result = new HashSet<>();
-    for(String key : roles.keySet()) {
+    for(String key : new LinkedList<>(roles.keySet())) {
       Role r = roleRepository.findByRole(key.toUpperCase());
       if(r != null) {
         result.add(r);
@@ -195,16 +194,18 @@ public class UserService extends ServiceWithMsg implements UserDetailsService {
       user.setPassword(generateKey(16));
       user.setPasswordRenewerKey(generateKey(16));
       user.setStatus(UserStatusEnum.WAITING_FOR_ACTIVATION);
-      userRepository.save(user);
-      emailService.sendMessage(user);
+      if(emailService.sendMessage(user.getEmail(),
+          "Activation email",
+          emailService.createMessageText(EmailService.ACTIVATION_AND_INITIAL_PASSWORD, new String[] {user.getFullName(), user.getPasswordRenewerKey() , user.getPassword()}))) {
+        userRepository.save(user);
+      }
       return true;
     }
     return false;
   }
   
-  private void refreshAuthorization(UserDetails user) {
-    UsernamePasswordAuthenticationToken a = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
-    SecurityContextHolder.getContext().setAuthentication(a);
+  private User getActualUser() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    return userRepository.findByEmail(auth.getName());
   }
-
 }

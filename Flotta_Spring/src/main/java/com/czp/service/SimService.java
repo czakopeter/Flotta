@@ -1,6 +1,5 @@
 package com.czp.service;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +8,7 @@ import org.springframework.stereotype.Service;
 import com.czp.entity.Sim;
 import com.czp.enums.SimStatusEnum;
 import com.czp.repository.SimRepository;
-import com.czp.status.service.SimStatusService;
-import com.czp.utility.Validator;
+//import com.czp.status.service.SimStatusService;
 
 @Service
 public class SimService extends ServiceWithMsg {
@@ -19,17 +17,17 @@ public class SimService extends ServiceWithMsg {
 	
 	private SimRepository simRepository;
 	
-	private SimStatusService simStatusService;
+//	private SimStatusService simStatusService;
 	
 	@Autowired
 	public void setSimRepository(SimRepository simRepository) {
     this.simRepository = simRepository;
   }
 	
-	@Autowired
-  public void setSimStatusService(SimStatusService simStatusService) {
-    this.simStatusService = simStatusService;
-  }
+//	@Autowired
+//  public void setSimStatusService(SimStatusService simStatusService) {
+//    this.simStatusService = simStatusService;
+//  }
 
   public List<Sim> findAll() {
     return simRepository.findAll(); 
